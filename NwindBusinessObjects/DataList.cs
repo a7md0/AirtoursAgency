@@ -47,8 +47,7 @@ namespace NwindBusinessObjects {
         protected void SetValues(T item) {
             Type type = item.GetType();
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            
-            int fieldCount = 0;
+
             foreach (var property in properties) {
                 object value = reader[property.Name] ?? null;
                 if (value is DBNull) {
@@ -56,7 +55,6 @@ namespace NwindBusinessObjects {
                 }
 
                 property.SetValue(item, value);
-                fieldCount++;
             }
         }
     }
