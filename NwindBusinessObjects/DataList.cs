@@ -50,7 +50,7 @@ namespace NwindBusinessObjects {
             
             int fieldCount = 0;
             foreach (var property in properties) {
-                object value = reader[property.Name];
+                object value = reader[property.Name] ?? null;
                 if (value is DBNull) {
                     value = null;
                 }
