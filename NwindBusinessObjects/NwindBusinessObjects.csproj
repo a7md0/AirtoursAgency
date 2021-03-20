@@ -41,9 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Employee.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerList.cs" />
     <Compile Include="DataList.cs" />
+    <Compile Include="EmployeeList.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="NorthwindDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
