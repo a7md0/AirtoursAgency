@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
-    public class Customer : Item {
+    public class Customer : Item<string> {
         private string companyName;
         private string contactName;
         private string contactTitle;

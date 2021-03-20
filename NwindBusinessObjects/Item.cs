@@ -5,16 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
-    public class Item {
-        protected string id;
+    public class Item<T> {
+        protected T id;
 
-        public Item(string id) {
+        public Item(T id) {
             this.id = id;
         }
 
         public Item() { }
 
-        public string Id {
+        public T Id {
             get { return id; }
             set { id = value; }
         }
