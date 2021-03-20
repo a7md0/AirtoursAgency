@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
-    public class Item<T> {
+    public abstract class Item<T> {
         protected T id;
 
         public Item(T id) {

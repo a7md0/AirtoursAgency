@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 
 namespace NwindBusinessObjects {
-    public class DataList<T> {
+    public abstract class DataList<T> {
         protected string table;
         protected SqlConnection connection;
         protected SqlCommand command;
