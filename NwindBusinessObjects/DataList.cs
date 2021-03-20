@@ -49,9 +49,14 @@ namespace NwindBusinessObjects {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
             foreach (var property in properties) {
-                object value = reader[property.Name] ?? null;
+                object value = reader[property.Name]; // Find value by matching property name against the coulmn name
+
+                if (value == null) {
+                    continue; // Skip if no matching column for this property
+                }
+
                 if (value is DBNull) {
-                    value = null;
+                    value = null; // Set valute to null if matached with db type NULL
                 }
 
                 property.SetValue(item, value);
