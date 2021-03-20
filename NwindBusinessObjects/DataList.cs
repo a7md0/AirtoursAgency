@@ -9,36 +9,39 @@ using System.Data.SqlClient;
 
 namespace NwindBusinessObjects {
     public abstract class DataList<T> {
-        protected string table;
+        private readonly string table;
+
         protected SqlConnection connection;
         protected SqlCommand command;
         protected SqlDataReader reader;
+
         protected List<T> list;
 
         public DataList(string table) {
             this.table = table;
+
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
             this.command = connection.CreateCommand();
+            this.reader = null;
+
             this.list = new List<T>();
         }
 
         public string Table {
             get { return table; }
-            set { table = value; }
         }
 
         public List<T> List {
             get { return list; }
-            set { list = value; }
         }
 
         public void Populate() {
             this.connection.Open();
 
-            command.CommandText = $"SELECT * FROM {table};";
-            reader = command.ExecuteReader();
+            this.command.CommandText = $"SELECT * FROM {this.table};";
+            this.reader = command.ExecuteReader();
 
-            GenerateList();
+            this.GenerateList();
 
             this.reader.Close();
             this.command.Dispose();
