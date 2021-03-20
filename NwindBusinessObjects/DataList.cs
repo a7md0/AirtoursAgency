@@ -33,16 +33,30 @@ namespace NwindBusinessObjects {
         }
 
         public void Populate() {
-            connection.Open();
+            this.connection.Open();
 
-            command.CommandText = "SELECT * FROM " + table;
+            command.CommandText = $"SELECT * FROM {table};";
             reader = command.ExecuteReader();
 
             GenerateList();
+
+            this.reader.Close();
+            this.command.Dispose();
+            this.connection.Close();
         }
 
         //needed so that it can be overridden in subclasses
-        protected virtual void GenerateList() { }
+        protected virtual void GenerateList() {
+            this.list.Clear();
+
+            while (reader.Read()) {
+                T item = Activator.CreateInstance<T>(); // https://stackoverflow.com/a/40987945/1738413
+
+                this.SetValues(item);
+
+                this.list.Add(item);
+            }
+        }
 
         protected void SetValues(T item) {
             Type type = item.GetType();
