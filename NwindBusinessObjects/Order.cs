@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace NwindBusinessObjects {
     public class Order : Item<int> {
         private string customerID;
-        private int employeeID;
-        private DateTime orderDate;
-        private DateTime requiredDate;
-        private DateTime shippedDate;
-        private int shipVia;
-        private decimal freight;
+        private int? employeeID;
+        private DateTime? orderDate;
+        private DateTime? requiredDate;
+        private DateTime? shippedDate;
+        private int? shipVia;
+        private decimal? freight;
         private string shipName;
         private string shipAddress;
         private string shipCity;
@@ -44,7 +44,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public int EmployeeID {
+        public int? EmployeeID {
             get {
                 return this.employeeID;
             }
@@ -54,7 +54,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public DateTime OrderDate {
+        public DateTime? OrderDate {
             get {
                 return this.orderDate;
             }
@@ -64,7 +64,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public DateTime RequiredDate {
+        public DateTime? RequiredDate {
             get {
                 return this.requiredDate;
             }
@@ -74,7 +74,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public DateTime ShippedDate {
+        public DateTime? ShippedDate {
             get {
                 return this.shippedDate;
             }
@@ -84,7 +84,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public int ShipVia {
+        public int? ShipVia {
             get {
                 return this.shipVia;
             }
@@ -94,7 +94,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public decimal Freight {
+        public decimal? Freight {
             get {
                 return this.freight;
             }

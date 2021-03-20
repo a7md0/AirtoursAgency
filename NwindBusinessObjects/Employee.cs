@@ -10,8 +10,8 @@ namespace NwindBusinessObjects {
         private string firstName;
         private string title;
         private string titleOfCourtesy;
-        private DateTime birthDate;
-        private DateTime hireDate;
+        private DateTime? birthDate;
+        private DateTime? hireDate;
         private string address;
         private string city;
         private string region;
@@ -21,7 +21,7 @@ namespace NwindBusinessObjects {
         private string extension;
         private byte[] photo;
         private string notes;
-        private int reportsTo;
+        private int? reportsTo;
         private string photoPath;
 
         public Employee(int employeeID) : base(employeeID) { }
@@ -78,7 +78,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public DateTime BirthDate {
+        public DateTime? BirthDate {
             get {
                 return this.birthDate;
             }
@@ -88,7 +88,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public DateTime HireDate {
+        public DateTime? HireDate {
             get {
                 return this.hireDate;
             }
@@ -188,7 +188,7 @@ namespace NwindBusinessObjects {
             }
         }
 
-        public int ReportsTo {
+        public int? ReportsTo {
             get {
                 return this.reportsTo;
             }
