@@ -11,7 +11,7 @@ namespace NwindBusinessObjects {
     public abstract class DataList<T> {
         private readonly string table;
 
-        protected SqlConnection connection;
+        protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
         protected SqlCommand command;
         protected SqlDataReader reader;
 
