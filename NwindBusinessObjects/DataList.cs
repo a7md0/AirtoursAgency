@@ -33,14 +33,23 @@ namespace NwindBusinessObjects {
             this.columnsOrdinals = new Dictionary<string, int>();
         }
 
+        /// <summary>
+        /// Table name used in this data list.
+        /// </summary>
         public string Table {
             get { return table; }
         }
 
+        /// <summary>
+        /// List of current fetched records.
+        /// </summary>
         public List<T> List {
             get { return list; }
         }
 
+        /// <summary>
+        /// Populate the list (SELECT *)
+        /// </summary>
         public void Populate() {
             this.connection.Open();
 
@@ -55,7 +64,9 @@ namespace NwindBusinessObjects {
             this.connection.Close();
         }
 
-        //needed so that it can be overridden in subclasses
+        /// <summary>
+        /// Recreate the current list with the values from the reader. It does empty the list at start.
+        /// </summary>
         protected virtual void GenerateList() {
             this.list.Clear();
 
@@ -68,6 +79,10 @@ namespace NwindBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Set values of given item from the current reader.
+        /// </summary>
+        /// <param name="item">Item to set properties value from the current reader.</param>
         protected void SetValues(T item) {
             foreach (var property in itemProperties) {
                 try {
@@ -96,10 +111,17 @@ namespace NwindBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Find and set the current item proprieties.
+        /// </summary>
+        /// <param name="bindingAttr">A bitmask comprised of one or more System.Reflection.BindingFlags that specify how the search is conducted.-or- Zero, to return null.</param>
         private void setItemProperties(BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) {
             itemProperties = typeof(T).GetProperties(bindingAttr);
         }
 
+        /// <summary>
+        /// Set columns ordinals (integer order of each column by name). It is inefficient to call within loop, so it being called once after each query.
+        /// </summary>
         protected void setColumnsOrdinals() {
             columnsOrdinals.Clear();
 
