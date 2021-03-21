@@ -17,6 +17,9 @@ namespace NwindBusinessObjects {
 
         protected List<T> list;
 
+        private PropertyInfo[] itemProperties;
+        private Dictionary<string, int> columnsOrdinals;
+
         public DataList(string table) {
             this.table = table;
 
@@ -25,6 +28,9 @@ namespace NwindBusinessObjects {
             this.reader = null;
 
             this.list = new List<T>();
+
+            this.setItemProperties();
+            this.columnsOrdinals = new Dictionary<string, int>();
         }
 
         public string Table {
@@ -40,6 +46,7 @@ namespace NwindBusinessObjects {
 
             this.command.CommandText = $"SELECT * FROM {this.table};";
             this.reader = command.ExecuteReader();
+            this.setColumnsOrdinals();
 
             this.GenerateList();
 
@@ -62,12 +69,9 @@ namespace NwindBusinessObjects {
         }
 
         protected void SetValues(T item) {
-            Type type = item.GetType();
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-
-            foreach (var property in properties) {
+            foreach (var property in itemProperties) {
                 try {
-                    object value = reader[property.Name]; // Find value by matching property name against the column name. +throws IndexOutOfRangeException
+                    object value = reader.GetValue(columnsOrdinals[property.Name]); // Find value by matching property name against the column name.
 
                     if (value == null) {
                         continue; // Skip if no matching column for this property
@@ -77,17 +81,34 @@ namespace NwindBusinessObjects {
                         value = null; // Set value to null if matched with db type NULL
                     }
 
-                    try {
-                        property.SetValue(item, value);
-                    } catch (ArgumentException) {
+                    property.SetValue(item, value);
+                } catch (KeyNotFoundException) { // Dictionary throws if key not found
 
-                    } catch (TargetException) {
+                } catch (ArgumentException) { // PropertyInfo.SetValue throws
 
-                    } catch (MethodAccessException) {
+                } catch (TargetException) {
 
-                    } catch (TargetInvocationException) {
+                } catch (MethodAccessException) {
 
-                    }
+                } catch (TargetInvocationException) {
+
+                }
+            }
+        }
+
+        private void setItemProperties(BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) {
+            itemProperties = typeof(T).GetProperties(bindingAttr);
+        }
+
+        protected void setColumnsOrdinals() {
+            columnsOrdinals.Clear();
+
+            foreach (var property in itemProperties) {
+                try {
+                    string propertyName = property.Name;
+                    int columnOrdinal = reader.GetOrdinal(propertyName); // throws IndexOutOfRangeException
+
+                    columnsOrdinals.Add(propertyName, columnOrdinal);
                 } catch (IndexOutOfRangeException) { // No column with the specified name was found.
 
                 }
