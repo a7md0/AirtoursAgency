@@ -66,28 +66,31 @@ namespace NwindBusinessObjects {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
             foreach (var property in properties) {
-                object value = reader[property.Name]; // Find value by matching property name against the column name
-
-                if (value == null) {
-                    continue; // Skip if no matching column for this property
-                }
-
-                if (value is DBNull) {
-                    value = null; // Set value to null if matched with db type NULL
-                }
-
                 try {
-                    property.SetValue(item, value);
-                } catch (ArgumentException) {
-                    
-                } catch (TargetException) {
+                    object value = reader[property.Name]; // Find value by matching property name against the column name. +throws IndexOutOfRangeException
 
-                } catch (MethodAccessException) {
+                    if (value == null) {
+                        continue; // Skip if no matching column for this property
+                    }
 
-                } catch (TargetInvocationException) {
+                    if (value is DBNull) {
+                        value = null; // Set value to null if matched with db type NULL
+                    }
+
+                    try {
+                        property.SetValue(item, value);
+                    } catch (ArgumentException) {
+
+                    } catch (TargetException) {
+
+                    } catch (MethodAccessException) {
+
+                    } catch (TargetInvocationException) {
+
+                    }
+                } catch (IndexOutOfRangeException) { // No column with the specified name was found.
 
                 }
-
             }
         }
     }
