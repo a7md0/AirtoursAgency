@@ -21,7 +21,7 @@ namespace NwindBusinessObjects {
             this.table = table;
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
-            this.command = connection.CreateCommand();
+            this.command = this.connection.CreateCommand();
             this.reader = null;
 
             this.list = new List<T>();
