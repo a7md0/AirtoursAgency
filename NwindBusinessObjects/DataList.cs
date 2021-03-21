@@ -76,7 +76,18 @@ namespace NwindBusinessObjects {
                     value = null; // Set valute to null if matached with db type NULL
                 }
 
-                property.SetValue(item, value);
+                try {
+                    property.SetValue(item, value);
+                } catch (ArgumentException) {
+                    
+                } catch (TargetException) {
+
+                } catch (MethodAccessException) {
+
+                } catch (TargetInvocationException) {
+
+                }
+
             }
         }
     }
