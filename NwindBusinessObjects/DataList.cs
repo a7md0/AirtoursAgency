@@ -85,6 +85,24 @@ namespace NwindBusinessObjects {
             this.connection.Close();
         }
 
+        public void PopulateWithFilter(string field, string value) {
+            this.connection.Open();
+
+            this.command = this.connection.CreateCommand();
+            this.command.CommandText = $"SELECT * FROM {this.table} WHERE {@field} = @value;";
+            this.command.Parameters.AddWithValue("field", field);
+            this.command.Parameters.AddWithValue("value", value);
+
+            this.reader = command.ExecuteReader();
+            this.setColumnsOrdinals();
+
+            this.GenerateList();
+
+            this.reader.Close();
+            this.command.Dispose();
+            this.connection.Close();
+        }
+
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
