@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 namespace NwindBusinessObjects {
     public abstract class DataList<T> {
         private readonly string table;
+        private readonly string idColumn;
 
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
         protected SqlCommand command;
@@ -20,8 +21,9 @@ namespace NwindBusinessObjects {
         private PropertyInfo[] itemProperties;
         private Dictionary<string, int> columnsOrdinals;
 
-        public DataList(string table) {
+        public DataList(string table, string idColumn) {
             this.table = table;
+            this.idColumn = idColumn;
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
             this.command = this.connection.CreateCommand();

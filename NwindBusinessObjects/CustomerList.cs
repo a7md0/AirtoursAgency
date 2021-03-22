@@ -8,6 +8,6 @@ namespace NwindBusinessObjects {
     public class CustomerList : DataList<Customer> {
         const string TABLE_NAME = "Customers";
 
-        public CustomerList() : base(TABLE_NAME) { }
+        public CustomerList() : base(TABLE_NAME, "CustomerID") { }
     }
 }
