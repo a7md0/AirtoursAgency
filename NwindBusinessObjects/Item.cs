@@ -5,25 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
-    public abstract class Item<T> {
-        protected T id;
+    public abstract class Item {
+        protected string id;
 
-        public Item(T id) {
+        public Item(string id) {
             this.id = id;
         }
 
         public Item() { }
 
-        public T Id {
+        public string Id {
             get { return id; }
             set { id = value; }
         }
 
-        public T getID() {
+        public string getID() {
             return this.id;
         }
 
-        public void setID(T id) {
+        public void setID(string id) {
             this.id = id;
         }
     }

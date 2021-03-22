@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
-    public class Order : Item<int> {
+    public class Order : Item {
+        private int orderID;
         private string customerID;
         private int? employeeID;
         private DateTime? orderDate;
@@ -20,17 +21,18 @@ namespace NwindBusinessObjects {
         private string shipPostalCode;
         private string shipCountry;
 
-        public Order(int orderId) : base(orderId) { }
+        public Order(int orderId) : base(orderId.ToString()) { }
 
         public Order() { }
 
         public int OrderID {
             get {
-                return base.id;
+                return this.orderID;
             }
 
             set {
-                base.id = value;
+                base.id = value.ToString();
+                this.orderID = value;
             }
         }
 

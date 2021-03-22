@@ -8,9 +8,9 @@ using System.Reflection;
 using System.Data.SqlClient;
 
 namespace NwindBusinessObjects {
-    public abstract class DataList<T> {
-        private readonly string table;
-        private readonly string idColumn;
+    public abstract class DataList<T> where T : Item {
+        protected readonly string table;
+        protected readonly string idColumn;
 
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
         protected SqlCommand command;
@@ -38,16 +38,17 @@ namespace NwindBusinessObjects {
         /// <summary>
         /// Table name used in this data list.
         /// </summary>
-        public string Table {
-            get { return table; }
-        }
+        public string Table => this.table;
 
         /// <summary>
         /// List of current fetched records.
         /// </summary>
-        public List<T> List {
-            get { return list; }
-        }
+        public List<T> List => this.list;
+
+        /// <summary>
+        /// Id column of this data list table.
+        /// </summary>
+        public string IdColumn => this.idColumn;
 
         /// <summary>
         /// Populate the list (SELECT *)
@@ -60,6 +61,24 @@ namespace NwindBusinessObjects {
             this.setColumnsOrdinals();
 
             this.GenerateList();
+
+            this.reader.Close();
+            this.command.Dispose();
+            this.connection.Close();
+        }
+
+        public void Populate(T item) {
+            this.connection.Open();
+
+            this.command = this.connection.CreateCommand();
+            this.command.CommandText = $"SELECT * FROM {this.table} WHERE {idColumn} = @id;";
+            this.command.Parameters.AddWithValue("id", item.Id);
+
+            this.reader = command.ExecuteReader();
+            this.setColumnsOrdinals();
+
+            this.reader.Read();
+            this.SetValues(item);
 
             this.reader.Close();
             this.command.Dispose();

@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
-    public class Employee : Item<int> {
+    public class Employee : Item {
+        private int employeeID;
         private string lastName;
         private string firstName;
         private string title;
@@ -24,17 +25,18 @@ namespace NwindBusinessObjects {
         private int? reportsTo;
         private string photoPath;
 
-        public Employee(int employeeID) : base(employeeID) { }
+        public Employee(int employeeID) : base(employeeID.ToString()) { }
 
         public Employee() { }
 
         public int EmployeeID {
             get {
-                return base.id;
+                return this.employeeID;
             }
 
             set {
-                base.id = value;
+                base.id = value.ToString();
+                this.employeeID = value;
             }
         }
 
