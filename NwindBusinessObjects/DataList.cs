@@ -56,7 +56,7 @@ namespace NwindBusinessObjects {
         public void Populate() {
             this.connection.Open();
 
-            this.command.CommandText = $"SELECT * FROM {this.table};";
+            this.command.CommandText = $"SELECT * FROM [{this.table}];";
             this.reader = command.ExecuteReader();
             this.setColumnsOrdinals();
 
@@ -71,7 +71,7 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             this.command = this.connection.CreateCommand();
-            this.command.CommandText = $"SELECT * FROM {this.table} WHERE {idColumn} = @id;";
+            this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{idColumn}] = @id;";
             this.command.Parameters.AddWithValue("id", item.Id);
 
             this.reader = command.ExecuteReader();
@@ -89,7 +89,7 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             this.command = this.connection.CreateCommand();
-            this.command.CommandText = $"SELECT * FROM {this.table} WHERE {@field} = @value;";
+            this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
             this.command.Parameters.AddWithValue("field", field);
             this.command.Parameters.AddWithValue("value", value);
 
