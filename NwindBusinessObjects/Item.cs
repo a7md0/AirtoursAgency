@@ -18,5 +18,13 @@ namespace NwindBusinessObjects {
             get { return id; }
             set { id = value; }
         }
+
+        public T getID() {
+            return this.id;
+        }
+
+        public void setID(T id) {
+            this.id = id;
+        }
     }
 }
