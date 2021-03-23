@@ -19,7 +19,7 @@ namespace NwindBusinessObjects {
 
         public Customer(string customerID) : base(customerID) { }
 
-        public Customer() { }
+        public Customer() : base() { }
 
         public string CustomerID {
             get { return base.id; }

@@ -23,7 +23,7 @@ namespace NwindBusinessObjects {
 
         public Order(int orderId) : base(orderId.ToString()) { }
 
-        public Order() { }
+        public Order() : base() { }
 
         public int OrderID {
             get {

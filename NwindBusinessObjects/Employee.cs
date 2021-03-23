@@ -27,7 +27,7 @@ namespace NwindBusinessObjects {
 
         public Employee(int employeeID) : base(employeeID.ToString()) { }
 
-        public Employee() { }
+        public Employee() : base() { }
 
         public int EmployeeID {
             get {
