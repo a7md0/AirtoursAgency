@@ -16,15 +16,15 @@ namespace NwindBusinessObjects {
 
         public string Id {
             get { return id; }
-            set { id = value; }
+            //set { id = value; }
         }
 
         public string getID() {
             return this.id;
         }
 
-        public void setID(string id) {
+        /*public void setID(string id) {
             this.id = id;
-        }
+        }*/
     }
 }
