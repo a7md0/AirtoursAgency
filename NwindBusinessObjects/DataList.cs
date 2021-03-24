@@ -130,11 +130,12 @@ namespace NwindBusinessObjects {
                     fields.Add($"[{name}] = @{name}");
                 }
 
-                setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. xyz = @xyz, a = @a)
+                if (fields.Count > 0) {
+                    setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. xyz = @xyz, a = @a)
 
-                this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
-
-                command.ExecuteNonQuery();
+                    this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
+                    this.command.ExecuteNonQuery();
+                }
             }
 
             this.connection.Close();
