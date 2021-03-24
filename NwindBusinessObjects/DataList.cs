@@ -103,6 +103,42 @@ namespace NwindBusinessObjects {
             this.connection.Close();
         }
 
+        public void Update(T item) {
+            this.connection.Open();
+            this.command = this.connection.CreateCommand();
+            
+            List<string> fields = new List<string>();
+
+            foreach (var property in itemProperties) {
+                var name = property.Name; // Get field name
+                var value = property.GetValue(item); // Get value
+
+                if (value == null) { // if value is null we skip
+                    continue;
+                }
+
+                this.command.Parameters.AddWithValue(name, value); // Add to the parameters
+
+                if (name == idColumn) {
+                    continue;
+                }
+
+                fields.Add($"[{name}] = @{name}");
+            }
+
+            string setFields = string.Join(", ", fields);
+
+            this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{idColumn}] = @{idColumn};";
+
+            Console.WriteLine(this.command.CommandText);
+
+            this.reader = command.ExecuteReader();
+
+            this.reader.Close();
+            this.command.Dispose();
+            this.connection.Close();
+        }
+
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
