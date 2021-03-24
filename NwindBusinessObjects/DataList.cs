@@ -26,7 +26,7 @@ namespace NwindBusinessObjects {
             this.pkColumn = pkColumn;
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
-            this.command = this.connection.CreateCommand();
+            this.command = null;
             this.reader = null;
 
             this.list = new List<T>();
@@ -56,84 +56,87 @@ namespace NwindBusinessObjects {
         public void Populate() {
             this.connection.Open();
 
-            this.command.CommandText = $"SELECT * FROM [{this.table}];";
-            this.reader = command.ExecuteReader();
-            this.setColumnsOrdinals();
+            using (this.command = this.connection.CreateCommand()) {
+                this.command.CommandText = $"SELECT * FROM [{this.table}];";
 
-            this.GenerateList();
+                using (this.reader = command.ExecuteReader()) {
+                    this.setColumnsOrdinals();
 
-            this.reader.Close();
-            this.command.Dispose();
+                    this.GenerateList();
+                }
+            }
+
             this.connection.Close();
         }
 
         public void Populate(T item) {
             this.connection.Open();
 
-            this.command = this.connection.CreateCommand();
-            this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{pkColumn}] = @id;";
-            this.command.Parameters.AddWithValue("id", item.Id);
+            using (this.command = this.connection.CreateCommand()) {
+                this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{pkColumn}] = @id;";
+                this.command.Parameters.AddWithValue("id", item.Id);
 
-            this.reader = command.ExecuteReader();
-            this.setColumnsOrdinals();
+                using (this.reader = command.ExecuteReader()) {
+                    this.setColumnsOrdinals();
 
-            if (this.reader.Read()) { 
-                this.SetValues(item);
+                    if (this.reader.Read()) {
+                        this.SetValues(item);
+                    }
+                }
             }
 
-            this.reader.Close();
-            this.command.Dispose();
             this.connection.Close();
         }
 
         public void PopulateWithFilter(string field, string value) {
             this.connection.Open();
 
-            this.command = this.connection.CreateCommand();
-            this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
-            this.command.Parameters.AddWithValue("field", field);
-            this.command.Parameters.AddWithValue("value", value);
+            using (this.command = this.connection.CreateCommand()) {
+                this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
+                this.command.Parameters.AddWithValue("field", field);
+                this.command.Parameters.AddWithValue("value", value);
 
-            this.reader = command.ExecuteReader();
-            this.setColumnsOrdinals();
+                using (this.reader = command.ExecuteReader()) {
+                    this.setColumnsOrdinals();
 
-            this.GenerateList();
+                    this.GenerateList();
+                }
+            }
 
-            this.reader.Close();
-            this.command.Dispose();
             this.connection.Close();
         }
 
-        public void Update(T item) {
+        public bool Update(T item) {
             this.connection.Open();
-            this.command = this.connection.CreateCommand();
-            
-            List<string> fields = new List<string>(); // List of set instructions (e.g. xyz = 1)
 
-            foreach (var property in itemProperties) {
-                var name = property.Name; // Get field name
-                var value = property.GetValue(item); // Get value
+            using (this.command = this.connection.CreateCommand()) {
+                List<string> fields = new List<string>(); // List of set instructions (e.g. xyz = 1)
+                string setFields;
 
-                if (value == null) { // if value is null we skip
-                    continue;
+                foreach (var property in itemProperties) {
+                    var name = property.Name; // Get field name
+                    var value = property.GetValue(item); // Get value
+
+                    if (value == null) { // if value is null we skip
+                        continue;
+                    }
+
+                    this.command.Parameters.AddWithValue(name, value); // Add to the parameters
+
+                    if (name == pkColumn) {
+                        continue;
+                    }
+
+                    fields.Add($"[{name}] = @{name}");
                 }
 
-                this.command.Parameters.AddWithValue(name, value); // Add to the parameters
+                setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. xyz = @xyz, a = @a)
 
-                if (name == pkColumn) {
-                    continue;
-                }
+                this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
 
-                fields.Add($"[{name}] = @{name}");
+                command.ExecuteNonQuery();
             }
 
-            string setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. xyz = @xyz, a = @a)
-
-            this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
-
-            command.ExecuteNonQuery();
-
-            this.command.Dispose();
             this.connection.Close();
         }
 
@@ -159,11 +162,8 @@ namespace NwindBusinessObjects {
         protected void SetValues(T item) {
             foreach (var property in itemProperties) {
                 try {
-                    object value = reader.GetValue(columnsOrdinals[property.Name]); // Find value by matching property name against the column name.
-
-                    if (value == null) {
-                        continue; // Skip if no matching column for this property
-                    }
+                    int ordinal = columnsOrdinals[property.Name]; // Find value by matching property name
+                    object value = reader.GetValue(ordinal);
 
                     if (value is DBNull) {
                         value = null; // Set value to null if matched with db type NULL
