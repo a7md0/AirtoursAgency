@@ -130,9 +130,8 @@ namespace NwindBusinessObjects {
 
             this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
 
-            this.reader = command.ExecuteReader();
+            command.ExecuteNonQuery();
 
-            this.reader.Close();
             this.command.Dispose();
             this.connection.Close();
         }
