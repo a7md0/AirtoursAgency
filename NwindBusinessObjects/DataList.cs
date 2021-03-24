@@ -106,7 +106,7 @@ namespace NwindBusinessObjects {
             this.connection.Close();
         }
 
-        public bool Update(T item) {
+        public void Update(T item) {
             this.connection.Open();
 
             using (this.command = this.connection.CreateCommand()) {
