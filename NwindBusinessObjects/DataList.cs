@@ -77,8 +77,9 @@ namespace NwindBusinessObjects {
             this.reader = command.ExecuteReader();
             this.setColumnsOrdinals();
 
-            this.reader.Read();
-            this.SetValues(item);
+            if (this.reader.Read()) { 
+                this.SetValues(item);
+            }
 
             this.reader.Close();
             this.command.Dispose();
@@ -170,6 +171,8 @@ namespace NwindBusinessObjects {
 
                     property.SetValue(item, value);
                 } catch (KeyNotFoundException) { // Dictionary throws if key not found
+
+                } catch (InvalidOperationException) {
 
                 } catch (ArgumentException) { // PropertyInfo.SetValue throws
 
