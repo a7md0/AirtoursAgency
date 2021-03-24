@@ -107,7 +107,7 @@ namespace NwindBusinessObjects {
             this.connection.Open();
             this.command = this.connection.CreateCommand();
             
-            List<string> fields = new List<string>(); // List of set instructions (e.g. SET xyz = 1)
+            List<string> fields = new List<string>(); // List of set instructions (e.g. xyz = 1)
 
             foreach (var property in itemProperties) {
                 var name = property.Name; // Get field name
@@ -126,7 +126,7 @@ namespace NwindBusinessObjects {
                 fields.Add($"[{name}] = @{name}");
             }
 
-            string setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. SET xyz = @xyz, a = @a)
+            string setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. xyz = @xyz, a = @a)
 
             this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
 
