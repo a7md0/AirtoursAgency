@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 namespace NwindBusinessObjects {
     public abstract class DataList<T> where T : Item {
         protected readonly string table;
-        protected readonly string idColumn;
+        protected readonly string pkColumn;
 
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
         protected SqlCommand command;
@@ -21,9 +21,9 @@ namespace NwindBusinessObjects {
         private PropertyInfo[] itemProperties;
         private Dictionary<string, int> columnsOrdinals;
 
-        public DataList(string table, string idColumn) {
+        public DataList(string table, string pkColumn) {
             this.table = table;
-            this.idColumn = idColumn;
+            this.pkColumn = pkColumn;
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
             this.command = this.connection.CreateCommand();
@@ -48,7 +48,7 @@ namespace NwindBusinessObjects {
         /// <summary>
         /// Id column of this data list table.
         /// </summary>
-        public string IdColumn => this.idColumn;
+        public string PkColumn => this.pkColumn;
 
         /// <summary>
         /// Populate the list (SELECT *)
@@ -71,7 +71,7 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             this.command = this.connection.CreateCommand();
-            this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{idColumn}] = @id;";
+            this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{pkColumn}] = @id;";
             this.command.Parameters.AddWithValue("id", item.Id);
 
             this.reader = command.ExecuteReader();
@@ -107,7 +107,7 @@ namespace NwindBusinessObjects {
             this.connection.Open();
             this.command = this.connection.CreateCommand();
             
-            List<string> fields = new List<string>();
+            List<string> fields = new List<string>(); // List of set instructions (e.g. SET xyz = 1)
 
             foreach (var property in itemProperties) {
                 var name = property.Name; // Get field name
@@ -119,18 +119,16 @@ namespace NwindBusinessObjects {
 
                 this.command.Parameters.AddWithValue(name, value); // Add to the parameters
 
-                if (name == idColumn) {
+                if (name == pkColumn) {
                     continue;
                 }
 
                 fields.Add($"[{name}] = @{name}");
             }
 
-            string setFields = string.Join(", ", fields);
+            string setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. SET xyz = @xyz, a = @a)
 
-            this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{idColumn}] = @{idColumn};";
-
-            Console.WriteLine(this.command.CommandText);
+            this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
 
             this.reader = command.ExecuteReader();
 
