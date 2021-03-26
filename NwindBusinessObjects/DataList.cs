@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 
 namespace NwindBusinessObjects {
-    public abstract class DataList<T> where T : Item {
+    public abstract class DataList<T> where T : Item, new() {
         protected readonly string table;
         protected readonly string pkColumn;
 
@@ -148,7 +148,7 @@ namespace NwindBusinessObjects {
             this.list.Clear();
 
             while (reader.Read()) {
-                T item = Activator.CreateInstance<T>(); // https://stackoverflow.com/a/40987945/1738413
+                T item = new T();
 
                 this.SetValues(item);
 
