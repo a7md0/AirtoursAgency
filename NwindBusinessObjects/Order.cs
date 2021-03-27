@@ -21,7 +21,9 @@ namespace NwindBusinessObjects {
         private string shipPostalCode;
         private string shipCountry;
 
-        public Order(int orderId) : base(orderId.ToString()) { }
+        public Order(int orderID) : base(orderID.ToString()) {
+            this.orderID = orderID;
+        }
 
         public Order() : base() { }
 

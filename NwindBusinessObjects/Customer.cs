@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
     public class Customer : Item {
+        private string customerID;
         private string companyName;
         private string contactName;
         private string contactTitle;
@@ -17,13 +18,18 @@ namespace NwindBusinessObjects {
         private string phone;
         private string fax;
 
-        public Customer(string customerID) : base(customerID) { }
+        public Customer(string customerID) : base(customerID) {
+            this.customerID = customerID;
+        }
 
         public Customer() : base() { }
 
         public string CustomerID {
-            get { return base.id; }
-            set { base.id = value; }
+            get { return this.customerID; }
+            set {
+                this.customerID = value;
+                base.id = value;
+            }
         }
 
         public string CompanyName {

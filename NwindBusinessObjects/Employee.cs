@@ -25,7 +25,9 @@ namespace NwindBusinessObjects {
         private int? reportsTo;
         private string photoPath;
 
-        public Employee(int employeeID) : base(employeeID.ToString()) { }
+        public Employee(int employeeID) : base(employeeID.ToString()) {
+            this.employeeID = employeeID;
+        }
 
         public Employee() : base() { }
 
