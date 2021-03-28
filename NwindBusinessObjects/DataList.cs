@@ -33,7 +33,7 @@ namespace NwindBusinessObjects {
 
             this.list = new List<T>();
 
-            this.setItemProperties();
+            this.itemProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             this.columnsOrdinals = new Dictionary<string, int>();
         }
 
@@ -171,14 +171,6 @@ namespace NwindBusinessObjects {
 
                 }
             }
-        }
-
-        /// <summary>
-        /// Find and set the current item proprieties.
-        /// </summary>
-        /// <param name="bindingAttr">A bitmask comprised of one or more System.Reflection.BindingFlags that specify how the search is conducted.-or- Zero, to return null.</param>
-        private void setItemProperties(BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) {
-            itemProperties = typeof(T).GetProperties(bindingAttr);
         }
 
         /// <summary>
