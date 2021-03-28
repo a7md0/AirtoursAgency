@@ -42,11 +42,15 @@ namespace NwindBusinessObjects.Builder {
         }
 
         public void Add(string column, object value) {
-            if (value == null && skipNullValues) { // if value is null we skip
+            object val = value;
+
+            if (val == null && skipNullValues) { // if value is null we skip
                 return;
+            } else if (val == null && !skipNullValues) {
+                val = DBNull.Value;
             }
 
-            this.parameters.Add(new SqlParameter(column, value)); // Add to the parameters
+            this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
 
             
             if (skipColumns.Any(column.Contains)) {
