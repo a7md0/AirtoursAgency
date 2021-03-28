@@ -7,25 +7,25 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 
 namespace NwindBusinessObjects.Builder {
-    public class WhereCluase : IDisposable {
+    public class WhereClause : IDisposable {
         private List<Predicate> predicates;
         private List<SqlParameter> parameters;
 
-        public WhereCluase() {
+        public WhereClause() {
             this.predicates = new List<Predicate>();
             this.parameters = new List<SqlParameter>();
 
             this.predicates.Add(new AndPredicate());
         }
 
-        public WhereCluase And() {
+        public WhereClause And() {
             //values.Add(key, value);
             predicates.Add(new AndPredicate());
 
             return this;
         }
 
-        public WhereCluase Or() {
+        public WhereClause Or() {
             //values.Add(key, value);
             predicates.Add(new OrPredicate());
 
@@ -35,7 +35,7 @@ namespace NwindBusinessObjects.Builder {
         #region operators
         // see https://en.wikipedia.org/wiki/SQL_syntax#Operators
 
-        public WhereCluase EqualTo(string columnName, object value) {
+        public WhereClause EqualTo(string columnName, object value) {
             var last = predicates.Last();
 
             parameters.Add(new SqlParameter(columnName, value));
@@ -44,7 +44,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase NotEqualTo(string columnName, object value) {
+        public WhereClause NotEqualTo(string columnName, object value) {
             var last = predicates.Last();
 
             parameters.Add(new SqlParameter(columnName, value));
@@ -53,7 +53,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase GreaterThan(string columnName, IComparable value) {
+        public WhereClause GreaterThan(string columnName, IComparable value) {
             var last = predicates.Last();
 
             parameters.Add(new SqlParameter(columnName, value));
@@ -62,7 +62,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase LessThan(string columnName, IComparable value) {
+        public WhereClause LessThan(string columnName, IComparable value) {
             var last = predicates.Last();
 
             parameters.Add(new SqlParameter(columnName, value));
@@ -71,7 +71,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase GreaterThanOrEqual(string columnName, IComparable value) {
+        public WhereClause GreaterThanOrEqual(string columnName, IComparable value) {
             var last = predicates.Last();
 
             parameters.Add(new SqlParameter(columnName, value));
@@ -80,7 +80,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase LessThanOrEqual(string columnName, IComparable value) {
+        public WhereClause LessThanOrEqual(string columnName, IComparable value) {
             var last = predicates.Last();
 
             parameters.Add(new SqlParameter(columnName, value));
@@ -89,7 +89,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase Between(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
+        public WhereClause Between(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
             var last = predicates.Last();
 
             string prefix = not == true ? "NOT " : "";
@@ -103,7 +103,7 @@ namespace NwindBusinessObjects.Builder {
             return this;
         }
 
-        public WhereCluase Like(string columnName, dynamic value, bool not = false) {
+        public WhereClause Like(string columnName, dynamic value, bool not = false) {
             throw new NotImplementedException();
 
 #pragma warning disable CS0162 // Unreachable code detected
@@ -118,7 +118,7 @@ namespace NwindBusinessObjects.Builder {
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        public WhereCluase In(string columnName, dynamic value, bool not = false) {
+        public WhereClause In(string columnName, dynamic value, bool not = false) {
             throw new NotImplementedException();
 #pragma warning disable CS0162 // Unreachable code detected
             var last = predicates.Last();
@@ -133,7 +133,7 @@ namespace NwindBusinessObjects.Builder {
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        public WhereCluase Is(string columnName, bool value, bool not = false) {
+        public WhereClause Is(string columnName, bool value, bool not = false) {
             var last = predicates.Last();
 
             string prefix = not == true ? "NOT " : "";

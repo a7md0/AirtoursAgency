@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builder\SetClause.cs" />
-    <Compile Include="Builder\WhereCluase.cs" />
+    <Compile Include="Builder\WhereClause.cs" />
     <Compile Include="OrderList.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Employee.cs" />
