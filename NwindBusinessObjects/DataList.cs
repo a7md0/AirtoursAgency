@@ -18,8 +18,8 @@ namespace NwindBusinessObjects {
 
         protected List<T> list;
 
-        private PropertyInfo[] itemProperties;
-        private Dictionary<string, int> columnsOrdinals;
+        protected PropertyInfo[] itemProperties;
+        protected Dictionary<string, int> columnsOrdinals;
 
         public DataList(string table, string pkColumn) {
             this.table = table;
