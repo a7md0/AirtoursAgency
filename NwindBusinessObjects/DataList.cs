@@ -212,5 +212,78 @@ namespace NwindBusinessObjects {
                 }
             }
         }
+
+        protected object ScalarQuery(string query, SqlParameter[] parameters = null) {
+            object result = null;
+
+            this.connection.Open();
+
+            using (this.command = this.connection.CreateCommand()) {
+                this.command.CommandText = query;
+
+                if (parameters != null) { 
+                    this.command.Parameters.AddRange(parameters);
+                }
+
+                result = command.ExecuteScalar();
+            }
+
+            this.connection.Close();
+
+            return result;
+        }
+
+        public double TotalValue(string column) {
+            return this.TotalValue<double>(column, null, null, null);
+        }
+
+        public U TotalValue<U>(string column) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.TotalValue<U>(column, null, null, null);
+        }
+
+        public double TotalValue(
+            string column,
+            string whereColumn,
+            string whereOperator,
+            dynamic whereValue
+        ) {
+            return this.TotalValue<double>(column, whereColumn, whereOperator, whereValue);
+        }
+
+        public U TotalValue<U>(
+            string column,
+            string whereColumn,
+            string whereOperator,
+            dynamic whereValue
+        ) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            U value = default(U);
+            SqlParameter[] sqlParameters = null;
+            string suffix = "";
+
+            if (whereColumn != null && whereOperator != null && whereValue != null) {
+                sqlParameters = new SqlParameter[1];
+                sqlParameters[0] = new SqlParameter(whereColumn, whereValue);
+
+                suffix = $" WHERE {whereColumn} {whereOperator} @{whereColumn}";
+            }
+
+            try {
+                object result = this.ScalarQuery($"SELECT SUM([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
+                value = (U)Convert.ChangeType(result, typeof(U));
+            } catch (System.InvalidCastException) { }
+
+            return value;
+        }
+
+        public int GetMaxID() {
+            int value = 0;
+
+            try {
+                object result = this.ScalarQuery($"SELECT MAX([{this.pkColumn}]) FROM [{this.table}];");
+                value = (int) result;
+            } catch (NullReferenceException) { }
+
+            return value;
+        }
     }
 }
