@@ -18,6 +18,8 @@ namespace NwindBusinessObjects.Builder {
             this.predicates.Add(new AndPredicate());
         }
 
+        public SqlParameter[] Parameters => this.parameters.ToArray();
+
         public WhereClause And() {
             //values.Add(key, value);
             predicates.Add(new AndPredicate());

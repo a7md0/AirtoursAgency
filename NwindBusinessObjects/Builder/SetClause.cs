@@ -30,7 +30,7 @@ namespace NwindBusinessObjects.Builder {
 
         public bool HasAny => this.predicates.Count > 0;
 
-        public List<SqlParameter> Parameters => this.parameters;
+        public SqlParameter[] Parameters => this.parameters.ToArray();
 
         public void Add(Item item, PropertyInfo[] itemProperties) {
             foreach (var property in itemProperties) {
