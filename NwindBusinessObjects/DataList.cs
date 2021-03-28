@@ -7,6 +7,8 @@ using System.Reflection;
 
 using System.Data.SqlClient;
 
+using NwindBusinessObjects.Builder;
+
 namespace NwindBusinessObjects {
     public abstract class DataList<T> where T : Item, new() {
         protected readonly string table;
@@ -109,31 +111,15 @@ namespace NwindBusinessObjects {
         public void Update(T item) {
             this.connection.Open();
 
-            using (this.command = this.connection.CreateCommand()) {
-                List<string> fields = new List<string>(); // List of set instructions (e.g. xyz = 1)
-                string setFields;
+            using (this.command = this.connection.CreateCommand())
+            using (var set = new SetClause(new[] { this.pkColumn }, true)) {
+                set.Add(item, itemProperties);
 
-                foreach (var property in itemProperties) {
-                    var name = property.Name; // Get field name
-                    var value = property.GetValue(item); // Get value
+                if (set.HasAny) {
+                    string setClause = set.ToString();
 
-                    if (value == null) { // if value is null we skip
-                        continue;
-                    }
-
-                    this.command.Parameters.AddWithValue(name, value); // Add to the parameters
-
-                    if (name == pkColumn) {
-                        continue;
-                    }
-
-                    fields.Add($"[{name}] = @{name}");
-                }
-
-                if (fields.Count > 0) {
-                    setFields = string.Join(", ", fields); // Join list of instructions by comma (e.g. xyz = @xyz, a = @a)
-
-                    this.command.CommandText = $"UPDATE [{this.table}] SET {setFields} WHERE [{pkColumn}] = @{pkColumn};";
+                    this.command.Parameters.AddRange(set.Parameters);
+                    this.command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
                     this.command.ExecuteNonQuery();
                 }
             }
