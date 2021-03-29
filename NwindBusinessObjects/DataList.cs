@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 using NwindBusinessObjects.Builder;
 
 namespace NwindBusinessObjects {
-    public abstract class DataList<T> where T : Item, new() {
+    public abstract partial class DataList<T> where T : Item, new() {
         protected readonly string table;
         protected readonly string pkColumn;
 
@@ -51,7 +51,9 @@ namespace NwindBusinessObjects {
         /// Id column of this data list table.
         /// </summary>
         public string PkColumn => this.pkColumn;
+    }
 
+    partial class DataList<T> {
         /// <summary>
         /// Populate the list (SELECT *)
         /// </summary>
@@ -141,7 +143,9 @@ namespace NwindBusinessObjects {
                 this.list.Add(item);
             }
         }
+    }
 
+    partial class DataList<T> {
         /// <summary>
         /// Set values of given item from the current reader.
         /// </summary>
@@ -190,7 +194,9 @@ namespace NwindBusinessObjects {
                 }
             }
         }
+    }
 
+    partial class DataList<T> {
         protected object ScalarQuery(string query, SqlParameter[] parameters = null) {
             object result = null;
 
@@ -199,7 +205,7 @@ namespace NwindBusinessObjects {
             using (this.command = this.connection.CreateCommand()) {
                 this.command.CommandText = query;
 
-                if (parameters != null) { 
+                if (parameters != null) {
                     this.command.Parameters.AddRange(parameters);
                 }
 
@@ -258,7 +264,7 @@ namespace NwindBusinessObjects {
 
             try {
                 object result = this.ScalarQuery($"SELECT MAX([{this.pkColumn}]) FROM [{this.table}];");
-                value = (int) result;
+                value = (int)result;
             } catch (NullReferenceException) { }
 
             return value;
