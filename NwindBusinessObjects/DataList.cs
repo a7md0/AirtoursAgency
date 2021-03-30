@@ -15,8 +15,6 @@ namespace NwindBusinessObjects {
         protected readonly string pkColumn;
 
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
-        protected SqlCommand command;
-        protected SqlDataReader reader;
 
         protected List<T> list;
 
@@ -28,8 +26,6 @@ namespace NwindBusinessObjects {
             this.pkColumn = pkColumn;
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
-            this.command = null;
-            this.reader = null;
 
             this.list = new List<T>();
 
@@ -60,13 +56,13 @@ namespace NwindBusinessObjects {
         public void Populate() {
             this.connection.Open();
 
-            using (this.command = this.connection.CreateCommand()) {
-                this.command.CommandText = $"SELECT * FROM [{this.table}];";
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = $"SELECT * FROM [{this.table}];";
 
-                using (this.reader = command.ExecuteReader()) {
-                    this.setColumnsOrdinals();
+                using (var reader = command.ExecuteReader()) {
+                    this.setColumnsOrdinals(reader);
 
-                    this.GenerateList();
+                    this.GenerateList(reader);
                 }
             }
 
@@ -76,15 +72,15 @@ namespace NwindBusinessObjects {
         public void Populate(T item) {
             this.connection.Open();
 
-            using (this.command = this.connection.CreateCommand()) {
-                this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{pkColumn}] = @id;";
-                this.command.Parameters.AddWithValue("id", item.Id);
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{pkColumn}] = @id;";
+                command.Parameters.AddWithValue("id", item.Id);
 
-                using (this.reader = command.ExecuteReader()) {
-                    this.setColumnsOrdinals();
+                using (var reader = command.ExecuteReader()) {
+                    this.setColumnsOrdinals(reader);
 
-                    if (this.reader.Read()) {
-                        this.SetValues(item);
+                    if (reader.Read()) {
+                        this.SetValues(item, reader);
                     }
                 }
             }
@@ -95,15 +91,15 @@ namespace NwindBusinessObjects {
         public void PopulateWithFilter(string field, string value) {
             this.connection.Open();
 
-            using (this.command = this.connection.CreateCommand()) {
-                this.command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
-                this.command.Parameters.AddWithValue("field", field);
-                this.command.Parameters.AddWithValue("value", value);
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
+                command.Parameters.AddWithValue("field", field);
+                command.Parameters.AddWithValue("value", value);
 
-                using (this.reader = command.ExecuteReader()) {
-                    this.setColumnsOrdinals();
+                using (var reader = command.ExecuteReader()) {
+                    this.setColumnsOrdinals(reader);
 
-                    this.GenerateList();
+                    this.GenerateList(reader);
                 }
             }
 
@@ -113,16 +109,16 @@ namespace NwindBusinessObjects {
         public void Update(T item) {
             this.connection.Open();
 
-            using (this.command = this.connection.CreateCommand())
+            using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(new[] { this.pkColumn }, true)) {
                 set.Add(item, itemProperties);
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
 
-                    this.command.Parameters.AddRange(set.Parameters);
-                    this.command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
-                    this.command.ExecuteNonQuery();
+                    command.Parameters.AddRange(set.Parameters);
+                    command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
+                    command.ExecuteNonQuery();
                 }
             }
 
@@ -132,13 +128,13 @@ namespace NwindBusinessObjects {
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
-        protected virtual void GenerateList() {
+        protected virtual void GenerateList(SqlDataReader reader) {
             this.list.Clear();
 
             while (reader.Read()) {
                 T item = new T();
 
-                this.SetValues(item);
+                this.SetValues(item, reader);
 
                 this.list.Add(item);
             }
@@ -150,7 +146,7 @@ namespace NwindBusinessObjects {
         /// Set values of given item from the current reader.
         /// </summary>
         /// <param name="item">Item to set properties value from the current reader.</param>
-        protected void SetValues(T item) {
+        protected void SetValues(T item, SqlDataReader reader) {
             foreach (var property in itemProperties) {
                 try {
                     int ordinal = columnsOrdinals[property.Name]; // Find value by matching property name
@@ -180,7 +176,7 @@ namespace NwindBusinessObjects {
         /// <summary>
         /// Set columns ordinals (integer order of each column by name). It is inefficient to call within loop, so it being called once after each query.
         /// </summary>
-        protected void setColumnsOrdinals() {
+        protected void setColumnsOrdinals(SqlDataReader reader) {
             columnsOrdinals.Clear();
 
             foreach (var property in itemProperties) {
@@ -213,11 +209,11 @@ namespace NwindBusinessObjects {
 
             this.connection.Open();
 
-            using (this.command = this.connection.CreateCommand()) {
-                this.command.CommandText = query;
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = query;
 
                 if (parameters != null) {
-                    this.command.Parameters.AddRange(parameters);
+                    command.Parameters.AddRange(parameters);
                 }
 
                 object result = (U)command.ExecuteScalar();
