@@ -222,8 +222,6 @@ namespace NwindBusinessObjects {
                         object result = command.ExecuteScalar();
                         value = (U)Convert.ChangeType(result, typeof(U));
                     }
-
-                
                 } catch (InvalidCastException ex) {
                     Debug.WriteLine(ex, "DataList.ScalarQuery");
                 } catch (SqlException ex) {
