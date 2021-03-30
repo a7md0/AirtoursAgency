@@ -219,7 +219,7 @@ namespace NwindBusinessObjects {
                             command.Parameters.AddRange(parameters);
                         }
 
-                        object result = (U)command.ExecuteScalar();
+                        object result = command.ExecuteScalar();
                         value = (U)Convert.ChangeType(result, typeof(U));
                     }
 
