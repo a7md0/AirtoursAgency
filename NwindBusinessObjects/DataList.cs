@@ -192,6 +192,7 @@ namespace NwindBusinessObjects {
                 } catch (ArgumentException) {
                 }
             }
+        }
     }
 
     partial class DataList<T> {
