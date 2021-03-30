@@ -175,22 +175,23 @@ namespace NwindBusinessObjects {
         }
 
         /// <summary>
-        /// Set columns ordinals (integer order of each column by name). It is inefficient to call within loop, so it being called once after each query.
+        /// Set columns ordinals (integer order of each column by name). It is inefficient to call within loop, so it being called once after each query and cached for usage.
         /// </summary>
+        /// <param name="reader">Data reader to read ordinal from</param>
         protected void setColumnsOrdinals(SqlDataReader reader) {
-            columnsOrdinals.Clear();
+            this.columnsOrdinals.Clear();
 
-            foreach (var property in itemProperties) {
+            foreach (var property in this.itemProperties) {
                 try {
                     string propertyName = property.Name;
                     int columnOrdinal = reader.GetOrdinal(propertyName); // throws IndexOutOfRangeException
 
-                    columnsOrdinals.Add(propertyName, columnOrdinal);
+                    this.columnsOrdinals.Add(propertyName, columnOrdinal);
                 } catch (IndexOutOfRangeException) { // No column with the specified name was found.
-
+                } catch (ArgumentNullException) {
+                } catch (ArgumentException) {
                 }
             }
-        }
     }
 
     partial class DataList<T> {
