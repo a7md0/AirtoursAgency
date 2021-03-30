@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Diagnostics;
 
 using System.Data.SqlClient;
 
@@ -207,20 +208,44 @@ namespace NwindBusinessObjects {
         protected U ScalarQuery<U>(string query, SqlParameter[] parameters = null) {
             U value = default(U);
 
-            this.connection.Open();
+            try {
+                this.connection.Open(); 
 
-            using (var command = this.connection.CreateCommand()) {
-                command.CommandText = query;
+                try {
+                    using (var command = this.connection.CreateCommand()) {
+                        command.CommandText = query;
 
-                if (parameters != null) {
-                    command.Parameters.AddRange(parameters);
+                        if (parameters != null) {
+                            command.Parameters.AddRange(parameters);
+                        }
+
+                        object result = (U)command.ExecuteScalar();
+                        value = (U)Convert.ChangeType(result, typeof(U));
+                    }
+
+                
+                } catch (InvalidCastException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } catch (SqlException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } catch (InvalidOperationException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } catch (System.IO.IOException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } catch (FormatException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } catch (OverflowException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } catch (ArgumentNullException ex) {
+                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                } finally {
+                    this.connection.Close();
                 }
-
-                object result = (U)command.ExecuteScalar();
-                value = (U)Convert.ChangeType(result, typeof(U));
+            } catch (InvalidOperationException ex) {
+                Debug.WriteLine(ex, "DataList.ScalarQuery");
+            } catch (SqlException ex) {
+                Debug.WriteLine(ex, "DataList.ScalarQuery");
             }
-
-            this.connection.Close();
 
             return value;
         }
