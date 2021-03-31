@@ -216,7 +216,7 @@ namespace NwindBusinessObjects {
             foreach (var property in this.itemProperties) {
                 column = new DataColumn();
 
-                column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
                 column.ColumnName = property.Name;
 
                 this.dataTable.Columns.Add(column);
@@ -227,7 +227,7 @@ namespace NwindBusinessObjects {
             DataRow row = this.dataTable.NewRow();
 
             foreach (var property in this.itemProperties) {
-                row[property.Name] = property.GetValue(item) ?? DBNull.Value;
+                row[property.Name] = property.GetValue(item) ?? DBNull.Value; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
             }
 
             this.dataTable.Rows.Add(row);
