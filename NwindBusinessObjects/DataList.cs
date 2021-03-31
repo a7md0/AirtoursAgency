@@ -230,6 +230,27 @@ namespace NwindBusinessObjects {
                 column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
                 column.ColumnName = property.Name;
 
+                /*
+                column.AllowDBNull = false;
+                if (property.PropertyType.IsValueType) {
+                    if (!column.AutoIncrement) { 
+                        column.DefaultValue = Activator.CreateInstance(property.PropertyType);
+                    }
+
+                    var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+                    if (underlyingType != null) { 
+                        column.AllowDBNull = true;
+
+                        column.DataType = underlyingType;
+                    }
+                } else {
+                    column.AllowDBNull = true;
+                    column.DefaultValue = DBNull.Value;
+
+                    column.DataType = property.PropertyType;
+                }
+                */
+
                 this.dataTable.Columns.Add(column);
             }
         }
