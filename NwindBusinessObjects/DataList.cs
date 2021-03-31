@@ -216,7 +216,7 @@ namespace NwindBusinessObjects {
             foreach (var property in this.itemProperties) {
                 column = new DataColumn();
 
-                column.DataType = property.PropertyType;
+                column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 column.ColumnName = property.Name;
 
                 this.dataTable.Columns.Add(column);
@@ -227,7 +227,7 @@ namespace NwindBusinessObjects {
             DataRow row = this.dataTable.NewRow();
 
             foreach (var property in this.itemProperties) {
-                row[property.Name] = property.GetValue(item);
+                row[property.Name] = property.GetValue(item) ?? DBNull.Value;
             }
 
             this.dataTable.Rows.Add(row);
