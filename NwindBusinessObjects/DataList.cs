@@ -207,6 +207,7 @@ namespace NwindBusinessObjects {
         }
 
         protected void setDataTableColumns() {
+            this.dataTable.Clear();
             this.dataTable.Columns.Clear();
 
             DataColumn column;
