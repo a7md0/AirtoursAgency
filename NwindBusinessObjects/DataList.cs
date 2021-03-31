@@ -209,8 +209,15 @@ namespace NwindBusinessObjects {
         protected void setDataTableColumns() {
             this.dataTable.Columns.Clear();
 
+            DataColumn column;
+
             foreach (var property in this.itemProperties) {
-                this.dataTable.Columns.Add(property.Name);
+                column = new DataColumn();
+
+                column.DataType = property.PropertyType;
+                column.ColumnName = property.Name;
+
+                this.dataTable.Columns.Add(column);
             }
         }
 
