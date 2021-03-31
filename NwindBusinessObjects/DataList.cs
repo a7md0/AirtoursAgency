@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.Diagnostics;
 
+using System.Data;
 using System.Data.SqlClient;
 
 using NwindBusinessObjects.Builder;
@@ -18,6 +19,7 @@ namespace NwindBusinessObjects {
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
 
         protected List<T> list;
+        protected DataTable dataTable;
 
         protected PropertyInfo[] itemProperties;
         protected Dictionary<string, int> columnsOrdinals;
@@ -29,9 +31,12 @@ namespace NwindBusinessObjects {
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
 
             this.list = new List<T>();
+            this.dataTable = new DataTable(table);
 
             this.itemProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             this.columnsOrdinals = new Dictionary<string, int>();
+
+            this.setDataTableColumns();
         }
 
         /// <summary>
@@ -43,6 +48,11 @@ namespace NwindBusinessObjects {
         /// List of current fetched records.
         /// </summary>
         public List<T> List => this.list;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DataTable DataTable => this.dataTable;
 
         /// <summary>
         /// Id column of this data list table.
@@ -131,6 +141,7 @@ namespace NwindBusinessObjects {
         /// </summary>
         protected virtual void GenerateList(SqlDataReader reader) {
             this.list.Clear();
+            this.dataTable.Rows.Clear();
 
             while (reader.Read()) {
                 T item = new T();
@@ -138,6 +149,7 @@ namespace NwindBusinessObjects {
                 this.SetValues(item, reader);
 
                 this.list.Add(item);
+                this.addDataTableRow(item);
             }
         }
     }
@@ -192,6 +204,24 @@ namespace NwindBusinessObjects {
                 } catch (ArgumentException) {
                 }
             }
+        }
+
+        protected void setDataTableColumns() {
+            this.dataTable.Columns.Clear();
+
+            foreach (var property in this.itemProperties) {
+                this.dataTable.Columns.Add(property.Name);
+            }
+        }
+
+        protected void addDataTableRow(T item) {
+            DataRow row = this.dataTable.NewRow();
+
+            foreach (var property in this.itemProperties) {
+                row[property.Name] = property.GetValue(item);
+            }
+
+            this.dataTable.Rows.Add(row);
         }
     }
 
