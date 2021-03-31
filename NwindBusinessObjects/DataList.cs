@@ -216,6 +216,17 @@ namespace NwindBusinessObjects {
             foreach (var property in this.itemProperties) {
                 column = new DataColumn();
 
+                if (property.Name == this.pkColumn) {
+                    column.ReadOnly = true;
+                    column.Unique = true;
+
+                    if (property.PropertyType == typeof(int)) {
+                        column.AutoIncrement = true;
+                        column.AutoIncrementSeed = this.GetMaxID();
+                        column.AutoIncrementStep = 1;
+                    }
+                }
+
                 column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
                 column.ColumnName = property.Name;
 
