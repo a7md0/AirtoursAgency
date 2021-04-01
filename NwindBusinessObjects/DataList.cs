@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Reflection;
 using System.Diagnostics;
 
 using System.Data;
 using System.Data.SqlClient;
 
-using NwindBusinessObjects.Builder;
-
 namespace NwindBusinessObjects {
+    using Builder;
     using Schema;
 
     public abstract partial class DataList<T> where T : Item, new() {
