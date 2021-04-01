@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace NwindBusinessObjects {
+    using Schema;
+
+    [Table("Customers", "CustomerID")]
     public class Customer : Item {
         private string customerID;
         private string companyName;

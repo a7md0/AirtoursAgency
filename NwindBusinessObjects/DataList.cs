@@ -12,6 +12,8 @@ using System.Data.SqlClient;
 using NwindBusinessObjects.Builder;
 
 namespace NwindBusinessObjects {
+    using Schema;
+
     public abstract partial class DataList<T> where T : Item, new() {
         protected readonly string table;
         protected readonly string pkColumn;
@@ -24,9 +26,11 @@ namespace NwindBusinessObjects {
         protected PropertyInfo[] itemProperties;
         protected Dictionary<string, int> columnsOrdinals;
 
-        public DataList(string table, string pkColumn) {
-            this.table = table;
-            this.pkColumn = pkColumn;
+        public DataList() {
+            var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
+
+            this.table = tableAttribute.Name;
+            this.pkColumn = tableAttribute.PkColumn;
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
 
