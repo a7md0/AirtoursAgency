@@ -14,17 +14,7 @@ namespace NwindBusinessObjects {
 
         public Item() { }
 
-        public string Id {
-            get { return id; }
-            //set { id = value; }
-        }
-
-        public string getID() {
-            return this.id;
-        }
-
-        /*public void setID(string id) {
-            this.id = id;
-        }*/
+        public string Id => this.id;
+        public string getID() => this.id;
     }
 }
