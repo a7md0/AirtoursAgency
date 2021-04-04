@@ -22,7 +22,7 @@ namespace NwindBusinessObjects.Builder {
             this.parameters = new List<SqlParameter>();
 
             this.skipColumns = skipColumns;
-            this.SkipNullValues = skipNullValues;
+            this.skipNullValues = skipNullValues;
         }
 
         public bool SkipNullValues {
