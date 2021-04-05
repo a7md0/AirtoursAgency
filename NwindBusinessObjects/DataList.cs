@@ -130,7 +130,20 @@ namespace NwindBusinessObjects {
 
                     command.Parameters.AddRange(set.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
-                    command.ExecuteNonQuery();
+                    try {
+                        command.ExecuteNonQuery();
+
+                        item.Valid = true;
+                        item.ErrorMessage = null;
+                    } catch (SqlException ex) {
+                        item.Valid = false;
+                        item.ErrorMessage = ex.Message;
+                    }
+                }
+            }
+
+            this.connection.Close();
+        }
 
         public void Add(T item) {
             this.connection.Open();
