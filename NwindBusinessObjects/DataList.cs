@@ -131,6 +131,30 @@ namespace NwindBusinessObjects {
                     command.Parameters.AddRange(set.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
                     command.ExecuteNonQuery();
+
+        public void Add(T item) {
+            this.connection.Open();
+
+            using (var command = this.connection.CreateCommand())
+            using (var insert = new InsertClause(null, false)) {
+                insert.Add(item, itemProperties);
+
+                if (insert.HasAny) {
+                    string insertClause = insert.ToString();
+
+                    command.Parameters.AddRange(insert.Parameters);
+                    command.CommandText = $"INSERT INTO [{this.table}] {insertClause};";
+                    Console.WriteLine(command.CommandText);
+
+                    try {
+                        command.ExecuteNonQuery();
+
+                        item.Valid = true;
+                        item.ErrorMessage = null;
+                    } catch (SqlException ex) {
+                        item.Valid = false;
+                        item.ErrorMessage = ex.Message;
+                    }
                 }
             }
 
