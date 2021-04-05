@@ -16,7 +16,7 @@ namespace NwindBusinessObjects.Builder {
         private string[] skipColumns;
         private bool skipNullValues;
 
-        public InsertClause(string[] skipColumns, bool skipNullValues = true) {
+        public InsertClause(string[] skipColumns, bool skipNullValues = false) {
             this.columns = new List<string>();
             this.values = new List<string>();
             this.parameters = new List<SqlParameter>();
@@ -52,12 +52,11 @@ namespace NwindBusinessObjects.Builder {
                 val = DBNull.Value;
             }
 
-            this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
-
-
-            if (skipColumns.Any(column.Contains)) {
+            if (skipColumns?.Any(column.Contains) ?? false) {
                 return;
             }
+
+            this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
 
             this.columns.Add($"[{column}]");
             this.values.Add($"@{column}");
