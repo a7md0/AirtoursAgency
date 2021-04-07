@@ -14,13 +14,15 @@ namespace NwindBusinessObjects.Builder {
         private List<SqlParameter> parameters;
 
         private DataTable schema;
+        private string pkColumn;
 
-        public InsertClause(DataTable schema) {
+        public InsertClause(DataTable schema, string pkColumn) {
             this.columns = new List<string>();
             this.values = new List<string>();
             this.parameters = new List<SqlParameter>();
 
             this.schema = schema;
+            this.pkColumn = pkColumn;
         }
 
         public bool HasAny => this.columns.Count > 0;
@@ -39,20 +41,12 @@ namespace NwindBusinessObjects.Builder {
         public void Add(string column, object value) {
             object val = value;
 
-            if (val == null) {
-                val = DBNull.Value;
+            if (column == this.pkColumn) {
+                return;
             }
 
-            foreach (DataRow row in this.schema.Rows) {
-                if (row.Field<string>("ColumnName") == column && row.Field<bool>("IsAutoIncrement")) {
-                    SqlParameter IDParameter = new SqlParameter("ID", SqlDbType.Int, 4, column) {
-                        Direction = ParameterDirection.ReturnValue,
-                    };
-                    this.parameters.Add(IDParameter);
-                    Console.WriteLine($"IDParameter {column}");
-
-                    return;
-                }
+            if (val == null) {
+                val = DBNull.Value;
             }
 
             this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
@@ -70,7 +64,7 @@ namespace NwindBusinessObjects.Builder {
 
             clause += "(";
             clause += string.Join(", ", this.columns);
-            clause += $") VALUES (";
+            clause += $") OUTPUT INSERTED.{this.pkColumn} VALUES (";
             clause += string.Join(", ", this.values);
             clause += ")";
 

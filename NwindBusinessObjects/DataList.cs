@@ -150,7 +150,7 @@ namespace NwindBusinessObjects {
 
         public void Add(T item) {
             using (var command = this.connection.CreateCommand())
-            using (var insert = new InsertClause(this.schema)) {
+            using (var insert = new InsertClause(this.schema, this.pkColumn)) {
                 insert.Add(item, itemProperties);
 
                 if (insert.HasAny) {
@@ -162,12 +162,13 @@ namespace NwindBusinessObjects {
 
                     try {
                         this.connection.Open();
-                        command.ExecuteNonQuery();
+                        object inserted_id = command.ExecuteScalar();
                         this.connection.Close();
 
-                        Console.WriteLine(command.Parameters["ID"]?.ParameterName);
-                        Console.WriteLine(command.Parameters["ID"]?.SqlValue);
-                        Console.WriteLine(command.Parameters["ID"]?.Value);
+                        if (item.Id == null) { 
+                            var prop = item.GetType().GetProperty(this.pkColumn);
+                            prop.SetValue(item, inserted_id);
+                        }
 
                         item.Valid = true;
                         item.ErrorMessage = null;
