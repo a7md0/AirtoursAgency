@@ -165,6 +165,10 @@ namespace NwindBusinessObjects {
                     try {
                         command.ExecuteNonQuery();
 
+                        Console.WriteLine(command.Parameters["ID"]?.ParameterName);
+                        Console.WriteLine(command.Parameters["ID"]?.SqlValue);
+                        Console.WriteLine(command.Parameters["ID"]?.Value);
+
                         item.Valid = true;
                         item.ErrorMessage = null;
                     } catch (SqlException ex) {

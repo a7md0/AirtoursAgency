@@ -44,8 +44,13 @@ namespace NwindBusinessObjects.Builder {
             }
 
             foreach (DataRow row in this.schema.Rows) {
-                Console.WriteLine(row.Field<string>("ColumnName"));
                 if (row.Field<string>("ColumnName") == column && row.Field<bool>("IsAutoIncrement")) {
+                    SqlParameter IDParameter = new SqlParameter("ID", SqlDbType.Int, 4, column) {
+                        Direction = ParameterDirection.ReturnValue,
+                    };
+                    this.parameters.Add(IDParameter);
+                    Console.WriteLine($"IDParameter {column}");
+
                     return;
                 }
             }
@@ -65,7 +70,7 @@ namespace NwindBusinessObjects.Builder {
 
             clause += "(";
             clause += string.Join(", ", this.columns);
-            clause += ") VALUES (";
+            clause += $") VALUES (";
             clause += string.Join(", ", this.values);
             clause += ")";
 
