@@ -38,6 +38,7 @@ namespace NwindBusinessObjects {
             this.columnsOrdinals = new Dictionary<string, int>();
 
             this.setDataTableColumns();
+            this.fillDataTableColumns();
         }
 
         /// <summary>
@@ -148,8 +149,14 @@ namespace NwindBusinessObjects {
         public void Add(T item) {
             this.connection.Open();
 
+            string[] skipColumn = null;
+
+            if (this.dataTable.Columns[this.pkColumn].AutoIncrement) {
+                skipColumn = new[] { this.pkColumn };
+            }
+
             using (var command = this.connection.CreateCommand())
-            using (var insert = new InsertClause(null, false)) {
+            using (var insert = new InsertClause(skipColumn, false)) {
                 insert.Add(item, itemProperties);
 
                 if (insert.HasAny) {
@@ -262,6 +269,20 @@ namespace NwindBusinessObjects {
                 } catch (IndexOutOfRangeException) { // No column with the specified name was found.
                 } catch (ArgumentNullException) {
                 } catch (ArgumentException) {
+                }
+            }
+        }
+
+        protected void fillDataTableColumns() {
+            this.dataTable.Clear();
+            this.dataTable.Rows.Clear();
+            this.dataTable.Columns.Clear();
+
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = $"SELECT * FROM {this.table} WHERE 1 = 0;";
+
+                using (var reader = command.ExecuteReader(CommandBehavior.KeyInfo)) {
+                    this.dataTable = reader.GetSchemaTable();
                 }
             }
         }
