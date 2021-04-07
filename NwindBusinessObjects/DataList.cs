@@ -151,14 +151,8 @@ namespace NwindBusinessObjects {
         public void Add(T item) {
             this.connection.Open();
 
-            string[] skipColumn = null;
-
-            if (this.schema.Rows[0]?.Field<bool>("IsAutoIncrement") ?? false) {
-                skipColumn = new[] { this.pkColumn };
-            }
-
             using (var command = this.connection.CreateCommand())
-            using (var insert = new InsertClause(skipColumn, false)) {
+            using (var insert = new InsertClause(this.schema)) {
                 insert.Add(item, itemProperties);
 
                 if (insert.HasAny) {
@@ -187,7 +181,7 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"DELETE FROM [{this.table}] WHERE {this.pkColumn} = @id;";
+                command.CommandText = $"DELETE FROM [{this.table}] WHERE [{this.pkColumn}] = @id;";
                 command.Parameters.AddWithValue("id", item.Id);
 
                 try {

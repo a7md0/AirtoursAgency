@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using System.Data;
 using System.Data.SqlClient;
+
 using System.Reflection;
 
 namespace NwindBusinessObjects.Builder {
@@ -13,21 +13,14 @@ namespace NwindBusinessObjects.Builder {
         private List<string> values;
         private List<SqlParameter> parameters;
 
-        private string[] skipColumns;
-        private bool skipNullValues;
+        private DataTable schema;
 
-        public InsertClause(string[] skipColumns, bool skipNullValues = false) {
+        public InsertClause(DataTable schema) {
             this.columns = new List<string>();
             this.values = new List<string>();
             this.parameters = new List<SqlParameter>();
 
-            this.skipColumns = skipColumns;
-            this.skipNullValues = skipNullValues;
-        }
-
-        public bool SkipNullValues {
-            get => this.skipNullValues;
-            set => this.skipNullValues = value;
+            this.schema = schema;
         }
 
         public bool HasAny => this.columns.Count > 0;
@@ -46,14 +39,15 @@ namespace NwindBusinessObjects.Builder {
         public void Add(string column, object value) {
             object val = value;
 
-            if (val == null && skipNullValues) { // if value is null we skip
-                return;
-            } else if (val == null && !skipNullValues) {
+            if (val == null) {
                 val = DBNull.Value;
             }
 
-            if (skipColumns?.Any(column.Contains) ?? false) {
-                return;
+            foreach (DataRow row in this.schema.Rows) {
+                Console.WriteLine(row.Field<string>("ColumnName"));
+                if (row.Field<string>("ColumnName") == column && row.Field<bool>("IsAutoIncrement")) {
+                    return;
+                }
             }
 
             this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
@@ -95,7 +89,6 @@ namespace NwindBusinessObjects.Builder {
                 this.columns = null;
                 this.values = null;
                 this.parameters = null;
-                this.skipColumns = null;
 
                 this.disposedValue = true;
             }
