@@ -19,6 +19,7 @@ namespace NwindBusinessObjects {
 
         protected List<T> list;
         protected DataTable dataTable;
+        protected DataTable schema;
 
         protected PropertyInfo[] itemProperties;
         protected Dictionary<string, int> columnsOrdinals;
@@ -33,12 +34,13 @@ namespace NwindBusinessObjects {
 
             this.list = new List<T>();
             this.dataTable = new DataTable(table);
+            this.schema = new DataTable(table);
 
             this.itemProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             this.columnsOrdinals = new Dictionary<string, int>();
 
             this.setDataTableColumns();
-            this.fillDataTableColumns();
+            this.setSchema();
         }
 
         /// <summary>
@@ -151,7 +153,7 @@ namespace NwindBusinessObjects {
 
             string[] skipColumn = null;
 
-            if (this.dataTable.Columns[this.pkColumn].AutoIncrement) {
+            if (this.schema.Rows[0]?.Field<bool>("IsAutoIncrement") ?? false) {
                 skipColumn = new[] { this.pkColumn };
             }
 
@@ -273,18 +275,19 @@ namespace NwindBusinessObjects {
             }
         }
 
-        protected void fillDataTableColumns() {
-            this.dataTable.Clear();
-            this.dataTable.Rows.Clear();
-            this.dataTable.Columns.Clear();
+        protected void setSchema() {
+            this.schema.Clear();
+            this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM {this.table} WHERE 1 = 0;";
 
-                using (var reader = command.ExecuteReader(CommandBehavior.KeyInfo)) {
-                    this.dataTable = reader.GetSchemaTable();
+                using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
+                    this.schema = reader.GetSchemaTable();
                 }
             }
+
+            this.connection.Close();
         }
 
         protected void setDataTableColumns() {
