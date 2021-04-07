@@ -149,8 +149,6 @@ namespace NwindBusinessObjects {
         }
 
         public void Add(T item) {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand())
             using (var insert = new InsertClause(this.schema)) {
                 insert.Add(item, itemProperties);
@@ -163,7 +161,9 @@ namespace NwindBusinessObjects {
                     Console.WriteLine(command.CommandText);
 
                     try {
+                        this.connection.Open();
                         command.ExecuteNonQuery();
+                        this.connection.Close();
 
                         Console.WriteLine(command.Parameters["ID"]?.ParameterName);
                         Console.WriteLine(command.Parameters["ID"]?.SqlValue);
@@ -177,8 +177,6 @@ namespace NwindBusinessObjects {
                     }
                 }
             }
-
-            this.connection.Close();
         }
 
         public void Delete(T item) {
