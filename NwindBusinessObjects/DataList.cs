@@ -174,6 +174,28 @@ namespace NwindBusinessObjects {
             this.connection.Close();
         }
 
+        public void Delete(T item) {
+            this.connection.Open();
+
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = $"DELETE FROM [{this.table}] WHERE {this.pkColumn} = @id;";
+                command.Parameters.AddWithValue("id", item.Id);
+
+                try {
+                    command.ExecuteNonQuery();
+
+                    item.Valid = true;
+                    item.ErrorMessage = null;
+                } catch (SqlException ex) {
+                    item.Valid = false;
+                    item.ErrorMessage = ex.Message;
+                }
+
+            }
+
+            this.connection.Close();
+        }
+
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
@@ -320,7 +342,7 @@ namespace NwindBusinessObjects {
             U value = default(U);
 
             try {
-                this.connection.Open(); 
+                this.connection.Open();
 
                 try {
                     using (var command = this.connection.CreateCommand()) {
@@ -336,7 +358,7 @@ namespace NwindBusinessObjects {
                         } else {
                             value = (U)Convert.ChangeType(result, typeof(U));
                         }
-                        
+
                     }
                 } catch (InvalidCastException ex) {
                     Debug.WriteLine(ex, "DataList.ScalarQuery");
