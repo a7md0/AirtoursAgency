@@ -158,7 +158,6 @@ namespace NwindBusinessObjects {
 
                     command.Parameters.AddRange(insert.Parameters);
                     command.CommandText = $"INSERT INTO [{this.table}] {insertClause};";
-                    Console.WriteLine(command.CommandText);
 
                     try {
                         this.connection.Open();
