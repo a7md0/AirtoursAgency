@@ -163,10 +163,8 @@ namespace NwindBusinessObjects {
                         object inserted_id = command.ExecuteScalar();
                         this.connection.Close();
 
-                        if (item.Id == null) { 
-                            var prop = item.GetType().GetProperty(this.pkColumn);
-                            prop.SetValue(item, inserted_id);
-                        }
+                        var prop = item.GetType().GetProperty(this.pkColumn);
+                        prop.SetValue(item, inserted_id);
 
                         item.Valid = true;
                         item.ErrorMessage = null;
