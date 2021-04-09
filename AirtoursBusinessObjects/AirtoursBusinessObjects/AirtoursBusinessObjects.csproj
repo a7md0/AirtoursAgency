@@ -66,6 +66,8 @@
     <Compile Include="ReservationList.cs" />
     <Compile Include="ReservedSeat.cs" />
     <Compile Include="ReservedSeatList.cs" />
+    <Compile Include="ScheduledFlight.cs" />
+    <Compile Include="ScheduledFlightList.cs" />
     <Compile Include="Schema\TableAttribute.cs" />
     <Compile Include="Schema\TableSchema.cs" />
   </ItemGroup>
