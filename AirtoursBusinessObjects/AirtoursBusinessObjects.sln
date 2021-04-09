@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1401
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NwindBusinessObjects", "NwindBusinessObjects\NwindBusinessObjects.csproj", "{5E92A02E-2174-4669-B399-2EB56CD944B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirtoursBusinessObjects", "AirtoursBusinessObjects\AirtoursBusinessObjects.csproj", "{5E92A02E-2174-4669-B399-2EB56CD944B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C973B916-F641-4E31-9972-A7C7AB17FEB8}
+		SolutionGuid = {C973B916-F641-4E31-9972-A7C7AB17FEB9}
 	EndGlobalSection
 EndGlobal

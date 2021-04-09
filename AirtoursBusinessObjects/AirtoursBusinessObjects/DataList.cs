@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace NwindBusinessObjects {
+namespace AirtoursBusinessObjects {
     using Builder;
     using Schema;
 
@@ -32,7 +32,7 @@ namespace NwindBusinessObjects {
             this.pkColumn = tableAttribute.PkColumn;
             this.pkColumnProperty = typeof(T).GetProperty(this.pkColumn);
 
-            this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
+            this.connection = new SqlConnection(Properties.Settings.Default.AirtoursConnectionString);
 
             this.list = new List<T>();
             this.dataTable = new DataTable(table);

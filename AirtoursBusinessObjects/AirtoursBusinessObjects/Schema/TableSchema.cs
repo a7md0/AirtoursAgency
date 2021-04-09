@@ -2,7 +2,7 @@
 using System.Data;
 using System.Collections.Generic;
 
-namespace NwindBusinessObjects.Schema {
+namespace AirtoursBusinessObjects.Schema {
     public class TableSchema {
         private Dictionary<string, TableSchemaColumn> columns;
 

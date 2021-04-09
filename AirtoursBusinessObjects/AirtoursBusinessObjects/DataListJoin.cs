@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Data.SqlClient;
 
-namespace NwindBusinessObjects {
+namespace AirtoursBusinessObjects {
     using Schema;
 
     public abstract class DataListJoin<T> : DataList<T> where T : ItemJoin, new() {

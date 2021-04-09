@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NwindBusinessObjects.Schema {
+namespace AirtoursBusinessObjects.Schema {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
     class TableAttribute : Attribute {
         /// <summary>

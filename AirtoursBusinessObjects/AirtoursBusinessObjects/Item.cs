@@ -1,5 +1,5 @@
 ﻿
-namespace NwindBusinessObjects {
+namespace AirtoursBusinessObjects {
     public abstract class Item {
         protected string id;
 

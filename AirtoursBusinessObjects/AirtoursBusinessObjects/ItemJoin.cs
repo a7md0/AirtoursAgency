@@ -1,5 +1,5 @@
 ﻿
-namespace NwindBusinessObjects {
+namespace AirtoursBusinessObjects {
     public abstract class ItemJoin : Item {
         private readonly string joinId;
 

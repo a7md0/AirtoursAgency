@@ -4,7 +4,7 @@ using System.Linq;
 
 using System.Data.SqlClient;
 
-namespace NwindBusinessObjects.Builder {
+namespace AirtoursBusinessObjects.Builder {
     public class WhereClause : IDisposable {
         private List<Predicate> predicates;
         private List<SqlParameter> parameters;

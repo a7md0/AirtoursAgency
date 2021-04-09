@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NwindBusinessObjects.Properties {
+namespace AirtoursBusinessObjects.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -26,11 +26,11 @@ namespace NwindBusinessObjects.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Northwind;Integrated Security=" +
-            "True")]
-        public string NorthwindConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Airtours;Integrated Security=T" +
+            "rue")]
+        public string AirtoursConnectionString {
             get {
-                return ((string)(this["NorthwindConnectionString"]));
+                return ((string)(this["AirtoursConnectionString"]));
             }
         }
     }
