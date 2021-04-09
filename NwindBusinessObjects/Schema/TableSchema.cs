@@ -32,6 +32,7 @@ namespace NwindBusinessObjects.Schema {
         }
 
         public TableSchemaColumn this[string column] => this.columns[column];
+        public bool HasColumn(string column) => this.columns.ContainsKey(column);
     }
 
     public class TableSchemaColumn {
