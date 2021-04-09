@@ -306,11 +306,6 @@ namespace AirtoursBusinessObjects {
             foreach (var property in this.itemProperties) {
                 column = new DataColumn();
 
-                if (property.Name == this.pkColumn) {
-                    column.ReadOnly = true;
-                    column.Unique = true;
-                }
-
                 column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
                 column.ColumnName = property.Name;
 
