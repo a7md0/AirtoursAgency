@@ -19,7 +19,7 @@ namespace NwindBusinessObjects {
 
         protected List<T> list;
         protected DataTable dataTable;
-        protected DataTable schema;
+        protected TableSchema schema;
 
         protected PropertyInfo[] itemProperties;
         protected Dictionary<string, int> columnsOrdinals;
@@ -34,7 +34,6 @@ namespace NwindBusinessObjects {
 
             this.list = new List<T>();
             this.dataTable = new DataTable(table);
-            this.schema = new DataTable(table);
 
             this.itemProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             this.columnsOrdinals = new Dictionary<string, int>();
@@ -272,14 +271,15 @@ namespace NwindBusinessObjects {
         }
 
         protected void setSchema() {
-            this.schema.Clear();
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM {this.table} WHERE 1 = 0;";
 
                 using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
-                    this.schema = reader.GetSchemaTable();
+                    var schema = reader.GetSchemaTable();
+
+                    this.schema = new TableSchema(schema);
                 }
             }
 

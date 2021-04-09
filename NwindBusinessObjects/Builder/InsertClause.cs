@@ -8,15 +8,17 @@ using System.Data.SqlClient;
 using System.Reflection;
 
 namespace NwindBusinessObjects.Builder {
+    using Schema;
+
     public class InsertClause : IDisposable {
         private List<string> columns;
         private List<string> values;
         private List<SqlParameter> parameters;
 
-        private DataTable schema;
+        private TableSchema schema;
         private string pkColumn;
 
-        public InsertClause(DataTable schema, string pkColumn) {
+        public InsertClause(TableSchema schema, string pkColumn) {
             this.columns = new List<string>();
             this.values = new List<string>();
             this.parameters = new List<SqlParameter>();
@@ -41,7 +43,7 @@ namespace NwindBusinessObjects.Builder {
         public void Add(string column, object value) {
             object val = value;
 
-            if (column == this.pkColumn) {
+            if (this.schema[column].IsAutoIncrement) {
                 return;
             }
 
