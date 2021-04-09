@@ -59,6 +59,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Schema\TableAttribute.cs" />
+    <Compile Include="Schema\TableSchema.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
