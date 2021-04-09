@@ -65,9 +65,9 @@ namespace NwindBusinessObjects {
         public string PkColumn => this.pkColumn;
 
         protected virtual string whereItemClause(SqlCommand command, T item) {
-            command.Parameters.AddWithValue(this.pkColumn, pkColumnProperty.GetValue(item));
+            command.Parameters.AddWithValue(this.pkColumn, this.pkColumnProperty.GetValue(item));
 
-            return $"WHERE [{pkColumn}] = @{pkColumn}";
+            return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
         }
     }
 
@@ -95,8 +95,9 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{pkColumn}] = @id;";
-                command.Parameters.AddWithValue("id", item.Id);
+                var whereClause = this.whereItemClause(command, item);
+
+                command.CommandText = $"SELECT * FROM [{this.table}] {whereClause};";
 
                 using (var reader = command.ExecuteReader()) {
                     this.setColumnsOrdinals(reader);
