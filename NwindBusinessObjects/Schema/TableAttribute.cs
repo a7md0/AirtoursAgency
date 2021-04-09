@@ -12,9 +12,10 @@ namespace NwindBusinessObjects.Schema {
         /// </summary>
         /// <param name="name">Table name</param>
         /// <param name="pkColumn">Primary column name</param>
-        public TableAttribute(string name, string pkColumn) : base() {
+        public TableAttribute(string name, string pkColumn = null, string pkJoinColumn = null) : base() {
             this.Name = name;
             this.PkColumn = pkColumn;
+            this.PkJoinColumn = PkJoinColumn;
         }
 
         /// <summary>
@@ -26,5 +27,10 @@ namespace NwindBusinessObjects.Schema {
         /// Gets the name of the primary column name the model is mapped to.
         /// </summary>
         public string PkColumn { get; private set; }
+
+        /// <summary>
+        /// Gets the name of the 2nd primary key column name the model is mapped to.
+        /// </summary>
+        public string PkJoinColumn { get; private set; }
     }
 }
