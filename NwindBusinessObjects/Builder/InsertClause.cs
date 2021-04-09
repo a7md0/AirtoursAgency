@@ -18,7 +18,7 @@ namespace NwindBusinessObjects.Builder {
         private TableSchema schema;
         private string pkColumn;
 
-        public InsertClause(TableSchema schema, string pkColumn) {
+        public InsertClause(TableSchema schema, string pkColumn = null) {
             this.columns = new List<string>();
             this.values = new List<string>();
             this.parameters = new List<SqlParameter>();
@@ -76,7 +76,11 @@ namespace NwindBusinessObjects.Builder {
 
             clause += "(";
             clause += string.Join(", ", this.columns);
-            clause += $") OUTPUT INSERTED.{this.pkColumn} VALUES (";
+            clause += $") ";
+            if (this.pkColumn != null) {
+                clause += $"OUTPUT INSERTED.{this.pkColumn} ";
+            }
+            clause += "VALUES (";
             clause += string.Join(", ", this.values);
             clause += ")";
 
