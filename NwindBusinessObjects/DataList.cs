@@ -416,72 +416,32 @@ namespace NwindBusinessObjects {
             return value;
         }
 
-        public double TotalValue(string column) {
-            return this.AggregateValue<double>(AggregateFunctions.SUM, column, null, null, null);
-        }
-
+        public double TotalValue(string column) => this.AggregateValue<double>(AggregateFunctions.SUM, column, null);
         public U TotalValue<U>(string column) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.SUM, column, null, null, null);
+            return this.AggregateValue<U>(AggregateFunctions.SUM, column, null);
         }
 
-        public double TotalValue(
-            string column,
-            string whereColumn,
-            string whereOperator,
-            dynamic whereValue
-        ) {
-            return this.AggregateValue<double>(AggregateFunctions.SUM, column, whereColumn, whereOperator, whereValue);
-        }
-
-        public U TotalValue<U>(
-            string column,
-            string whereColumn,
-            string whereOperator,
-            dynamic whereValue
-        ) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereColumn, whereOperator, whereValue);
+        public double TotalValue(string column, WhereClause whereClause) =>  this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        public U TotalValue<U>(string column, WhereClause whereClause) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
 
         public int TotalCount() => this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn);
-
-        public int TotalCount(
-            string whereColumn,
-            string whereOperator,
-            dynamic whereValue
-        ) {
-            return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereColumn, whereOperator, whereValue);
+        public int TotalCount(WhereClause whereClause) {
+            return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
         }
 
-        public int AggregateValue(
-            AggregateFunctions aggregateFunction,
-            string column
-        ) => this.AggregateValue<int>(aggregateFunction, column, null, null, null);
+        public int AggregateValue(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<int>(aggregateFunction, column, null);
+        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<U>(aggregateFunction, column, null);
 
-        public U AggregateValue<U>(
-            AggregateFunctions aggregateFunction,
-            string column
-        ) => this.AggregateValue<U>(aggregateFunction, column, null, null, null);
-
-        public int AggregateValue(
-            AggregateFunctions aggregateFunction,
-            string column,
-            string whereColumn,
-            string whereOperator,
-            dynamic whereValue
-        ) => this.AggregateValue<int>(aggregateFunction, column, whereColumn, whereOperator, whereValue);
-
-        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, string whereColumn, string whereOperator, dynamic whereValue) {
+        public int AggregateValue(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) => this.AggregateValue<int>(aggregateFunction, column, whereClause);
+        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) {
             U value = default(U);
-            SqlParameter[] sqlParameters = null;
-            string suffix = "";
+
             string aggregate = aggregateFunction.ToString();
 
-            if (whereColumn != null && whereOperator != null && whereValue != null) {
-                sqlParameters = new SqlParameter[1];
-                sqlParameters[0] = new SqlParameter(whereColumn, whereValue);
-
-                suffix = $" WHERE {whereColumn} {whereOperator} @{whereColumn}";
-            }
+            SqlParameter[] sqlParameters = whereClause?.Parameters;
+            string suffix = whereClause?.ToString() ?? "";
 
             try {
                 value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
@@ -494,9 +454,7 @@ namespace NwindBusinessObjects {
         /// Query the maximum primary key value.
         /// </summary>
         /// <returns>Maximum id value</returns>
-        public virtual int GetMaxID() {
-            return this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
-        }
+        public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
     }
 
     public enum AggregateFunctions {
