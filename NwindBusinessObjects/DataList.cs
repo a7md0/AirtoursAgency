@@ -14,6 +14,7 @@ namespace NwindBusinessObjects {
     public abstract partial class DataList<T> where T : Item, new() {
         protected readonly string table;
         protected readonly string pkColumn;
+        protected readonly PropertyInfo pkColumnProperty;
 
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
 
@@ -29,6 +30,7 @@ namespace NwindBusinessObjects {
 
             this.table = tableAttribute.Name;
             this.pkColumn = tableAttribute.PkColumn;
+            this.pkColumnProperty = typeof(T).GetProperty(this.pkColumn);
 
             this.connection = new SqlConnection(Properties.Settings.Default.NorthwindConnectionString);
 
@@ -124,14 +126,16 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand())
-            using (var set = new SetClause(new[] { this.pkColumn }, true)) {
-                set.Add(item, itemProperties);
+            using (var set = new SetClause(this.schema)) {
+                set.Add(item, itemProperties, new[] { this.pkColumn });
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
 
                     command.Parameters.AddRange(set.Parameters);
+                    command.Parameters.AddWithValue(this.pkColumn, pkColumnProperty.GetValue(item));
                     command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
+
                     try {
                         command.ExecuteNonQuery();
 

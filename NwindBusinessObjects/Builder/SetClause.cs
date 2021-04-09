@@ -6,34 +6,33 @@ using System.Data.SqlClient;
 using System.Reflection;
 
 namespace NwindBusinessObjects.Builder {
+    using Schema;
+
     public class SetClause : IDisposable {
         private List<string> predicates;
         private List<SqlParameter> parameters;
 
-        private string[] skipColumns;
-        private bool skipNullValues;
+        private TableSchema schema;
 
-        public SetClause(string[] skipColumns, bool skipNullValues = true) {
+        public SetClause(TableSchema schema) {
             this.predicates = new List<string>();
             this.parameters = new List<SqlParameter>();
 
-            this.skipColumns = skipColumns;
-            this.SkipNullValues = skipNullValues;
-        }
-
-        public bool SkipNullValues {
-            get => this.skipNullValues;
-            set => this.skipNullValues = value;
+            this.schema = schema;
         }
 
         public bool HasAny => this.predicates.Count > 0;
 
         public SqlParameter[] Parameters => this.parameters.ToArray();
 
-        public void Add(Item item, PropertyInfo[] itemProperties) {
+        public void Add(Item item, PropertyInfo[] itemProperties, string[] skipColumns = null) {
             foreach (var property in itemProperties) {
                 var name = property.Name; // Get field name
                 var value = property.GetValue(item); // Get value
+
+                if (skipColumns != null && skipColumns.Any(name.Contains)) {
+                    continue;
+                }
 
                 this.Add(name, value);
             }
@@ -42,18 +41,25 @@ namespace NwindBusinessObjects.Builder {
         public void Add(string column, object value) {
             object val = value;
 
-            if (val == null && skipNullValues) { // if value is null we skip
+            if (!this.schema.HasColumn(column)) {
+                throw new ArgumentException($"{column} does not exists in this table schema.");
+            }
+
+            var schemaColumn = this.schema[column];
+
+            if (schemaColumn.IsAutoIncrement) {
                 return;
-            } else if (val == null && !skipNullValues) {
+            }
+
+            if (val is null) {
+                if (!schemaColumn.AllowDBNull) {
+                    return;
+                }
+
                 val = DBNull.Value;
             }
 
             this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
-
-            
-            if (skipColumns.Any(column.Contains)) {
-                return;
-            }
 
             this.predicates.Add($"[{column}] = @{column}");
         }
@@ -86,7 +92,6 @@ namespace NwindBusinessObjects.Builder {
                 // TODO: set large fields to null.
                 this.predicates = null;
                 this.parameters = null;
-                this.skipColumns = null;
 
                 disposedValue = true;
             }
