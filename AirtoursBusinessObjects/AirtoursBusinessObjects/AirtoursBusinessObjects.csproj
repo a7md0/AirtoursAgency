@@ -62,6 +62,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Reservation.cs" />
+    <Compile Include="ReservationList.cs" />
     <Compile Include="Schema\TableAttribute.cs" />
     <Compile Include="Schema\TableSchema.cs" />
   </ItemGroup>
