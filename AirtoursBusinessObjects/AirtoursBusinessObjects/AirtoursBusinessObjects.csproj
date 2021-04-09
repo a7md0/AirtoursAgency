@@ -51,6 +51,8 @@
     <Compile Include="DataListJoin.cs" />
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeList.cs" />
+    <Compile Include="Flight.cs" />
+    <Compile Include="FlightList.cs" />
     <Compile Include="ItemJoin.cs" />
     <Compile Include="DataList.cs" />
     <Compile Include="Item.cs" />
