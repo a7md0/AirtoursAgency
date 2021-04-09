@@ -372,9 +372,9 @@ namespace NwindBusinessObjects {
 
                         object result = command.ExecuteScalar();
                         if (typeof(U) == result.GetType()) {
-                            value = (U)result;
+                            value = (U) result;
                         } else {
-                            value = (U)Convert.ChangeType(result, typeof(U));
+                            value = (U) Convert.ChangeType(result, typeof(U));
                         }
 
                     }
