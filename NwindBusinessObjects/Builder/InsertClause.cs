@@ -40,14 +40,24 @@ namespace NwindBusinessObjects.Builder {
             }
         }
 
-        public void Add(string column, object value) {
+        public void Add(string column, dynamic value) {
             object val = value;
 
-            if (this.schema[column].IsAutoIncrement) {
+            if (!this.schema.HasColumn(column)) {
+                throw new ArgumentException($"{column} does not exists in this table schema.");
+            }
+
+            var schemaColumn = this.schema[column];
+
+            if (schemaColumn.IsAutoIncrement) {
                 return;
             }
 
-            if (val == null) {
+            if (val is null) {
+                if (!schemaColumn.AllowDBNull) {
+                    return;
+                }
+
                 val = DBNull.Value;
             }
 
