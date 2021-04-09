@@ -18,89 +18,61 @@ namespace NwindBusinessObjects.Builder {
 
         public SqlParameter[] Parameters => this.parameters.ToArray();
 
-        public WhereClause And() {
-            //values.Add(key, value);
-            predicates.Add(new AndPredicate());
+        #region Operators
+        public WhereClause AndWhere(string columnName, dynamic value) => this.AndWhere(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause AndWhere(string columnName, WhereOpreators @operator, dynamic value) {
+            var last = predicates.Last();
+            var whereOpreator = this.whereOpreatorToSymbol(@operator);
+
+            parameters.Add(new SqlParameter(columnName, value));
+            last.Predicates.Add($"{columnName} {whereOpreator} @{columnName}");
 
             return this;
         }
 
-        public WhereClause Or() {
-            //values.Add(key, value);
+        public WhereClause OrWhere(string columnName, dynamic value) => this.OrWhere(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause OrWhere(string columnName, WhereOpreators @operator, dynamic value) {
             predicates.Add(new OrPredicate());
 
-            return this;
+            return this.AndWhere(columnName, @operator, value);
         }
 
-        #region operators
-        // see https://en.wikipedia.org/wiki/SQL_syntax#Operators
-
-        public WhereClause EqualTo(string columnName, object value) {
-            var last = predicates.Last();
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} = @{columnName}");
-
-            return this;
-        }
-
-        public WhereClause NotEqualTo(string columnName, object value) {
-            var last = predicates.Last();
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} != @{columnName}");
-
-            return this;
-        }
-
-        public WhereClause GreaterThan(string columnName, IComparable value) {
-            var last = predicates.Last();
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} > @{columnName}");
-
-            return this;
-        }
-
-        public WhereClause LessThan(string columnName, IComparable value) {
-            var last = predicates.Last();
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} < @{columnName}");
-
-            return this;
-        }
-
-        public WhereClause GreaterThanOrEqual(string columnName, IComparable value) {
-            var last = predicates.Last();
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} >= @{columnName}");
-
-            return this;
-        }
-
-        public WhereClause LessThanOrEqual(string columnName, IComparable value) {
-            var last = predicates.Last();
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} <= @{columnName}");
-
-            return this;
-        }
-
-        public WhereClause Between(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
+        public WhereClause AndWhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
             var last = predicates.Last();
 
             string prefix = not == true ? "NOT " : "";
-            string minPlaceholder = $"min{columnName}";
-            string maxPlaceholder = $"max{columnName}";
+            string minPlaceholder = $"Min{columnName}";
+            string maxPlaceholder = $"Max{columnName}";
 
             parameters.Add(new SqlParameter(minPlaceholder, minValue));
             parameters.Add(new SqlParameter(maxPlaceholder, maxValue));
             last.Predicates.Add($"{prefix}{columnName} BETWEEN @{minPlaceholder} AND @{maxPlaceholder}");
 
             return this;
+        }
+
+        public WhereClause OrWhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
+            predicates.Add(new OrPredicate());
+
+            return this.AndWhereBetween(columnName, minValue, maxValue, not);
+        }
+
+        public WhereClause AndWhereIs(string columnName, bool value, bool not = false) {
+            var last = predicates.Last();
+
+            string prefix = not == true ? "NOT " : "";
+            string strValue = value == true ? "TRUE" : "FALSE";
+
+            parameters.Add(new SqlParameter(columnName, value));
+            last.Predicates.Add($"{columnName} IS {prefix}{strValue}");
+
+            return this;
+        }
+
+        public WhereClause OrWhereIs(string columnName, bool value, bool not = false) {
+            predicates.Add(new OrPredicate());
+
+            return this.AndWhereBetween(columnName, value, not);
         }
 
         public WhereClause Like(string columnName, dynamic value, bool not = false) {
@@ -132,19 +104,26 @@ namespace NwindBusinessObjects.Builder {
             return this;
 #pragma warning restore CS0162 // Unreachable code detected
         }
-
-        public WhereClause Is(string columnName, bool value, bool not = false) {
-            var last = predicates.Last();
-
-            string prefix = not == true ? "NOT " : "";
-            string strValue = value == true ? "TRUE" : "FALSE";
-
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} IS {prefix}{strValue}");
-
-            return this;
-        }
         #endregion Operators
+
+        private string whereOpreatorToSymbol(WhereOpreators whereOpreator) {
+            switch (whereOpreator) {
+                case WhereOpreators.EqualTo:
+                    return "=";
+                case WhereOpreators.NotEqualTo:
+                    return "!=";
+                case WhereOpreators.GreaterThan:
+                    return ">";
+                case WhereOpreators.GreaterThanOrEqual:
+                    return ">=";
+                case WhereOpreators.LessThan:
+                    return "<";
+                case WhereOpreators.LessThanOrEqual:
+                    return "<=";
+            }
+
+            return null;
+        }
 
         public override string ToString() {
             string clause = "";
@@ -249,5 +228,11 @@ namespace NwindBusinessObjects.Builder {
 
     class OrPredicate : Predicate {
         public OrPredicate() : base() { }
+    }
+
+    public enum WhereOpreators {
+        EqualTo, NotEqualTo,
+        GreaterThan, LessThan,
+        GreaterThanOrEqual, LessThanOrEqual,
     }
 }
