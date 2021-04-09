@@ -330,9 +330,51 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class DataList<T> {
-        protected object ScalarQuery(string query, SqlParameter[] parameters = null) {
-            return this.ScalarQuery<object>(query, parameters);
+        public double TotalValue(string column) => this.AggregateValue<double>(AggregateFunctions.SUM, column, null);
+        public U TotalValue<U>(string column) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.AggregateValue<U>(AggregateFunctions.SUM, column, null);
         }
+
+        public double TotalValue(string column, WhereClause whereClause) =>  this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        public U TotalValue<U>(string column, WhereClause whereClause) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
+        }
+
+        public int TotalCount() => this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn);
+        public int TotalCount(WhereClause whereClause) {
+            return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
+        }
+
+        public int AggregateValue(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<int>(aggregateFunction, column, null);
+        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<U>(aggregateFunction, column, null);
+
+        public int AggregateValue(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) => this.AggregateValue<int>(aggregateFunction, column, whereClause);
+        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) {
+            U value = default(U);
+
+            string aggregate = aggregateFunction.ToString();
+
+            SqlParameter[] sqlParameters = whereClause?.Parameters;
+            string suffix = whereClause?.ToString() ?? "";
+
+            if (!this.schema.HasColumn(column)) {
+                throw new ArgumentException($"{column} does not exists in this table schema.");
+            }
+
+            try {
+                value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
+            } catch (InvalidCastException) { }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Query the maximum primary key value.
+        /// </summary>
+        /// <returns>Maximum id value</returns>
+        public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
+
+        protected object ScalarQuery(string query, SqlParameter[] parameters = null) => this.ScalarQuery<object>(query, parameters);
 
         /// <summary>
         /// 
@@ -388,50 +430,6 @@ namespace AirtoursBusinessObjects {
 
             return value;
         }
-
-        public double TotalValue(string column) => this.AggregateValue<double>(AggregateFunctions.SUM, column, null);
-        public U TotalValue<U>(string column) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.SUM, column, null);
-        }
-
-        public double TotalValue(string column, WhereClause whereClause) =>  this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
-        public U TotalValue<U>(string column, WhereClause whereClause) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
-        }
-
-        public int TotalCount() => this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn);
-        public int TotalCount(WhereClause whereClause) {
-            return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
-        }
-
-        public int AggregateValue(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<int>(aggregateFunction, column, null);
-        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<U>(aggregateFunction, column, null);
-
-        public int AggregateValue(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) => this.AggregateValue<int>(aggregateFunction, column, whereClause);
-        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) {
-            U value = default(U);
-
-            string aggregate = aggregateFunction.ToString();
-
-            SqlParameter[] sqlParameters = whereClause?.Parameters;
-            string suffix = whereClause?.ToString() ?? "";
-
-            if (!this.schema.HasColumn(column)) {
-                throw new ArgumentException($"{column} does not exists in this table schema.");
-            }
-
-            try {
-                value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
-            } catch (InvalidCastException) { }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Query the maximum primary key value.
-        /// </summary>
-        /// <returns>Maximum id value</returns>
-        public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
     }
 
     public enum AggregateFunctions {
