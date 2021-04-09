@@ -443,6 +443,10 @@ namespace NwindBusinessObjects {
             SqlParameter[] sqlParameters = whereClause?.Parameters;
             string suffix = whereClause?.ToString() ?? "";
 
+            if (!this.schema.HasColumn(column)) {
+                throw new ArgumentException($"{column} does not exists in this table schema.");
+            }
+
             try {
                 value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
             } catch (InvalidCastException) { }
