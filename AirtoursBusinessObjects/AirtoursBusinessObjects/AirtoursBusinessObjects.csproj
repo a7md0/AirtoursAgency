@@ -49,6 +49,8 @@
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerList.cs" />
     <Compile Include="DataListJoin.cs" />
+    <Compile Include="Employee.cs" />
+    <Compile Include="EmployeeList.cs" />
     <Compile Include="ItemJoin.cs" />
     <Compile Include="DataList.cs" />
     <Compile Include="Item.cs" />
