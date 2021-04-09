@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aircraft.cs" />
+    <Compile Include="AircraftList.cs" />
     <Compile Include="Builder\InsertClause.cs" />
     <Compile Include="Builder\SetClause.cs" />
     <Compile Include="Builder\WhereClause.cs" />
