@@ -15,7 +15,7 @@ namespace AirtoursBusinessObjects.Schema {
         public TableAttribute(string name, string pkColumn = null, string pkJoinColumn = null) : base() {
             this.Name = name;
             this.PkColumn = pkColumn;
-            this.PkJoinColumn = PkJoinColumn;
+            this.PkJoinColumn = pkJoinColumn;
         }
 
         /// <summary>
