@@ -63,6 +63,12 @@ namespace NwindBusinessObjects {
         /// Id column of this data list table.
         /// </summary>
         public string PkColumn => this.pkColumn;
+
+        protected virtual string whereItemClause(SqlCommand command, T item) {
+            command.Parameters.AddWithValue(this.pkColumn, pkColumnProperty.GetValue(item));
+
+            return $"WHERE [{pkColumn}] = @{pkColumn}";
+        }
     }
 
     partial class DataList<T> {
@@ -131,10 +137,10 @@ namespace NwindBusinessObjects {
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
+                    var whereClause = this.whereItemClause(command, item);
 
                     command.Parameters.AddRange(set.Parameters);
-                    command.Parameters.AddWithValue(this.pkColumn, pkColumnProperty.GetValue(item));
-                    command.CommandText = $"UPDATE [{this.table}] {setClause} WHERE [{pkColumn}] = @{pkColumn};";
+                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
 
                     try {
                         command.ExecuteNonQuery();
@@ -184,8 +190,9 @@ namespace NwindBusinessObjects {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"DELETE FROM [{this.table}] WHERE [{this.pkColumn}] = @id;";
-                command.Parameters.AddWithValue("id", item.Id);
+                var whereClause = this.whereItemClause(command, item);
+
+                command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
 
                 try {
                     command.ExecuteNonQuery();
