@@ -1,7 +1,7 @@
 ﻿
 namespace AirtoursBusinessObjects {
     public abstract class ItemJoin : Item {
-        private readonly string joinId;
+        protected string joinId;
 
         public ItemJoin(string id, string joinId) : base(id) {
             this.joinId = joinId;
