@@ -129,7 +129,7 @@ namespace AirtoursBusinessObjects {
             this.connection.Close();
         }
 
-        public void Update(T item) {
+        public virtual void Update(T item) {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand())
@@ -158,7 +158,7 @@ namespace AirtoursBusinessObjects {
             this.connection.Close();
         }
 
-        public void Add(T item) {
+        public virtual void Add(T item) {
             using (var command = this.connection.CreateCommand())
             using (var insert = new InsertClause(this.schema, this.pkColumn)) {
                 insert.Add(item, itemProperties);
@@ -187,7 +187,7 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public void Delete(T item) {
+        public virtual void Delete(T item) {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
