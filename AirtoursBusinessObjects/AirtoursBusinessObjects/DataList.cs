@@ -164,18 +164,18 @@ namespace AirtoursBusinessObjects {
                 insert.Add(item, itemProperties);
 
                 if (insert.HasAny) {
-                    string insertClause = insert.ToString();
+                    string insertFields = insert.InsertFields;
+                    string insertValues = insert.InsertValues;
 
                     command.Parameters.AddRange(insert.Parameters);
-                    command.CommandText = $"INSERT INTO [{this.table}] {insertClause};";
+                    command.CommandText = $"INSERT INTO [{this.table}] ({insertFields}) OUTPUT INSERTED.{this.pkColumn} VALUES ({insertValues});";
 
                     try {
                         this.connection.Open();
                         object inserted_id = command.ExecuteScalar();
                         this.connection.Close();
 
-                        var prop = item.GetType().GetProperty(this.pkColumn);
-                        prop.SetValue(item, inserted_id);
+                        pkColumnProperty.SetValue(item, inserted_id);
 
                         item.Valid = true;
                         item.ErrorMessage = null;

@@ -27,6 +27,9 @@ namespace AirtoursBusinessObjects.Builder {
 
         public bool HasAny => this.columns.Count > 0;
 
+        public string InsertFields => string.Join(", ", this.columns);
+        public string InsertValues => string.Join(", ", this.values);
+
         public SqlParameter[] Parameters => this.parameters.ToArray();
 
         public void Add(Item item, PropertyInfo[] itemProperties) {
