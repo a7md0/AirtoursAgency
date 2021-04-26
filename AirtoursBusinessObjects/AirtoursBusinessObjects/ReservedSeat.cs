@@ -36,6 +36,7 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
+                base.joinId = value.ToString();
                 this.scheduledFlightID = value;
             }
         }
