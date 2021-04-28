@@ -1,8 +1,8 @@
 ﻿
 namespace AirtoursBusinessObjects {
     public abstract class Item {
-        public bool Valid { get; protected set; }
-        public string ErrorMessage { get; protected set; }
+        public bool Valid { get; protected internal set; }
+        public string ErrorMessage { get; protected internal set; }
 
         /// <summary>
         /// Property which indicate whether this item is already inserted in the database.
@@ -14,7 +14,7 @@ namespace AirtoursBusinessObjects {
         public abstract dynamic GetId();
         public abstract void SetId(dynamic id);
 
-        public void SetError(string message) {
+        protected internal void SetError(string message) {
             this.Valid = message == null ? true : false;
             this.ErrorMessage = message;
         }
