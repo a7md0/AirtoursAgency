@@ -45,5 +45,8 @@ namespace AirtoursBusinessObjects {
                 this.flightDate = value;
             }
         }
+
+        public override dynamic GetId() => this.scheduledFlightID;
+        public override void SetId(dynamic id) => this.ScheduledFlightID = id;
     }
 }

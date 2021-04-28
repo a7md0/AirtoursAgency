@@ -177,5 +177,8 @@ namespace AirtoursBusinessObjects {
                 this.securityCode = value;
             }
         }
+
+        public override dynamic GetId() => this.customerID;
+        public override void SetId(dynamic id) => this.CustomerID = id;
     }
 }

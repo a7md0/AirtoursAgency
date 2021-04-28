@@ -67,5 +67,8 @@ namespace AirtoursBusinessObjects {
                 this.economyCapacity = value;
             }
         }
+
+        public override dynamic GetId() => this.aircraftID;
+        public override void SetId(dynamic id) => this.AircraftID = id;
     }
 }

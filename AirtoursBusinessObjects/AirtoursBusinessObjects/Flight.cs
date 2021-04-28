@@ -155,5 +155,8 @@ namespace AirtoursBusinessObjects {
                 this.miles = value;
             }
         }
+
+        public override dynamic GetId() => this.flightID;
+        public override void SetId(dynamic id) => this.FlightID = id;
     }
 }

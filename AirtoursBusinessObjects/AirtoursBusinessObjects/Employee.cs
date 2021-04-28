@@ -122,5 +122,8 @@ namespace AirtoursBusinessObjects {
                 this.notes = value;
             }
         }
+
+        public override dynamic GetId() => this.employeeID;
+        public override void SetId(dynamic id) => this.EmployeeID = id;
     }
 }

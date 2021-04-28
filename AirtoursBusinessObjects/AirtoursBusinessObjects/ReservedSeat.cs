@@ -68,5 +68,11 @@ namespace AirtoursBusinessObjects {
                 this.sector = value;
             }
         }
+
+        public override dynamic GetId() => this.passengerID;
+        public override void SetId(dynamic id) => this.PassengerID = id;
+
+        public override dynamic GetJoinId() => this.scheduledFlightID;
+        public override void SetJoinId(dynamic joinId) => this.ScheduledFlightID = joinId;
     }
 }
