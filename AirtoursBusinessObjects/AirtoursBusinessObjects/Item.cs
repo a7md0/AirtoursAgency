@@ -1,18 +1,27 @@
-﻿
+﻿using System;
+using System.Reflection;
+
 namespace AirtoursBusinessObjects {
+    using Schema;
+
     public abstract class Item {
-        protected string id;
+        protected Type type;
+        protected TableAttribute tableAttribute;
+        protected PropertyInfo idProperty;
 
-        private bool valid;
-        private string errorMessage;
+        protected bool valid;
+        protected string errorMessage;
 
-        public Item(string id) {
-            this.id = id;
+        public Item() {
+            this.type = this.GetType();
+            this.tableAttribute = this.type.GetCustomAttribute<TableAttribute>();
+            this.idProperty = this.type.GetProperty(this.tableAttribute.PkColumn);
         }
 
-        public Item() { }
-
-        public string Id => this.id;
+        public dynamic Id {
+            get => this.idProperty.GetValue(this);
+            set => this.idProperty.SetValue(this, value);
+        }
 
         public bool Valid {
             get {
@@ -33,7 +42,5 @@ namespace AirtoursBusinessObjects {
                 this.errorMessage = value;
             }
         }
-
-        public string getID() => this.id;
     }
 }

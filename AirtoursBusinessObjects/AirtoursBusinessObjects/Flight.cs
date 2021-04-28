@@ -20,7 +20,7 @@ namespace AirtoursBusinessObjects {
         private string days;  // null-able:	YES
         private int? miles;	// null-able:	YES
 
-        public Flight(int flightID) : base(flightID.ToString()) {
+        public Flight(int flightID) : base() {
             this.flightID = flightID;
         }
 
@@ -32,7 +32,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.flightID = value;
             }
         }

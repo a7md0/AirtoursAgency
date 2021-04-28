@@ -22,7 +22,7 @@ namespace AirtoursBusinessObjects {
         private string creditCardNumber;  // null-able:	YES
         private int? securityCode;	// null-able:	YES
 
-        public Customer(int customerID) : base(customerID.ToString()) {
+        public Customer(int customerID) : base() {
             this.customerID = customerID;
         }
 
@@ -34,7 +34,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.customerID = value;
             }
         }

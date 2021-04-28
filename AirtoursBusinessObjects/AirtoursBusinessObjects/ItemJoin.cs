@@ -1,14 +1,16 @@
-﻿
+﻿using System.Reflection;
+
 namespace AirtoursBusinessObjects {
     public abstract class ItemJoin : Item {
-        protected string joinId;
+        protected PropertyInfo joindIdProperty;
 
-        public ItemJoin(string id, string joinId) : base(id) {
-            this.joinId = joinId;
+        public ItemJoin() : base() {
+            this.joindIdProperty = base.type.GetProperty(base.tableAttribute.PkJoinColumn);
         }
 
-        public ItemJoin() : base() { }
-
-        public string JoinId => this.joinId;
+        public dynamic JoinId {
+            get => this.joindIdProperty.GetValue(this);
+            set => this.joindIdProperty.SetValue(this, value);
+        }
     }
 }

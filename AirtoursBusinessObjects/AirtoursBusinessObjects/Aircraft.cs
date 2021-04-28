@@ -12,7 +12,7 @@ namespace AirtoursBusinessObjects {
         private int? businessCapacity;   // null-able:	YES
         private int? economyCapacity;	// null-able:	YES
 
-        public Aircraft(int aircraftID) : base(aircraftID.ToString()) {
+        public Aircraft(int aircraftID) : base() {
             this.aircraftID = aircraftID;
         }
 
@@ -24,7 +24,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.aircraftID = value;
             }
         }

@@ -17,7 +17,7 @@ namespace AirtoursBusinessObjects {
         private string phone; // null-able:	YES
         private string notes;	// null-able:	YES
 
-        public Employee(int employeeID) : base(employeeID.ToString()) {
+        public Employee(int employeeID) : base() {
             this.employeeID = employeeID;
         }
 
@@ -29,7 +29,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.employeeID = value;
             }
         }

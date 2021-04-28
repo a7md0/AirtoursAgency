@@ -12,7 +12,7 @@ namespace AirtoursBusinessObjects {
         private string status;    // null-able:	YES
         private string sector;	// null-able:	YES
 
-        public ReservedSeat(int passengerID, int scheduledFlightID) : base(passengerID.ToString(), scheduledFlightID.ToString()) {
+        public ReservedSeat(int passengerID, int scheduledFlightID) : base() {
             this.passengerID = passengerID;
             this.scheduledFlightID = scheduledFlightID;
         }
@@ -25,7 +25,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.passengerID = value;
             }
         }
@@ -36,7 +35,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.joinId = value.ToString();
                 this.scheduledFlightID = value;
             }
         }

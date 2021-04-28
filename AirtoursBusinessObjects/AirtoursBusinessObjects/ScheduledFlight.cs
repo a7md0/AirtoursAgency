@@ -10,7 +10,7 @@ namespace AirtoursBusinessObjects {
         private int? flightID;   // null-able:	YES
         private DateTime? flightDate;	// null-able:	YES
 
-        public ScheduledFlight(int scheduledFlightID) : base(scheduledFlightID.ToString()) {
+        public ScheduledFlight(int scheduledFlightID) : base() {
             this.scheduledFlightID = scheduledFlightID;
         }
 
@@ -22,7 +22,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.scheduledFlightID = value;
             }
         }

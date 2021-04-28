@@ -13,7 +13,7 @@ namespace AirtoursBusinessObjects {
         private DateTime? reservationDate;   // null-able:	YES
         private decimal? price;	// null-able:	YES
 
-        public Reservation(int reservationID) : base(reservationID.ToString()) {
+        public Reservation(int reservationID) : base() {
             this.reservationID = reservationID;
         }
 
@@ -25,7 +25,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.reservationID = value;
             }
         }
