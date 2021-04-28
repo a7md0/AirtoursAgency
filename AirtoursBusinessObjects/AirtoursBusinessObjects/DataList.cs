@@ -76,28 +76,25 @@ namespace AirtoursBusinessObjects {
         /// Populate the list (SELECT *)
         /// </summary>
         public void Populate() {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM [{this.table}];";
+                this.connection.Open();
 
                 using (var reader = command.ExecuteReader()) {
                     this.setColumnsOrdinals(reader);
 
                     this.GenerateList(reader);
                 }
+                this.connection.Close();
             }
-
-            this.connection.Close();
         }
 
         public void Populate(T item) {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereItemClause(command, item);
 
                 command.CommandText = $"SELECT * FROM [{this.table}] {whereClause};";
+                this.connection.Open();
 
                 using (var reader = command.ExecuteReader()) {
                     this.setColumnsOrdinals(reader);
@@ -106,32 +103,30 @@ namespace AirtoursBusinessObjects {
                         this.SetValues(item, reader);
                     }
                 }
-            }
 
-            this.connection.Close();
+                this.connection.Close();
+            }
         }
 
         public void PopulateWithFilter(string field, object value) {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
                 command.Parameters.AddWithValue("field", field);
                 command.Parameters.AddWithValue("value", value);
+
+                this.connection.Open();
 
                 using (var reader = command.ExecuteReader()) {
                     this.setColumnsOrdinals(reader);
 
                     this.GenerateList(reader);
                 }
-            }
 
-            this.connection.Close();
+                this.connection.Close();
+            }
         }
 
         public virtual void Update(T item) {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
                 set.Add(item, itemProperties, new[] { this.pkColumn });
@@ -143,6 +138,8 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(set.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
 
+                    this.connection.Open();
+
                     try {
                         command.ExecuteNonQuery();
 
@@ -150,10 +147,10 @@ namespace AirtoursBusinessObjects {
                     } catch (SqlException ex) {
                         item.SetError(ex.Message);
                     }
+
+                    this.connection.Close();
                 }
             }
-
-            this.connection.Close();
         }
 
         public virtual void Add(T item) {
@@ -168,31 +165,34 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(insert.Parameters);
                     command.CommandText = $"INSERT INTO [{this.table}] ({insertFields}) OUTPUT INSERTED.{this.pkColumn} VALUES ({insertValues});";
 
-                    try {
-                        this.connection.Open();
-                        object inserted_id = command.ExecuteScalar();
-                        this.connection.Close();
+                    this.connection.Open();
 
-                        if (inserted_id is null == false && inserted_id is DBNull == false) { 
+                    try {
+                        object inserted_id = command.ExecuteScalar();
+
+                        if (inserted_id is null == false && inserted_id is DBNull == false) {
                             item.SetId(inserted_id);
                         }
+
                         item.Inserted = true;
 
                         item.SetError(null);
                     } catch (SqlException ex) {
                         item.SetError(ex.Message);
                     }
+
+                    this.connection.Close();
                 }
             }
         }
 
         public virtual void Delete(T item) {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereItemClause(command, item);
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
+
+                this.connection.Open();
 
                 try {
                     command.ExecuteNonQuery();
@@ -202,9 +202,8 @@ namespace AirtoursBusinessObjects {
                     item.SetError(ex.Message);
                 }
 
+                this.connection.Close();
             }
-
-            this.connection.Close();
         }
 
         /// <summary>
@@ -328,7 +327,7 @@ namespace AirtoursBusinessObjects {
             return this.AggregateValue<U>(AggregateFunctions.SUM, column, null);
         }
 
-        public double TotalValue(string column, WhereClause whereClause) =>  this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        public double TotalValue(string column, WhereClause whereClause) => this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
         public U TotalValue<U>(string column, WhereClause whereClause) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
             return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
