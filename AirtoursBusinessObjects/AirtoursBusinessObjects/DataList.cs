@@ -250,18 +250,18 @@ namespace AirtoursBusinessObjects {
                     }
 
                     property.SetValue(item, value);
-                } catch (KeyNotFoundException) { // Dictionary throws if key not found
-
-                } catch (InvalidOperationException) {
-
-                } catch (ArgumentException) { // PropertyInfo.SetValue throws
-
-                } catch (TargetException) {
-
-                } catch (MethodAccessException) {
-
-                } catch (TargetInvocationException) {
-
+                } catch (KeyNotFoundException ex) { // Dictionary throws if key not found
+                    Debug.WriteLine(ex, "DataList.setValues");
+                } catch (InvalidOperationException ex) {
+                    Debug.WriteLine(ex, "DataList.setValues");
+                } catch (ArgumentException ex) { // PropertyInfo.SetValue throws
+                    Debug.WriteLine(ex, "DataList.setValues");
+                } catch (TargetException ex) {
+                    Debug.WriteLine(ex, "DataList.setValues");
+                } catch (MethodAccessException ex) {
+                    Debug.WriteLine(ex, "DataList.setValues");
+                } catch (TargetInvocationException ex) {
+                    Debug.WriteLine(ex, "DataList.setValues");
                 }
             }
         }
