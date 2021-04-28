@@ -117,6 +117,7 @@ namespace AirtoursBusinessObjects {
                         item.SetError(null);
                     } catch (SqlException ex) {
                         item.SetError(ex.Message);
+                        Debug.WriteLine(ex, "DataList.Add");
                     }
 
                     this.connection.Close();
@@ -154,6 +155,7 @@ namespace AirtoursBusinessObjects {
                 item.SetError(null);
             } catch (SqlException ex) {
                 item.SetError(ex.Message);
+                Debug.WriteLine(ex, "DataList.Update");
             }
 
             this.connection.Close();
@@ -176,6 +178,7 @@ namespace AirtoursBusinessObjects {
                     item.SetError(null);
                 } catch (SqlException ex) {
                     item.SetError(ex.Message);
+                    Debug.WriteLine(ex, "DataList.Delete");
                 }
 
                 this.connection.Close();
@@ -389,7 +392,9 @@ namespace AirtoursBusinessObjects {
 
             try {
                 value = this.scalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
-            } catch (InvalidCastException) { }
+            } catch (InvalidCastException ex) {
+                Debug.WriteLine(ex, "DataList.aggregateValue");
+            }
 
             return value;
         }
@@ -432,26 +437,26 @@ namespace AirtoursBusinessObjects {
 
                     }
                 } catch (InvalidCastException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } catch (SqlException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } catch (InvalidOperationException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } catch (System.IO.IOException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } catch (FormatException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } catch (OverflowException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } catch (ArgumentNullException ex) {
-                    Debug.WriteLine(ex, "DataList.ScalarQuery");
+                    Debug.WriteLine(ex, "DataList.scalarQuery");
                 } finally {
                     this.connection.Close();
                 }
             } catch (InvalidOperationException ex) {
-                Debug.WriteLine(ex, "DataList.ScalarQuery");
+                Debug.WriteLine(ex, "DataList.scalarQuery");
             } catch (SqlException ex) {
-                Debug.WriteLine(ex, "DataList.ScalarQuery");
+                Debug.WriteLine(ex, "DataList.scalarQuery");
             }
 
             return value;
@@ -471,8 +476,8 @@ namespace AirtoursBusinessObjects {
 
                     try {
                         affectedRows = command.ExecuteNonQuery();
-                    } catch (SqlException) {
-
+                    } catch (SqlException ex) {
+                        Debug.WriteLine(ex, "DataList.UpdateMany");
                     }
 
                     this.connection.Close();
@@ -492,8 +497,8 @@ namespace AirtoursBusinessObjects {
 
                 try {
                     affectedRows = command.ExecuteNonQuery();
-                } catch (SqlException) {
-
+                } catch (SqlException ex) {
+                    Debug.WriteLine(ex, "DataList.DeleteMany");
                 }
 
                 this.connection.Close();
