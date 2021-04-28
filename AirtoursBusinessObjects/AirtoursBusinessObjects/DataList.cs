@@ -39,7 +39,7 @@ namespace AirtoursBusinessObjects {
             this.columnsOrdinals = new Dictionary<string, int>();
 
             this.setDataTableColumns();
-            this.setSchema();
+            this.fetchTableSchema();
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        protected void setSchema() {
+        protected void fetchTableSchema() {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
