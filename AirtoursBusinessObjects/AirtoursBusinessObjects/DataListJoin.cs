@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 
 namespace AirtoursBusinessObjects {
+    using Builder;
     using Schema;
 
     public abstract class DataListJoin<T> : DataList<T> where T : ItemJoin, new() {
@@ -18,6 +19,17 @@ namespace AirtoursBusinessObjects {
             command.Parameters.AddWithValue(this.pkJoinColumn, item.GetJoinId());
 
             return $"{base.whereItemClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
+        }
+
+        public override void Update(T item) {
+            using (var command = base.connection.CreateCommand())
+            using (var set = new SetClause(base.schema)) {
+                set.Add(item, itemProperties, new[] { base.pkColumn, this.pkJoinColumn });
+
+                if (set.HasAny) {
+                    base.Update(item, command, set);
+                }
+            }
         }
     }
 }
