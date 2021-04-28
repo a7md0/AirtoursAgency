@@ -337,33 +337,32 @@ namespace AirtoursBusinessObjects {
             AVG, COUNT, MAX, MIN, SUM
         }
 
-        public double TotalValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        public double TotalValue(string column, WhereClause whereClause = null) => this.aggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
         public U TotalValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
+            return this.aggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
 
-        public int TotalCount() => this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn);
+        public int TotalCount() => this.aggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn);
         public int TotalCount(WhereClause whereClause) {
-            return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
+            return this.aggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
         }
 
-        public int MinValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MIN, column, whereClause);
+        public int MinValue(string column, WhereClause whereClause = null) => this.aggregateValue<int>(AggregateFunctions.MIN, column, whereClause);
         public U MinValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.MIN, column, whereClause);
+            return this.aggregateValue<U>(AggregateFunctions.MIN, column, whereClause);
         }
 
-        public int MaxValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MAX, column, whereClause);
+        public int MaxValue(string column, WhereClause whereClause = null) => this.aggregateValue<int>(AggregateFunctions.MAX, column, whereClause);
         public U MaxValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.MAX, column, whereClause);
+            return this.aggregateValue<U>(AggregateFunctions.MAX, column, whereClause);
         }
 
-        public double AvgValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.AVG, column, whereClause);
+        public double AvgValue(string column, WhereClause whereClause = null) => this.aggregateValue<double>(AggregateFunctions.AVG, column, whereClause);
         public U AvgValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
+            return this.aggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
         }
 
-        protected int AggregateValue(AggregateFunctions aggregateFunction, string column, WhereClause whereClause = null) => this.AggregateValue<int>(aggregateFunction, column, whereClause);
-        protected U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause = null) {
+        protected U aggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause = null) {
             U value = default(U);
 
             string aggregate = aggregateFunction.ToString();
@@ -376,7 +375,7 @@ namespace AirtoursBusinessObjects {
             }
 
             try {
-                value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
+                value = this.scalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
             } catch (InvalidCastException) { }
 
             return value;
@@ -386,9 +385,9 @@ namespace AirtoursBusinessObjects {
         /// Query the maximum primary key value.
         /// </summary>
         /// <returns>Maximum id value</returns>
-        public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
+        public virtual int GetMaxID() => this.aggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
 
-        protected object ScalarQuery(string query, SqlParameter[] parameters = null) => this.ScalarQuery<object>(query, parameters);
+        protected object scalarQuery(string query, SqlParameter[] parameters = null) => this.scalarQuery<object>(query, parameters);
 
         /// <summary>
         /// Execute scalar query and convert to appropriate type.
@@ -397,7 +396,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="query">The query to execute</param>
         /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
         /// <returns></returns>
-        protected U ScalarQuery<U>(string query, SqlParameter[] parameters = null) {
+        protected U scalarQuery<U>(string query, SqlParameter[] parameters = null) {
             U value = default(U);
 
             try {
