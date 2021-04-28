@@ -457,4 +457,49 @@ namespace AirtoursBusinessObjects {
             return value;
         }
     }
+
+    partial class DataList<T> {
+        public virtual int UpdateMany(SetClause setClause, WhereClause whereClause) {
+            using (var command = this.connection.CreateCommand()) {
+                int affectedRows = 0;
+
+                if (setClause.HasAny) {
+                    command.Parameters.AddRange(setClause.Parameters);
+                    command.CommandText = $"UPDATE [{this.table}] {setClause.ToString()} {whereClause.ToString()};";
+
+                    this.connection.Open();
+
+                    try {
+                        affectedRows = command.ExecuteNonQuery();
+                    } catch (SqlException) {
+
+                    }
+
+                    this.connection.Close();
+                }
+
+                return affectedRows;
+            }
+        }
+
+        public virtual int DeleteMany(WhereClause whereClause) {
+            using (var command = this.connection.CreateCommand()) {
+                int affectedRows = 0;
+
+                command.CommandText = $"DELETE FROM [{this.table}] {whereClause.ToString()};";
+
+                this.connection.Open();
+
+                try {
+                    affectedRows = command.ExecuteNonQuery();
+                } catch (SqlException) {
+
+                }
+
+                this.connection.Close();
+
+                return affectedRows;
+            }
+        }
+    }
 }
