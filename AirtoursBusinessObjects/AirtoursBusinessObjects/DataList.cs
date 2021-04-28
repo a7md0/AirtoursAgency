@@ -171,7 +171,10 @@ namespace AirtoursBusinessObjects {
                         object inserted_id = command.ExecuteScalar();
                         this.connection.Close();
 
-                        item.SetId(inserted_id);
+                        if (inserted_id is null == false && inserted_id is DBNull == false) { 
+                            item.SetId(inserted_id);
+                        }
+                        item.Inserted = true;
 
                         item.SetError(null);
                     } catch (SqlException ex) {
@@ -213,6 +216,7 @@ namespace AirtoursBusinessObjects {
                 T item = new T();
 
                 this.SetValues(item, reader);
+                item.Inserted = true;
 
                 this.list.Add(item);
                 this.addDataTableRow(item);
