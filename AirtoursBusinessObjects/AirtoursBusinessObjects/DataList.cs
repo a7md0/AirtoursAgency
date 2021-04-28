@@ -214,7 +214,9 @@ namespace AirtoursBusinessObjects {
                 return hasRows;
             }
         }
+    }
 
+    partial class DataList<T> {
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
@@ -232,9 +234,7 @@ namespace AirtoursBusinessObjects {
                 this.addDataTableRow(item);
             }
         }
-    }
 
-    partial class DataList<T> {
         /// <summary>
         /// Set values of given item from the current reader.
         /// </summary>
@@ -331,13 +331,12 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class DataList<T> {
-        public double TotalValue(string column) => this.AggregateValue<double>(AggregateFunctions.SUM, column, null);
-        public U TotalValue<U>(string column) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.AggregateValue<U>(AggregateFunctions.SUM, column, null);
+        protected enum AggregateFunctions {
+            AVG, COUNT, MAX, MIN, SUM
         }
 
-        public double TotalValue(string column, WhereClause whereClause) => this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
-        public U TotalValue<U>(string column, WhereClause whereClause) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+        public double TotalValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        public U TotalValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
             return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
 
@@ -346,11 +345,23 @@ namespace AirtoursBusinessObjects {
             return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
         }
 
-        public int AggregateValue(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<int>(aggregateFunction, column, null);
-        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column) => this.AggregateValue<U>(aggregateFunction, column, null);
+        public int MinValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MIN, column, whereClause);
+        public U MinValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.AggregateValue<U>(AggregateFunctions.MIN, column, whereClause);
+        }
 
-        public int AggregateValue(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) => this.AggregateValue<int>(aggregateFunction, column, whereClause);
-        public U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause) {
+        public int MaxValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MAX, column, whereClause);
+        public U MaxValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.AggregateValue<U>(AggregateFunctions.MAX, column, whereClause);
+        }
+
+        public double AvgValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.AVG, column, whereClause);
+        public U AvgValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
+            return this.AggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
+        }
+
+        protected int AggregateValue(AggregateFunctions aggregateFunction, string column, WhereClause whereClause = null) => this.AggregateValue<int>(aggregateFunction, column, whereClause);
+        protected U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause = null) {
             U value = default(U);
 
             string aggregate = aggregateFunction.ToString();
@@ -378,11 +389,11 @@ namespace AirtoursBusinessObjects {
         protected object ScalarQuery(string query, SqlParameter[] parameters = null) => this.ScalarQuery<object>(query, parameters);
 
         /// <summary>
-        /// 
+        /// Execute scalar query and convert to appropriate type.
         /// </summary>
-        /// <typeparam name="U"></typeparam>
-        /// <param name="query"></param>
-        /// <param name="parameters"></param>
+        /// <typeparam name="U">Result data type</typeparam>
+        /// <param name="query">The query to execute</param>
+        /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
         /// <returns></returns>
         protected U ScalarQuery<U>(string query, SqlParameter[] parameters = null) {
             U value = default(U);
@@ -431,9 +442,5 @@ namespace AirtoursBusinessObjects {
 
             return value;
         }
-    }
-
-    public enum AggregateFunctions {
-        AVG, COUNT, MAX, MIN, SUM
     }
 }
