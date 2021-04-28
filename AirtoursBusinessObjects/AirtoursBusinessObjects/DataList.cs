@@ -206,7 +206,7 @@ namespace AirtoursBusinessObjects {
                     hasRows = reader.HasRows;
 
                     this.setColumnsOrdinals(reader);
-                    this.GenerateList(reader);
+                    this.generateList(reader);
                 }
 
                 this.connection.Close();
@@ -220,7 +220,7 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
-        protected virtual void GenerateList(SqlDataReader reader) {
+        protected virtual void generateList(SqlDataReader reader) {
             this.list.Clear();
             this.dataTable.Rows.Clear();
 
