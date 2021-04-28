@@ -14,15 +14,13 @@ namespace AirtoursBusinessObjects.Builder {
         private List<SqlParameter> parameters;
 
         private TableSchema schema;
-        private string pkColumn;
 
-        public InsertClause(TableSchema schema, string pkColumn = null) {
+        public InsertClause(TableSchema schema) {
             this.columns = new List<string>();
             this.values = new List<string>();
             this.parameters = new List<SqlParameter>();
 
             this.schema = schema;
-            this.pkColumn = pkColumn;
         }
 
         public bool HasAny => this.columns.Count > 0;
@@ -77,11 +75,7 @@ namespace AirtoursBusinessObjects.Builder {
 
             clause += "(";
             clause += string.Join(", ", this.columns);
-            clause += $") ";
-            if (this.pkColumn != null) {
-                clause += $"OUTPUT INSERTED.{this.pkColumn} ";
-            }
-            clause += "VALUES (";
+            clause += $") VALUES (";
             clause += string.Join(", ", this.values);
             clause += ")";
 

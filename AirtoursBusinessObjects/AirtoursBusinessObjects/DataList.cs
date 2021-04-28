@@ -93,7 +93,7 @@ namespace AirtoursBusinessObjects {
 
         public virtual void Add(T item) {
             using (var command = this.connection.CreateCommand())
-            using (var insert = new InsertClause(this.schema, this.pkColumn)) {
+            using (var insert = new InsertClause(this.schema)) {
                 insert.Add(item, itemProperties);
 
                 if (insert.HasAny) {
