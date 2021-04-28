@@ -14,7 +14,6 @@ namespace AirtoursBusinessObjects {
     public abstract partial class DataList<T> where T : Item, new() {
         protected readonly string table;
         protected readonly string pkColumn;
-        protected readonly PropertyInfo pkColumnProperty;
 
         protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
 
@@ -30,7 +29,6 @@ namespace AirtoursBusinessObjects {
 
             this.table = tableAttribute.Name;
             this.pkColumn = tableAttribute.PkColumn;
-            this.pkColumnProperty = typeof(T).GetProperty(this.pkColumn);
 
             this.connection = new SqlConnection(Properties.Settings.Default.AirtoursConnectionString);
 
@@ -65,7 +63,7 @@ namespace AirtoursBusinessObjects {
         public string PkColumn => this.pkColumn;
 
         protected virtual string whereItemClause(SqlCommand command, T item) {
-            command.Parameters.AddWithValue(this.pkColumn, this.pkColumnProperty.GetValue(item));
+            command.Parameters.AddWithValue(this.pkColumn, item.GetId());
 
             return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
         }
@@ -173,7 +171,7 @@ namespace AirtoursBusinessObjects {
                         object inserted_id = command.ExecuteScalar();
                         this.connection.Close();
 
-                        pkColumnProperty.SetValue(item, inserted_id);
+                        item.SetId(inserted_id);
 
                         item.SetError(null);
                     } catch (SqlException ex) {
