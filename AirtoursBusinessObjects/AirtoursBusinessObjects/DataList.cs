@@ -62,6 +62,8 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         public string PkColumn => this.pkColumn;
 
+        public T NewItem => new T();
+
         protected virtual string whereItemClause(SqlCommand command, T item) {
             command.Parameters.AddWithValue(this.pkColumn, item.GetId());
 
