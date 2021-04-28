@@ -63,23 +63,16 @@ namespace AirtoursBusinessObjects {
         public string PkColumn => this.pkColumn;
 
         public T NewItem => new T();
+    }
 
+    partial class DataList<T> {
         protected virtual string whereItemClause(SqlCommand command, T item) {
             command.Parameters.AddWithValue(this.pkColumn, item.GetId());
 
             return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
         }
-    }
 
-    partial class DataList<T> {
-        /// <summary>
-        /// Populate the list (SELECT *)
-        /// </summary>
-        public bool Populate() {
-            return this.Populate(null);
-        }
-
-        public void Fill(T item) {
+        public virtual void Fill(T item) {
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereItemClause(command, item);
 
@@ -95,68 +88,6 @@ namespace AirtoursBusinessObjects {
                 }
 
                 this.connection.Close();
-            }
-        }
-
-        public bool Populate(string field, dynamic value) {
-            using (var whereClause = new WhereClause()) {
-                whereClause.AndWhere(field, value);
-
-                return this.Populate(whereClause);
-            }
-        }
-
-        public bool Populate(WhereClause whereClause) {
-            using (var command = this.connection.CreateCommand()) {
-                bool hasRows = false;
-
-                SqlParameter[] sqlParameters = whereClause?.Parameters;
-                string suffix = $" {whereClause?.ToString()}" ?? "";
-
-                command.CommandText = $"SELECT * FROM [{this.table}]{suffix};";
-                if (sqlParameters is null == false) { 
-                    command.Parameters.AddRange(sqlParameters);
-                }
-
-                this.connection.Open();
-
-                using (var reader = command.ExecuteReader()) {
-                    hasRows = reader.HasRows;
-
-                    this.setColumnsOrdinals(reader);
-                    this.GenerateList(reader);
-                }
-
-                this.connection.Close();
-
-                return hasRows;
-            }
-        }
-
-        public virtual void Update(T item) {
-            using (var command = this.connection.CreateCommand())
-            using (var set = new SetClause(this.schema)) {
-                set.Add(item, itemProperties, new[] { this.pkColumn });
-
-                if (set.HasAny) {
-                    string setClause = set.ToString();
-                    var whereClause = this.whereItemClause(command, item);
-
-                    command.Parameters.AddRange(set.Parameters);
-                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
-
-                    this.connection.Open();
-
-                    try {
-                        command.ExecuteNonQuery();
-
-                        item.SetError(null);
-                    } catch (SqlException ex) {
-                        item.SetError(ex.Message);
-                    }
-
-                    this.connection.Close();
-                }
             }
         }
 
@@ -193,6 +124,34 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+
+        public virtual void Update(T item) {
+            using (var command = this.connection.CreateCommand())
+            using (var set = new SetClause(this.schema)) {
+                set.Add(item, itemProperties, new[] { this.pkColumn });
+
+                if (set.HasAny) {
+                    string setClause = set.ToString();
+                    var whereClause = this.whereItemClause(command, item);
+
+                    command.Parameters.AddRange(set.Parameters);
+                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
+
+                    this.connection.Open();
+
+                    try {
+                        command.ExecuteNonQuery();
+
+                        item.SetError(null);
+                    } catch (SqlException ex) {
+                        item.SetError(ex.Message);
+                    }
+
+                    this.connection.Close();
+                }
+            }
+        }
+
         public virtual void Delete(T item) {
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereItemClause(command, item);
@@ -210,6 +169,50 @@ namespace AirtoursBusinessObjects {
                 }
 
                 this.connection.Close();
+            }
+        }
+    }
+
+    partial class DataList<T> {
+        /// <summary>
+        /// Populate the list (SELECT *)
+        /// </summary>
+        public bool Populate() {
+            return this.Populate(null);
+        }
+
+        public bool Populate(string field, dynamic value) {
+            using (var whereClause = new WhereClause()) {
+                whereClause.AndWhere(field, value);
+
+                return this.Populate(whereClause);
+            }
+        }
+
+        public bool Populate(WhereClause whereClause) {
+            using (var command = this.connection.CreateCommand()) {
+                bool hasRows = false;
+
+                SqlParameter[] sqlParameters = whereClause?.Parameters;
+                string suffix = $" {whereClause?.ToString()}" ?? "";
+
+                command.CommandText = $"SELECT * FROM [{this.table}]{suffix};";
+                if (sqlParameters is null == false) {
+                    command.Parameters.AddRange(sqlParameters);
+                }
+
+                this.connection.Open();
+
+                using (var reader = command.ExecuteReader()) {
+                    hasRows = reader.HasRows;
+
+                    this.setColumnsOrdinals(reader);
+                    this.GenerateList(reader);
+                }
+
+                this.connection.Close();
+
+                return hasRows;
             }
         }
 
