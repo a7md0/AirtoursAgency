@@ -83,7 +83,7 @@ namespace AirtoursBusinessObjects {
                     this.setColumnsOrdinals(reader);
 
                     if (reader.Read()) {
-                        this.SetValues(item, reader);
+                        this.setValues(item, reader);
                     }
                 }
 
@@ -227,7 +227,7 @@ namespace AirtoursBusinessObjects {
             while (reader.Read()) {
                 T item = new T();
 
-                this.SetValues(item, reader);
+                this.setValues(item, reader);
                 item.Inserted = true;
 
                 this.list.Add(item);
@@ -239,7 +239,7 @@ namespace AirtoursBusinessObjects {
         /// Set values of given item from the current reader.
         /// </summary>
         /// <param name="item">Item to set properties value from the current reader.</param>
-        protected void SetValues(T item, SqlDataReader reader) {
+        protected void setValues(T item, SqlDataReader reader) {
             foreach (var property in itemProperties) {
                 try {
                     int ordinal = columnsOrdinals[property.Name]; // Find value by matching property name
@@ -290,19 +290,18 @@ namespace AirtoursBusinessObjects {
         }
 
         protected void fetchTableSchema() {
-            this.connection.Open();
-
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM [{this.table}] WHERE 1 = 0;";
+                this.connection.Open();
 
                 using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
                     var schema = reader.GetSchemaTable();
 
                     this.schema = new TableSchema(schema);
                 }
-            }
 
-            this.connection.Close();
+                this.connection.Close();
+            }
         }
 
         protected void setDataTableColumns() {
