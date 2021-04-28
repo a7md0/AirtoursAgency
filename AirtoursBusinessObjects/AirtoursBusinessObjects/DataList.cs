@@ -124,18 +124,22 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public virtual void Update(T item) {
+        public virtual bool Update(T item) {
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
                 set.Add(item, itemProperties, new[] { this.pkColumn });
 
                 if (set.HasAny) {
-                    this.Update(item, command, set);
+                    return this.Update(item, command, set);
                 }
+
+                return false;
             }
         }
 
-        protected void Update(T item, SqlCommand command, SetClause set) {
+        protected bool Update(T item, SqlCommand command, SetClause set) {
+            int affectedRows = 0;
+
             string setClause = set.ToString();
             var whereClause = this.whereItemClause(command, item);
 
@@ -145,7 +149,7 @@ namespace AirtoursBusinessObjects {
             this.connection.Open();
 
             try {
-                command.ExecuteNonQuery();
+                affectedRows = command.ExecuteNonQuery();
 
                 item.SetError(null);
             } catch (SqlException ex) {
@@ -153,10 +157,13 @@ namespace AirtoursBusinessObjects {
             }
 
             this.connection.Close();
+
+            return affectedRows > 0;
         }
 
-        public virtual void Delete(T item) {
+        public virtual bool Delete(T item) {
             using (var command = this.connection.CreateCommand()) {
+                int affectedRows = 0;
                 var whereClause = this.whereItemClause(command, item);
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
@@ -164,7 +171,7 @@ namespace AirtoursBusinessObjects {
                 this.connection.Open();
 
                 try {
-                    command.ExecuteNonQuery();
+                    affectedRows = command.ExecuteNonQuery();
 
                     item.SetError(null);
                 } catch (SqlException ex) {
@@ -172,6 +179,8 @@ namespace AirtoursBusinessObjects {
                 }
 
                 this.connection.Close();
+
+                return affectedRows > 0;
             }
         }
     }

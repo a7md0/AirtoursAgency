@@ -21,14 +21,16 @@ namespace AirtoursBusinessObjects {
             return $"{base.whereItemClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
         }
 
-        public override void Update(T item) {
+        public override bool Update(T item) {
             using (var command = base.connection.CreateCommand())
             using (var set = new SetClause(base.schema)) {
                 set.Add(item, itemProperties, new[] { base.pkColumn, this.pkJoinColumn });
 
                 if (set.HasAny) {
-                    base.Update(item, command, set);
+                    return base.Update(item, command, set);
                 }
+
+                return false;
             }
         }
     }
