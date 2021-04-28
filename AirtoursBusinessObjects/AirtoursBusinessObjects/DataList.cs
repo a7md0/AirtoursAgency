@@ -124,7 +124,6 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-
         public virtual void Update(T item) {
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
