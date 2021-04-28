@@ -279,9 +279,12 @@ namespace AirtoursBusinessObjects {
                     int columnOrdinal = reader.GetOrdinal(propertyName); // throws IndexOutOfRangeException
 
                     this.columnsOrdinals.Add(propertyName, columnOrdinal);
-                } catch (IndexOutOfRangeException) { // No column with the specified name was found.
-                } catch (ArgumentNullException) {
-                } catch (ArgumentException) {
+                } catch (IndexOutOfRangeException ex) { // No column with the specified name was found.
+                    Debug.WriteLine(ex, "DataList.setColumnsOrdinals");
+                } catch (ArgumentNullException ex) {
+                    Debug.WriteLine(ex, "DataList.setColumnsOrdinals");
+                } catch (ArgumentException ex) {
+                    Debug.WriteLine(ex, "DataList.setColumnsOrdinals");
                 }
             }
         }
