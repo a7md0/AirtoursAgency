@@ -146,11 +146,9 @@ namespace AirtoursBusinessObjects {
                     try {
                         command.ExecuteNonQuery();
 
-                        item.Valid = true;
-                        item.ErrorMessage = null;
+                        item.SetError(null);
                     } catch (SqlException ex) {
-                        item.Valid = false;
-                        item.ErrorMessage = ex.Message;
+                        item.SetError(ex.Message);
                     }
                 }
             }
@@ -177,11 +175,9 @@ namespace AirtoursBusinessObjects {
 
                         pkColumnProperty.SetValue(item, inserted_id);
 
-                        item.Valid = true;
-                        item.ErrorMessage = null;
+                        item.SetError(null);
                     } catch (SqlException ex) {
-                        item.Valid = false;
-                        item.ErrorMessage = ex.Message;
+                        item.SetError(ex.Message);
                     }
                 }
             }
@@ -198,11 +194,9 @@ namespace AirtoursBusinessObjects {
                 try {
                     command.ExecuteNonQuery();
 
-                    item.Valid = true;
-                    item.ErrorMessage = null;
+                    item.SetError(null);
                 } catch (SqlException ex) {
-                    item.Valid = false;
-                    item.ErrorMessage = ex.Message;
+                    item.SetError(ex.Message);
                 }
 
             }

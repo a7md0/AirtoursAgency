@@ -9,8 +9,8 @@ namespace AirtoursBusinessObjects {
         protected TableAttribute tableAttribute;
         protected PropertyInfo idProperty;
 
-        protected bool valid;
-        protected string errorMessage;
+        public bool Valid { get; protected set; }
+        public string ErrorMessage { get; protected set; }
 
         public Item() {
             this.type = this.GetType();
@@ -23,24 +23,9 @@ namespace AirtoursBusinessObjects {
             set => this.idProperty.SetValue(this, value);
         }
 
-        public bool Valid {
-            get {
-                return this.valid;
-            }
-
-            set {
-                this.valid = value;
-            }
-        }
-
-        public string ErrorMessage {
-            get {
-                return this.errorMessage;
-            }
-
-            set {
-                this.errorMessage = value;
-            }
+        public void SetError(string message) {
+            this.Valid = message == null ? true : false;
+            this.ErrorMessage = message;
         }
     }
 }
