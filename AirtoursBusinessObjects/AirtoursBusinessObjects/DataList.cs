@@ -284,7 +284,7 @@ namespace AirtoursBusinessObjects {
             this.connection.Open();
 
             using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"SELECT * FROM {this.table} WHERE 1 = 0;";
+                command.CommandText = $"SELECT * FROM [{this.table}] WHERE 1 = 0;";
 
                 using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
                     var schema = reader.GetSchemaTable();
