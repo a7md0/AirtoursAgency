@@ -130,25 +130,29 @@ namespace AirtoursBusinessObjects {
                 set.Add(item, itemProperties, new[] { this.pkColumn });
 
                 if (set.HasAny) {
-                    string setClause = set.ToString();
-                    var whereClause = this.whereItemClause(command, item);
-
-                    command.Parameters.AddRange(set.Parameters);
-                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
-
-                    this.connection.Open();
-
-                    try {
-                        command.ExecuteNonQuery();
-
-                        item.SetError(null);
-                    } catch (SqlException ex) {
-                        item.SetError(ex.Message);
-                    }
-
-                    this.connection.Close();
+                    this.Update(item, command, set);
                 }
             }
+        }
+
+        protected void Update(T item, SqlCommand command, SetClause set) {
+            string setClause = set.ToString();
+            var whereClause = this.whereItemClause(command, item);
+
+            command.Parameters.AddRange(set.Parameters);
+            command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
+
+            this.connection.Open();
+
+            try {
+                command.ExecuteNonQuery();
+
+                item.SetError(null);
+            } catch (SqlException ex) {
+                item.SetError(ex.Message);
+            }
+
+            this.connection.Close();
         }
 
         public virtual void Delete(T item) {
