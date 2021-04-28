@@ -75,21 +75,11 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Populate the list (SELECT *)
         /// </summary>
-        public void Populate() {
-            using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"SELECT * FROM [{this.table}];";
-                this.connection.Open();
-
-                using (var reader = command.ExecuteReader()) {
-                    this.setColumnsOrdinals(reader);
-
-                    this.GenerateList(reader);
-                }
-                this.connection.Close();
-            }
+        public bool Populate() {
+            return this.Populate(null);
         }
 
-        public void Populate(T item) {
+        public void Fill(T item) {
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereItemClause(command, item);
 
@@ -108,21 +98,38 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public void PopulateWithFilter(string field, object value) {
+        public bool Populate(string field, dynamic value) {
+            using (var whereClause = new WhereClause()) {
+                whereClause.AndWhere(field, value);
+
+                return this.Populate(whereClause);
+            }
+        }
+
+        public bool Populate(WhereClause whereClause) {
             using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"SELECT * FROM [{this.table}] WHERE [{@field}] = @value;";
-                command.Parameters.AddWithValue("field", field);
-                command.Parameters.AddWithValue("value", value);
+                bool hasRows = false;
+
+                SqlParameter[] sqlParameters = whereClause?.Parameters;
+                string suffix = $" {whereClause?.ToString()}" ?? "";
+
+                command.CommandText = $"SELECT * FROM [{this.table}]{suffix};";
+                if (sqlParameters is null == false) { 
+                    command.Parameters.AddRange(sqlParameters);
+                }
 
                 this.connection.Open();
 
                 using (var reader = command.ExecuteReader()) {
-                    this.setColumnsOrdinals(reader);
+                    hasRows = reader.HasRows;
 
+                    this.setColumnsOrdinals(reader);
                     this.GenerateList(reader);
                 }
 
                 this.connection.Close();
+
+                return hasRows;
             }
         }
 
