@@ -24,6 +24,8 @@ namespace AirtoursBusinessObjects {
         protected PropertyInfo[] itemProperties;
         protected Dictionary<string, int> columnsOrdinals;
 
+        protected string[] nonUpdateableColumns = new string[2];
+
         public DataList() {
             var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
 
@@ -37,6 +39,8 @@ namespace AirtoursBusinessObjects {
 
             this.itemProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             this.columnsOrdinals = new Dictionary<string, int>();
+
+            this.nonUpdateableColumns[0] = this.pkColumn;
 
             this.setDataTableColumns();
             this.fetchTableSchema();
@@ -128,39 +132,33 @@ namespace AirtoursBusinessObjects {
         public virtual bool Update(T item) {
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
-                set.Add(item, itemProperties, new[] { this.pkColumn });
+                int affectedRows = 0;
+
+                set.Add(item, itemProperties, this.nonUpdateableColumns);
 
                 if (set.HasAny) {
-                    return this.Update(item, command, set);
+                    string setClause = set.ToString();
+                    var whereClause = this.whereItemClause(command, item);
+
+                    command.Parameters.AddRange(set.Parameters);
+                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
+
+                    this.connection.Open();
+
+                    try {
+                        affectedRows = command.ExecuteNonQuery();
+
+                        item.SetError(null);
+                    } catch (SqlException ex) {
+                        item.SetError(ex.Message);
+                        Debug.WriteLine(ex, "DataList.Update");
+                    }
+
+                    this.connection.Close();
                 }
 
-                return false;
+                return affectedRows > 0;
             }
-        }
-
-        protected bool Update(T item, SqlCommand command, SetClause set) {
-            int affectedRows = 0;
-
-            string setClause = set.ToString();
-            var whereClause = this.whereItemClause(command, item);
-
-            command.Parameters.AddRange(set.Parameters);
-            command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
-
-            this.connection.Open();
-
-            try {
-                affectedRows = command.ExecuteNonQuery();
-
-                item.SetError(null);
-            } catch (SqlException ex) {
-                item.SetError(ex.Message);
-                Debug.WriteLine(ex, "DataList.Update");
-            }
-
-            this.connection.Close();
-
-            return affectedRows > 0;
         }
 
         public virtual bool Delete(T item) {
