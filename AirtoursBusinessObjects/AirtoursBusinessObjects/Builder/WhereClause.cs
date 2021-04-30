@@ -75,6 +75,22 @@ namespace AirtoursBusinessObjects.Builder {
             return this.AndWhereBetween(columnName, value, not);
         }
 
+        public WhereClause AndWhereIsNull(string columnName, bool not = false) {
+            var last = predicates.Last();
+
+            string prefix = not == true ? "NOT " : "";
+
+            last.Predicates.Add($"{columnName} IS {prefix}NULL");
+
+            return this;
+        }
+
+        public WhereClause OrWhereIsNull(string columnName, bool not = false) {
+            predicates.Add(new OrPredicate());
+
+            return this.AndWhereIsNull(columnName, not);
+        }
+
         public WhereClause Like(string columnName, dynamic value, bool not = false) {
             throw new NotImplementedException();
 
