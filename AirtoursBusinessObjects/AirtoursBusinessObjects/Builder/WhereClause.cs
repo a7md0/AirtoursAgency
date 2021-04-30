@@ -72,7 +72,7 @@ namespace AirtoursBusinessObjects.Builder {
         public WhereClause OrWhereIs(string columnName, bool value, bool not = false) {
             predicates.Add(new OrPredicate());
 
-            return this.AndWhereBetween(columnName, value, not);
+            return this.AndWhereIs(columnName, value, not);
         }
 
         public WhereClause AndWhereIsNull(string columnName, bool not = false) {
