@@ -309,9 +309,9 @@ namespace AirtoursBusinessObjects {
                 this.connection.Open();
 
                 using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
-                    var schema = reader.GetSchemaTable();
+                    var schemaTable = reader.GetSchemaTable();
 
-                    this.schema = new TableSchema(schema);
+                    this.schema = new TableSchema(schemaTable);
                 }
 
                 this.connection.Close();
