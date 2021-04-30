@@ -347,6 +347,42 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class DataList<T> {
+        public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, ascending);
+        public List<U> UniqueValues<U>(string column, bool ascending = true) {
+            List<U> values = new List<U>();
+
+            var whereClause = new WhereClause().AndWhereIsNull(column, true);
+            var orderBy = ascending ? "ASC" : "DESC";
+
+            using (var command = this.connection.CreateCommand()) {
+                command.CommandText = $"SELECT DISTINCT[{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
+
+                this.connection.Open();
+
+                using (var reader = command.ExecuteReader()) {
+                    while (reader.Read()) {
+                        var value = reader.GetValue(0);
+
+                        if (value is DBNull) {
+                            continue;
+                        }
+
+                        if (typeof(U) != value.GetType()) {
+                            value = Convert.ChangeType(value, typeof(U));
+                        }
+
+                        values.Add((U) value);
+                    }
+                }
+
+                this.connection.Close();
+            }
+
+            return values;
+        }
+    }
+
+    partial class DataList<T> {
         protected enum AggregateFunctions {
             AVG, COUNT, MAX, MIN, SUM
         }
