@@ -9,7 +9,7 @@ namespace AirtoursBusinessObjects {
         private int reservationID;
         private int? customerID; // null-able:	YES
         private int? employeeID; // null-able:	YES
-        private bool? paid;   // null-able:	YES
+        private bool? paid = false;   // null-able:	YES
         private DateTime? reservationDate;   // null-able:	YES
         private decimal? price;	// null-able:	YES
 
