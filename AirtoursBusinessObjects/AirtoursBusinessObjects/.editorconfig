@@ -23,10 +23,10 @@ dotnet_sort_system_directives_first = false
 file_header_template = unset
 
 # this. and Me. preferences
-dotnet_style_qualification_for_event = false:silent
-dotnet_style_qualification_for_field = false:silent
-dotnet_style_qualification_for_method = false:silent
-dotnet_style_qualification_for_property = false:silent
+dotnet_style_qualification_for_event = true:silent
+dotnet_style_qualification_for_field = true:silent
+dotnet_style_qualification_for_method = true:silent
+dotnet_style_qualification_for_property = true:silent
 
 # Language keywords vs BCL types preferences
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
@@ -48,7 +48,7 @@ dotnet_style_explicit_tuple_names = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
-dotnet_style_prefer_auto_properties = true:silent
+dotnet_style_prefer_auto_properties = false:silent
 dotnet_style_prefer_compound_assignment = true:suggestion
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
