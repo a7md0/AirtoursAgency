@@ -15,7 +15,7 @@ namespace AirtoursBusinessObjects {
         protected readonly string table;
         protected readonly string pkColumn;
 
-        protected SqlConnection connection; // TODO: Move connection to Database class that implement singleton, and handle opening/closing the connection.
+        protected SqlConnection connection;
 
         protected List<T> list;
         protected DataTable dataTable;
