@@ -116,17 +116,22 @@ namespace AirtoursBusinessObjects {
                 var whereClause = this.whereItemClause(command, item);
 
                 command.CommandText = $"SELECT * FROM [{this.table}] {whereClause};";
-                this.connection.Open();
 
-                using (var reader = command.ExecuteReader()) {
-                    this.setColumnsOrdinals(reader);
+                try {
+                    this.openConnection();
 
-                    if (reader.Read()) {
-                        this.setValues(item, reader);
+                    using (var reader = command.ExecuteReader()) {
+                        this.setColumnsOrdinals(reader);
+
+                        if (reader.Read()) {
+                            this.setValues(item, reader);
+                        }
                     }
-                }
+                } catch (SqlException) {
 
-                this.connection.Close();
+                } finally {
+                    this.closeConnection();
+                }
             }
         }
 
@@ -146,9 +151,9 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(insert.Parameters);
                     command.CommandText = $"INSERT INTO [{this.table}] ({insertFields}) OUTPUT INSERTED.{this.pkColumn} VALUES ({insertValues});";
 
-                    this.connection.Open();
-
                     try {
+                        this.openConnection();
+
                         object inserted_id = command.ExecuteScalar();
 
                         if (inserted_id is null == false && inserted_id is DBNull == false) {
@@ -161,9 +166,9 @@ namespace AirtoursBusinessObjects {
                     } catch (SqlException ex) {
                         item.SetError(ex.Message);
                         Debug.WriteLine(ex, "DataList.Add");
+                    } finally {
+                        this.closeConnection();
                     }
-
-                    this.connection.Close();
                 }
             }
         }
@@ -187,18 +192,18 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(set.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
 
-                    this.connection.Open();
-
                     try {
+                        this.openConnection();
+
                         affectedRows = command.ExecuteNonQuery();
 
                         item.SetError(null);
                     } catch (SqlException ex) {
                         item.SetError(ex.Message);
                         Debug.WriteLine(ex, "DataList.Update");
+                    } finally {
+                        this.closeConnection();
                     }
-
-                    this.connection.Close();
                 }
 
                 return affectedRows > 0;
@@ -217,18 +222,20 @@ namespace AirtoursBusinessObjects {
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
 
-                this.connection.Open();
+
 
                 try {
+                    this.openConnection();
+
                     affectedRows = command.ExecuteNonQuery();
 
                     item.SetError(null);
                 } catch (SqlException ex) {
                     item.SetError(ex.Message);
                     Debug.WriteLine(ex, "DataList.Delete");
+                } finally {
+                    this.closeConnection();
                 }
-
-                this.connection.Close();
 
                 return affectedRows > 0;
             }
@@ -263,16 +270,20 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(sqlParameters);
                 }
 
-                this.connection.Open();
+                try {
+                    this.openConnection();
 
-                using (var reader = command.ExecuteReader()) {
-                    hasRows = reader.HasRows;
+                    using (var reader = command.ExecuteReader()) {
+                        hasRows = reader.HasRows;
 
-                    this.setColumnsOrdinals(reader);
-                    this.generateList(reader);
+                        this.setColumnsOrdinals(reader);
+                        this.generateList(reader);
+                    }
+                } catch (SqlException) {
+
+                } finally {
+                    this.closeConnection();
                 }
-
-                this.connection.Close();
 
                 return hasRows;
             }
@@ -355,15 +366,20 @@ namespace AirtoursBusinessObjects {
         protected void fetchTableSchema() {
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM [{this.table}] WHERE 1 = 0;";
-                this.connection.Open();
 
-                using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
-                    var schemaTable = reader.GetSchemaTable();
+                try {
+                    this.openConnection();
 
-                    this.schema = new TableSchema(schemaTable);
+                    using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
+                        var schemaTable = reader.GetSchemaTable();
+
+                        this.schema = new TableSchema(schemaTable);
+                    }
+                } catch (SqlException) {
+
+                } finally {
+                    this.closeConnection();
                 }
-
-                this.connection.Close();
             }
         }
 
@@ -406,25 +422,28 @@ namespace AirtoursBusinessObjects {
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT DISTINCT[{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
 
-                this.connection.Open();
+                try {
+                    this.openConnection();
 
-                using (var reader = command.ExecuteReader()) {
-                    while (reader.Read()) {
-                        var value = reader.GetValue(0);
+                    using (var reader = command.ExecuteReader()) {
+                        while (reader.Read()) {
+                            var value = reader.GetValue(0);
 
-                        if (value is DBNull) {
-                            continue;
+                            if (value is DBNull) {
+                                continue;
+                            }
+
+                            if (typeof(U) != value.GetType()) {
+                                value = Convert.ChangeType(value, typeof(U));
+                            }
+
+                            values.Add((U) value);
                         }
-
-                        if (typeof(U) != value.GetType()) {
-                            value = Convert.ChangeType(value, typeof(U));
-                        }
-
-                        values.Add((U) value);
                     }
+                } catch (SqlException) {
+                } finally {
+                    this.closeConnection();
                 }
-
-                this.connection.Close();
             }
 
             return values;
@@ -462,6 +481,15 @@ namespace AirtoursBusinessObjects {
 
                 return this.Populate(whereClause);
             }
+        }
+
+        /// <summary>
+        /// Checks if there are any records meet these conditions. (Design Document Requirement #9)
+        /// </summary>
+        /// <param name="where">Where clause instance</param>
+        /// <returns>Whether there is any records matching the provided filters</returns>
+        public bool CheckChildRecords(WhereClause where) {
+            return this.TotalCount(where) > 0;
         }
     }
 
@@ -535,45 +563,37 @@ namespace AirtoursBusinessObjects {
             U value = default(U);
 
             try {
-                this.connection.Open();
+                using (var command = this.connection.CreateCommand()) {
+                    command.CommandText = query;
 
-                try {
-                    using (var command = this.connection.CreateCommand()) {
-                        command.CommandText = query;
-
-                        if (parameters != null) {
-                            command.Parameters.AddRange(parameters);
-                        }
-
-                        object result = command.ExecuteScalar();
-                        if (typeof(U) == result.GetType()) {
-                            value = (U) result;
-                        } else {
-                            value = (U) Convert.ChangeType(result, typeof(U));
-                        }
-
+                    if (parameters != null) {
+                        command.Parameters.AddRange(parameters);
                     }
-                } catch (InvalidCastException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } catch (SqlException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } catch (InvalidOperationException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } catch (System.IO.IOException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } catch (FormatException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } catch (OverflowException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } catch (ArgumentNullException ex) {
-                    Debug.WriteLine(ex, "DataList.scalarQuery");
-                } finally {
-                    this.connection.Close();
+
+                    this.openConnection();
+                    object result = command.ExecuteScalar();
+                    if (typeof(U) == result.GetType()) {
+                        value = (U) result;
+                    } else {
+                        value = (U) Convert.ChangeType(result, typeof(U));
+                    }
                 }
-            } catch (InvalidOperationException ex) {
+            } catch (InvalidCastException ex) {
                 Debug.WriteLine(ex, "DataList.scalarQuery");
             } catch (SqlException ex) {
                 Debug.WriteLine(ex, "DataList.scalarQuery");
+            } catch (InvalidOperationException ex) {
+                Debug.WriteLine(ex, "DataList.scalarQuery");
+            } catch (System.IO.IOException ex) {
+                Debug.WriteLine(ex, "DataList.scalarQuery");
+            } catch (FormatException ex) {
+                Debug.WriteLine(ex, "DataList.scalarQuery");
+            } catch (OverflowException ex) {
+                Debug.WriteLine(ex, "DataList.scalarQuery");
+            } catch (ArgumentNullException ex) {
+                Debug.WriteLine(ex, "DataList.scalarQuery");
+            } finally {
+                this.closeConnection();
             }
 
             return value;
@@ -589,21 +609,26 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(setClause.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause.ToString()} {whereClause.ToString()};";
 
-                    this.connection.Open();
-
                     try {
+                        this.openConnection();
+
                         affectedRows = command.ExecuteNonQuery();
                     } catch (SqlException ex) {
                         Debug.WriteLine(ex, "DataList.UpdateMany");
+                    } finally {
+                        this.closeConnection();
                     }
-
-                    this.connection.Close();
                 }
 
                 return affectedRows;
             }
         }
 
+        /// <summary>
+        /// Delete many records from the databases matching the provided where criteria.
+        /// </summary>
+        /// <param name="whereClause"></param>
+        /// <returns></returns>
         public virtual int Delete(WhereClause whereClause) {
             if (whereClause is null || !whereClause.HasAny) {
                 throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
@@ -614,15 +639,15 @@ namespace AirtoursBusinessObjects {
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause.ToString()};";
 
-                this.connection.Open();
-
                 try {
+                    this.openConnection();
+
                     affectedRows = command.ExecuteNonQuery();
                 } catch (SqlException ex) {
                     Debug.WriteLine(ex, "DataList.DeleteMany");
+                } finally {
+                    this.closeConnection();
                 }
-
-                this.connection.Close();
 
                 return affectedRows;
             }
