@@ -6,3 +6,9 @@
 
 -- 5
 SELECT COALESCE(SUM([Price]), 0) FROM [Reservation] WHERE [CustomerID] = 1 AND [Paid] = 0;
+
+SELECT DISTINCT [Manufacturer] FROM [Aircraft] WHERE [Manufacturer] IS NOT NULL ORDER BY [Manufacturer] ASC;
+--SELECT COUNT(DISTINCT [Manufacturer]), COUNT(DISTINCT (CASE WHEN [Manufacturer] IS NOT NULL THEN [Manufacturer] END)) FROM [Aircraft];
+
+SELECT COUNT(DISTINCT [Manufacturer]) FROM [Aircraft] WHERE [Manufacturer] IS NOT NULL;
+
