@@ -48,14 +48,14 @@
     <Compile Include="Builder\WhereClause.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="CustomerList.cs" />
-    <Compile Include="DataListJoin.cs" />
+    <Compile Include="ModelListJoin.cs" />
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeList.cs" />
     <Compile Include="Flight.cs" />
     <Compile Include="FlightList.cs" />
-    <Compile Include="ItemJoin.cs" />
-    <Compile Include="DataList.cs" />
-    <Compile Include="Item.cs" />
+    <Compile Include="ModelJoin.cs" />
+    <Compile Include="ModelList.cs" />
+    <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

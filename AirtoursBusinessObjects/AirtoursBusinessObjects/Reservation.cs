@@ -4,7 +4,7 @@ namespace AirtoursBusinessObjects {
     using Schema;
 
     [Table("Reservation", "ReservationID")]
-    public class Reservation : Item {
+    public class Reservation : Model {
 
         private int reservationID;
         private int? customerID; // null-able:	YES

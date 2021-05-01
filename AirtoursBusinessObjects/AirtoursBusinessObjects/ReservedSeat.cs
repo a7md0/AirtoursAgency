@@ -4,7 +4,7 @@ namespace AirtoursBusinessObjects {
     using Schema;
 
     [Table("ReservedSeat", "PassengerID", "ScheduledFlightID")]
-    public class ReservedSeat : ItemJoin {
+    public class ReservedSeat : ModelJoin {
 
         private int passengerID;
         private int scheduledFlightID;  // null-able:	NO

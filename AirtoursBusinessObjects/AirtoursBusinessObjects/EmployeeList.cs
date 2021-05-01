@@ -1,5 +1,5 @@
 ﻿namespace AirtoursBusinessObjects {
-    public class EmployeeList : DataList<Employee> {
+    public class EmployeeList : ModelList<Employee> {
         public EmployeeList() : base() { }
     }
 }

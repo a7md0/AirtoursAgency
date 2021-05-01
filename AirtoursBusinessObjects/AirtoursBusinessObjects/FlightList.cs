@@ -1,5 +1,5 @@
 ﻿namespace AirtoursBusinessObjects {
-    public class FlightList : DataList<Flight> {
+    public class FlightList : ModelList<Flight> {
         public FlightList() : base() { }
     }
 }

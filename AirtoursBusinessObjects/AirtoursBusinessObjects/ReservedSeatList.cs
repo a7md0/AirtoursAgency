@@ -1,5 +1,5 @@
 ﻿namespace AirtoursBusinessObjects {
-    public class ReservedSeatList : DataListJoin<ReservedSeat> {
+    public class ReservedSeatList : ModelListJoin<ReservedSeat> {
         public ReservedSeatList() : base() { }
     }
 }

@@ -1,6 +1,6 @@
 ﻿
 namespace AirtoursBusinessObjects {
-    public abstract class Item {
+    public abstract class Model {
         public bool Valid { get; protected internal set; }
         public string ErrorMessage { get; protected internal set; }
 
@@ -9,7 +9,7 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         public bool Inserted { get; protected internal set; } = false;
 
-        public Item() { }
+        public Model() { }
 
         public abstract dynamic GetId();
         public abstract void SetId(dynamic id);

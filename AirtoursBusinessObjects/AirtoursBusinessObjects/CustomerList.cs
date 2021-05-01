@@ -1,5 +1,5 @@
 ﻿namespace AirtoursBusinessObjects {
-    public class CustomerList : DataList<Customer> {
+    public class CustomerList : ModelList<Customer> {
         public CustomerList() : base() { }
     }
 }

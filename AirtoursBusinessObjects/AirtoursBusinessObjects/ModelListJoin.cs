@@ -6,20 +6,20 @@ namespace AirtoursBusinessObjects {
     using Builder;
     using Schema;
 
-    public abstract class DataListJoin<T> : DataList<T> where T : ItemJoin, new() {
+    public abstract class ModelListJoin<T> : ModelList<T> where T : ModelJoin, new() {
         protected readonly string pkJoinColumn;
 
-        public DataListJoin() : base() {
+        public ModelListJoin() : base() {
             var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
 
             this.pkJoinColumn = tableAttribute.PkJoinColumn;
             base.nonUpdateableColumns[1] = this.pkJoinColumn;
         }
 
-        protected override string whereItemClause(SqlCommand command, T item) {
+        protected override string whereModelClause(SqlCommand command, T item) {
             command.Parameters.AddWithValue(this.pkJoinColumn, item.GetJoinId());
 
-            return $"{base.whereItemClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
+            return $"{base.whereModelClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
         }
     }
 }

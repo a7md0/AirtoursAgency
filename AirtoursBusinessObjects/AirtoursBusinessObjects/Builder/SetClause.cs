@@ -25,7 +25,7 @@ namespace AirtoursBusinessObjects.Builder {
 
         public SqlParameter[] Parameters => this.parameters.ToArray();
 
-        public void Add(Item item, PropertyInfo[] itemProperties, string[] skipColumns = null) {
+        public void Add(Model item, PropertyInfo[] itemProperties, string[] skipColumns = null) {
             foreach (var property in itemProperties) {
                 var name = property.Name; // Get field name
                 var value = property.GetValue(item); // Get value

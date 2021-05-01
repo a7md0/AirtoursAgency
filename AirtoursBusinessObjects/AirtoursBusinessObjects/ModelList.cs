@@ -11,7 +11,7 @@ namespace AirtoursBusinessObjects {
     using Builder;
     using Schema;
 
-    public abstract partial class DataList<T> where T : Item, new() {
+    public abstract partial class ModelList<T> where T : Model, new() {
         protected readonly string table;
         protected readonly string pkColumn;
 
@@ -21,12 +21,12 @@ namespace AirtoursBusinessObjects {
         protected DataTable dataTable;
         protected TableSchema schema;
 
-        protected PropertyInfo[] itemProperties;
+        protected PropertyInfo[] modelProperties;
         protected Dictionary<string, int> columnsOrdinals;
 
         protected string[] nonUpdateableColumns = new string[2];
 
-        public DataList() {
+        public ModelList() {
             var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
 
             this.table = tableAttribute.Name;
@@ -37,7 +37,7 @@ namespace AirtoursBusinessObjects {
             this.list = new List<T>();
             this.dataTable = new DataTable(table);
 
-            this.itemProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            this.modelProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             this.columnsOrdinals = new Dictionary<string, int>();
 
             this.nonUpdateableColumns[0] = this.pkColumn;
@@ -72,9 +72,9 @@ namespace AirtoursBusinessObjects {
         public string PkColumn => this.pkColumn;
 
         /// <summary>
-        /// Create new item which type is associated with this list.
+        /// Create new model which type is associated with this list.
         /// </summary>
-        public T NewItem => new T();
+        public T NewModel => new T();
 
         /// <summary>
         /// Create new WhereClause passing the current schema.
@@ -94,26 +94,26 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class DataList<T> {
+    partial class ModelList<T> {
         /// <summary>
-        /// Construct the where clause for given item by the primary key
+        /// Construct the where clause for given model by the primary key
         /// </summary>
         /// <param name="command">Current SqlCommand instance</param>
-        /// <param name="item">Item to be used for the value</param>
+        /// <param name="model">Model to be used for the value</param>
         /// <returns>Where clause string for the query</returns>
-        protected virtual string whereItemClause(SqlCommand command, T item) {
-            command.Parameters.AddWithValue(this.pkColumn, item.GetId());
+        protected virtual string whereModelClause(SqlCommand command, T model) {
+            command.Parameters.AddWithValue(this.pkColumn, model.GetId());
 
             return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
         }
 
         /// <summary>
-        /// Re-fill the supplied item details from the database.
+        /// Re-fill the supplied model details from the database.
         /// </summary>
-        /// <param name="item">Item with valid primary key</param>
-        public virtual void Fill(T item) {
+        /// <param name="model">Model with valid primary key</param>
+        public virtual void Fill(T model) {
             using (var command = this.connection.CreateCommand()) {
-                var whereClause = this.whereItemClause(command, item);
+                var whereClause = this.whereModelClause(command, model);
 
                 command.CommandText = $"SELECT * FROM [{this.table}] {whereClause};";
 
@@ -124,7 +124,7 @@ namespace AirtoursBusinessObjects {
                         this.setColumnsOrdinals(reader);
 
                         if (reader.Read()) {
-                            this.setValues(item, reader);
+                            this.setValues(model, reader);
                         }
                     }
                 } catch (SqlException) {
@@ -136,13 +136,13 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Add new item to the database.
+        /// Add new model to the database.
         /// </summary>
-        /// <param name="item">Item instance</param>
-        public virtual void Add(T item) {
+        /// <param name="model">Model instance</param>
+        public virtual void Add(T model) {
             using (var command = this.connection.CreateCommand())
             using (var insert = new InsertClause(this.schema)) {
-                insert.Add(item, itemProperties);
+                insert.Add(model, modelProperties);
 
                 if (insert.HasAny) {
                     string insertFields = insert.InsertFields;
@@ -157,15 +157,15 @@ namespace AirtoursBusinessObjects {
                         object inserted_id = command.ExecuteScalar();
 
                         if (inserted_id is null == false && inserted_id is DBNull == false) {
-                            item.SetId(inserted_id);
+                            model.SetId(inserted_id);
                         }
 
-                        item.Inserted = true;
+                        model.Inserted = true;
 
-                        item.SetError(null);
+                        model.SetError(null);
                     } catch (SqlException ex) {
-                        item.SetError(ex.Message);
-                        Debug.WriteLine(ex, "DataList.Add");
+                        model.SetError(ex.Message);
+                        Debug.WriteLine(ex, "ModelList.Add");
                     } finally {
                         this.closeConnection();
                     }
@@ -174,20 +174,20 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Update an existing item in the database.
+        /// Update an existing model in the database.
         /// </summary>
-        /// <param name="item">Item instance, with valid primary key. Data will be pulled from this item and updated into the database, where the primary key is equal to the saved one</param>
+        /// <param name="model">Model instance, with valid primary key. Data will be pulled from this model and updated into the database, where the primary key is equal to the saved one</param>
         /// <returns>Whether the row was updated or not</returns>
-        public virtual bool Update(T item) {
+        public virtual bool Update(T model) {
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
                 int affectedRows = 0;
 
-                set.Add(item, itemProperties, this.nonUpdateableColumns);
+                set.Add(model, modelProperties, this.nonUpdateableColumns);
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
-                    var whereClause = this.whereItemClause(command, item);
+                    var whereClause = this.whereModelClause(command, model);
 
                     command.Parameters.AddRange(set.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
@@ -197,10 +197,10 @@ namespace AirtoursBusinessObjects {
 
                         affectedRows = command.ExecuteNonQuery();
 
-                        item.SetError(null);
+                        model.SetError(null);
                     } catch (SqlException ex) {
-                        item.SetError(ex.Message);
-                        Debug.WriteLine(ex, "DataList.Update");
+                        model.SetError(ex.Message);
+                        Debug.WriteLine(ex, "ModelList.Update");
                     } finally {
                         this.closeConnection();
                     }
@@ -211,14 +211,14 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Delete an existing item in the database.
+        /// Delete an existing model in the database.
         /// </summary>
-        /// <param name="item">Item instance, with valid primary key. The equivalent row will be deleted permanently from the database.</param>
+        /// <param name="model">Model instance, with valid primary key. The equivalent row will be deleted permanently from the database.</param>
         /// <returns>Whether the row was deleted or not</returns>
-        public virtual bool Delete(T item) {
+        public virtual bool Delete(T model) {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
-                var whereClause = this.whereItemClause(command, item);
+                var whereClause = this.whereModelClause(command, model);
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
 
@@ -229,10 +229,10 @@ namespace AirtoursBusinessObjects {
 
                     affectedRows = command.ExecuteNonQuery();
 
-                    item.SetError(null);
+                    model.SetError(null);
                 } catch (SqlException ex) {
-                    item.SetError(ex.Message);
-                    Debug.WriteLine(ex, "DataList.Delete");
+                    model.SetError(ex.Message);
+                    Debug.WriteLine(ex, "ModelList.Delete");
                 } finally {
                     this.closeConnection();
                 }
@@ -242,7 +242,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class DataList<T> {
+    partial class ModelList<T> {
         /// <summary>
         /// Populate the list (SELECT *)
         /// </summary>
@@ -290,7 +290,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class DataList<T> {
+    partial class ModelList<T> {
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
@@ -299,22 +299,22 @@ namespace AirtoursBusinessObjects {
             this.dataTable.Rows.Clear();
 
             while (reader.Read()) {
-                T item = new T();
+                T model = new T();
 
-                this.setValues(item, reader);
-                item.Inserted = true;
+                this.setValues(model, reader);
+                model.Inserted = true;
 
-                this.list.Add(item);
-                this.addDataTableRow(item);
+                this.list.Add(model);
+                this.addDataTableRow(model);
             }
         }
 
         /// <summary>
-        /// Set values of given item from the current reader.
+        /// Set values of given model from the current reader.
         /// </summary>
-        /// <param name="item">Item to set properties value from the current reader.</param>
-        protected void setValues(T item, SqlDataReader reader) {
-            foreach (var property in itemProperties) {
+        /// <param name="model">Model to set properties value from the current reader.</param>
+        protected void setValues(T model, SqlDataReader reader) {
+            foreach (var property in modelProperties) {
                 try {
                     int ordinal = columnsOrdinals[property.Name]; // Find value by matching property name
                     object value = reader.GetValue(ordinal);
@@ -323,19 +323,19 @@ namespace AirtoursBusinessObjects {
                         value = null; // Set value to null if matched with db type NULL
                     }
 
-                    property.SetValue(item, value);
+                    property.SetValue(model, value);
                 } catch (KeyNotFoundException ex) { // Dictionary throws if key not found
-                    Debug.WriteLine(ex, "DataList.setValues");
+                    Debug.WriteLine(ex, "ModelList.setValues");
                 } catch (InvalidOperationException ex) {
-                    Debug.WriteLine(ex, "DataList.setValues");
+                    Debug.WriteLine(ex, "ModelList.setValues");
                 } catch (ArgumentException ex) { // PropertyInfo.SetValue throws
-                    Debug.WriteLine(ex, "DataList.setValues");
+                    Debug.WriteLine(ex, "ModelList.setValues");
                 } catch (TargetException ex) {
-                    Debug.WriteLine(ex, "DataList.setValues");
+                    Debug.WriteLine(ex, "ModelList.setValues");
                 } catch (MethodAccessException ex) {
-                    Debug.WriteLine(ex, "DataList.setValues");
+                    Debug.WriteLine(ex, "ModelList.setValues");
                 } catch (TargetInvocationException ex) {
-                    Debug.WriteLine(ex, "DataList.setValues");
+                    Debug.WriteLine(ex, "ModelList.setValues");
                 }
             }
         }
@@ -347,18 +347,18 @@ namespace AirtoursBusinessObjects {
         protected void setColumnsOrdinals(SqlDataReader reader) {
             this.columnsOrdinals.Clear();
 
-            foreach (var property in this.itemProperties) {
+            foreach (var property in this.modelProperties) {
                 try {
                     string propertyName = property.Name;
                     int columnOrdinal = reader.GetOrdinal(propertyName); // throws IndexOutOfRangeException
 
                     this.columnsOrdinals.Add(propertyName, columnOrdinal);
                 } catch (IndexOutOfRangeException ex) { // No column with the specified name was found.
-                    Debug.WriteLine(ex, "DataList.setColumnsOrdinals");
+                    Debug.WriteLine(ex, "ModelList.setColumnsOrdinals");
                 } catch (ArgumentNullException ex) {
-                    Debug.WriteLine(ex, "DataList.setColumnsOrdinals");
+                    Debug.WriteLine(ex, "ModelList.setColumnsOrdinals");
                 } catch (ArgumentException ex) {
-                    Debug.WriteLine(ex, "DataList.setColumnsOrdinals");
+                    Debug.WriteLine(ex, "ModelList.setColumnsOrdinals");
                 }
             }
         }
@@ -390,7 +390,7 @@ namespace AirtoursBusinessObjects {
 
             DataColumn column;
 
-            foreach (var property in this.itemProperties) {
+            foreach (var property in this.modelProperties) {
                 column = new DataColumn();
 
                 column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
@@ -400,18 +400,18 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        protected void addDataTableRow(T item) {
+        protected void addDataTableRow(T model) {
             DataRow row = this.dataTable.NewRow();
 
-            foreach (var property in this.itemProperties) {
-                row[property.Name] = property.GetValue(item) ?? DBNull.Value; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
+            foreach (var property in this.modelProperties) {
+                row[property.Name] = property.GetValue(model) ?? DBNull.Value; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
             }
 
             this.dataTable.Rows.Add(row);
         }
     }
 
-    partial class DataList<T> {
+    partial class ModelList<T> {
         public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, ascending);
         public List<U> UniqueValues<U>(string column, bool ascending = true) {
             List<U> values = new List<U>();
@@ -450,17 +450,17 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Filter list based on item being the foreign key with additional filtering. (Design Document Requirement #8)
+        /// Filter list based on model being the foreign key with additional filtering. (Design Document Requirement #8)
         /// </summary>
-        /// <param name="item">Item to be considered the foreign key</param>
+        /// <param name="model">Model to be considered the foreign key</param>
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
-        public bool FilterPlus(Item item, WhereClause where = null) {
+        public bool FilterPlus(Model model, WhereClause where = null) {
             using (var whereClause = (WhereClause) where?.Clone() ?? new WhereClause()) {
-                var tableAttribute = item.GetType().GetCustomAttribute<TableAttribute>();
+                var tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
 
                 string fkColumn = tableAttribute.PkColumn;
-                object fkValue = item.GetId();
+                object fkValue = model.GetId();
 
                 whereClause.AndWhere(fkColumn, fkValue);
 
@@ -469,7 +469,7 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Filter list based on item being the foreign key with additional filtering. (Design Document Requirement #8)
+        /// Filter list based on model being the foreign key with additional filtering. (Design Document Requirement #8)
         /// </summary>
         /// <param name="fkColumn">Foreign key column name</param>
         /// <param name="fkValue">Foreign key value</param>
@@ -493,7 +493,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class DataList<T> {
+    partial class ModelList<T> {
         protected enum AggregateFunctions {
             AVG, COUNT, MAX, MIN, SUM
         }
@@ -538,7 +538,7 @@ namespace AirtoursBusinessObjects {
             try {
                 value = this.scalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
             } catch (InvalidCastException ex) {
-                Debug.WriteLine(ex, "DataList.aggregateValue");
+                Debug.WriteLine(ex, "ModelList.aggregateValue");
             }
 
             return value;
@@ -579,19 +579,19 @@ namespace AirtoursBusinessObjects {
                     }
                 }
             } catch (InvalidCastException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } catch (SqlException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } catch (InvalidOperationException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } catch (System.IO.IOException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } catch (FormatException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } catch (OverflowException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } catch (ArgumentNullException ex) {
-                Debug.WriteLine(ex, "DataList.scalarQuery");
+                Debug.WriteLine(ex, "ModelList.scalarQuery");
             } finally {
                 this.closeConnection();
             }
@@ -600,7 +600,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class DataList<T> {
+    partial class ModelList<T> {
         public virtual int UpdateMany(SetClause setClause, WhereClause whereClause) {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
@@ -614,7 +614,7 @@ namespace AirtoursBusinessObjects {
 
                         affectedRows = command.ExecuteNonQuery();
                     } catch (SqlException ex) {
-                        Debug.WriteLine(ex, "DataList.UpdateMany");
+                        Debug.WriteLine(ex, "ModelList.UpdateMany");
                     } finally {
                         this.closeConnection();
                     }
@@ -644,7 +644,7 @@ namespace AirtoursBusinessObjects {
 
                     affectedRows = command.ExecuteNonQuery();
                 } catch (SqlException ex) {
-                    Debug.WriteLine(ex, "DataList.DeleteMany");
+                    Debug.WriteLine(ex, "ModelList.DeleteMany");
                 } finally {
                     this.closeConnection();
                 }

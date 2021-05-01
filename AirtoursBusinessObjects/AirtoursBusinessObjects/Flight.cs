@@ -4,7 +4,7 @@ namespace AirtoursBusinessObjects {
     using Schema;
 
     [Table("Flight", "FlightID")]
-    public class Flight : Item {
+    public class Flight : Model {
 
         private int flightID;
         private string flightNumber;  // null-able:	YES
