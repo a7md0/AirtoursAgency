@@ -83,12 +83,22 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class DataList<T> {
+        /// <summary>
+        /// Construct the where clause for given item by the primary key
+        /// </summary>
+        /// <param name="command">Current SqlCommand instance</param>
+        /// <param name="item">Item to be used for the value</param>
+        /// <returns>Where clause string for the query</returns>
         protected virtual string whereItemClause(SqlCommand command, T item) {
             command.Parameters.AddWithValue(this.pkColumn, item.GetId());
 
             return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
         }
 
+        /// <summary>
+        /// Re-fill the supplied item details from the database.
+        /// </summary>
+        /// <param name="item">Item with valid primary key</param>
         public virtual void Fill(T item) {
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereItemClause(command, item);
@@ -108,6 +118,10 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Add new item to the database.
+        /// </summary>
+        /// <param name="item">Item instance</param>
         public virtual void Add(T item) {
             using (var command = this.connection.CreateCommand())
             using (var insert = new InsertClause(this.schema)) {
@@ -142,6 +156,11 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Update an existing item in the database.
+        /// </summary>
+        /// <param name="item">Item instance, with valid primary key. Data will be pulled from this item and updated into the database, where the primary key is equal to the saved one</param>
+        /// <returns></returns>
         public virtual bool Update(T item) {
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
@@ -174,6 +193,11 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Delete an existing item in the database.
+        /// </summary>
+        /// <param name="item">Item instance, with valid primary key. The equivalent row will be deleted permanently from the database.</param>
+        /// <returns>Whether the row was deleted or not</returns>
         public virtual bool Delete(T item) {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
