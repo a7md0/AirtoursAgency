@@ -160,7 +160,7 @@ namespace AirtoursBusinessObjects {
         /// Update an existing item in the database.
         /// </summary>
         /// <param name="item">Item instance, with valid primary key. Data will be pulled from this item and updated into the database, where the primary key is equal to the saved one</param>
-        /// <returns></returns>
+        /// <returns>Whether the row was updated or not</returns>
         public virtual bool Update(T item) {
             using (var command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema)) {
