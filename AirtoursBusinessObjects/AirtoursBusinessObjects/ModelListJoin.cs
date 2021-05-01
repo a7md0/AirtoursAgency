@@ -1,9 +1,7 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Data.SqlClient;
 
 namespace AirtoursBusinessObjects {
-    using Builder;
     using Schema;
 
     public abstract class ModelListJoin<T> : ModelList<T> where T : ModelJoin, new() {

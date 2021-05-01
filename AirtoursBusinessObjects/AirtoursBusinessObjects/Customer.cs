@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AirtoursBusinessObjects {
+﻿namespace AirtoursBusinessObjects {
     using Schema;
 
     [Table("Customer", "CustomerID")]
