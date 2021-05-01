@@ -592,7 +592,11 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public virtual int DeleteMany(WhereClause whereClause) {
+        public virtual int Delete(WhereClause whereClause) {
+            if (whereClause is null || !whereClause.HasAny) {
+                throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
+            }
+
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
