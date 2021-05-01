@@ -5,15 +5,23 @@ using System.Linq;
 using System.Data.SqlClient;
 
 namespace AirtoursBusinessObjects.Builder {
+    using Schema;
+
     public class WhereClause : IDisposable, ICloneable {
         private List<Predicate> predicates;
         private List<SqlParameter> parameters;
+
+        private TableSchema schema = null;
 
         public WhereClause() {
             this.predicates = new List<Predicate>();
             this.parameters = new List<SqlParameter>();
 
             this.predicates.Add(new AndPredicate());
+        }
+
+        public WhereClause(TableSchema schema) : this() {
+            this.schema = schema;
         }
 
         public SqlParameter[] Parameters => this.parameters.ToArray();
