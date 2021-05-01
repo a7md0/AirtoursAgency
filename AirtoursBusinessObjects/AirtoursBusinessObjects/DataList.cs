@@ -80,6 +80,18 @@ namespace AirtoursBusinessObjects {
         /// Create new WhereClause passing the current schema.
         /// </summary>
         public WhereClause WhereClause => new WhereClause(this.schema);
+
+        protected void openConnection() {
+            if (this.connection.State == ConnectionState.Closed) {
+                this.connection.Open();
+            }
+        }
+
+        protected void closeConnection() {
+            if (this.connection.State != ConnectionState.Closed) {
+                this.connection.Close();
+            }
+        }
     }
 
     partial class DataList<T> {
