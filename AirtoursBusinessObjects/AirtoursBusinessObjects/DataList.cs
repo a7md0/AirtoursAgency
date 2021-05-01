@@ -380,6 +380,40 @@ namespace AirtoursBusinessObjects {
 
             return values;
         }
+
+        /// <summary>
+        /// Filter list based on item being the foreign key with additional filtering. (Design Document Requirement #8)
+        /// </summary>
+        /// <param name="item">Item to be considered the foreign key</param>
+        /// <param name="where">Optional where clause for additional filters</param>
+        /// <returns>Whether there were any matching results</returns>
+        public bool FilterPlus(Item item, WhereClause where = null) {
+            using (var whereClause = (WhereClause) where?.Clone() ?? new WhereClause()) {
+                var tableAttribute = item.GetType().GetCustomAttribute<TableAttribute>();
+
+                string fkColumn = tableAttribute.PkColumn;
+                object fkValue = item.GetId();
+
+                whereClause.AndWhere(fkColumn, fkValue);
+
+                return this.Populate(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Filter list based on item being the foreign key with additional filtering. (Design Document Requirement #8)
+        /// </summary>
+        /// <param name="fkColumn">Foreign key column name</param>
+        /// <param name="fkValue">Foreign key value</param>
+        /// <param name="where">Optional where clause for additional filters</param>
+        /// <returns>Whether there were any matching results</returns>
+        public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
+            using (var whereClause = (WhereClause) where?.Clone() ?? new WhereClause()) {
+                whereClause.AndWhere(fkColumn, fkValue);
+
+                return this.Populate(whereClause);
+            }
+        }
     }
 
     partial class DataList<T> {
