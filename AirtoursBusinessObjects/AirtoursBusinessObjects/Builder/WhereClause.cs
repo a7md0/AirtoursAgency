@@ -30,6 +30,10 @@ namespace AirtoursBusinessObjects.Builder {
         #region Operators
         public WhereClause AndWhere(string columnName, dynamic value) => this.AndWhere(columnName, WhereOpreators.EqualTo, value);
         public WhereClause AndWhere(string columnName, WhereOpreators @operator, dynamic value) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             var last = predicates.Last();
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
 
@@ -41,12 +45,20 @@ namespace AirtoursBusinessObjects.Builder {
 
         public WhereClause OrWhere(string columnName, dynamic value) => this.OrWhere(columnName, WhereOpreators.EqualTo, value);
         public WhereClause OrWhere(string columnName, WhereOpreators @operator, dynamic value) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             predicates.Add(new OrPredicate());
 
             return this.AndWhere(columnName, @operator, value);
         }
 
         public WhereClause AndWhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             var last = predicates.Last();
 
             string prefix = not == true ? "NOT " : "";
@@ -61,12 +73,20 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause OrWhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool not = false) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             predicates.Add(new OrPredicate());
 
             return this.AndWhereBetween(columnName, minValue, maxValue, not);
         }
 
         public WhereClause AndWhereIs(string columnName, bool value, bool not = false) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             var last = predicates.Last();
 
             string prefix = not == true ? "NOT " : "";
@@ -79,12 +99,20 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause OrWhereIs(string columnName, bool value, bool not = false) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             predicates.Add(new OrPredicate());
 
             return this.AndWhereIs(columnName, value, not);
         }
 
         public WhereClause AndWhereIsNull(string columnName, bool not = false) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             var last = predicates.Last();
 
             string prefix = not == true ? "NOT " : "";
@@ -95,6 +123,10 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause OrWhereIsNull(string columnName, bool not = false) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
             predicates.Add(new OrPredicate());
 
             return this.AndWhereIsNull(columnName, not);
