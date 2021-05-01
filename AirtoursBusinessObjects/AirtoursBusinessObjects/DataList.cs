@@ -67,6 +67,11 @@ namespace AirtoursBusinessObjects {
         public string PkColumn => this.pkColumn;
 
         public T NewItem => new T();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public WhereClause WhereClause => new WhereClause(this.schema);
     }
 
     partial class DataList<T> {
