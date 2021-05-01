@@ -57,19 +57,27 @@ namespace AirtoursBusinessObjects {
         public List<T> List => this.list;
 
         /// <summary>
-        /// 
+        /// DataTable containing the current rows.
         /// </summary>
         public DataTable DataTable => this.dataTable;
+
+        /// <summary>
+        /// The table schema specification.
+        /// </summary>
+        public TableSchema TableSchema => this.schema;
 
         /// <summary>
         /// Id column of this data list table.
         /// </summary>
         public string PkColumn => this.pkColumn;
 
+        /// <summary>
+        /// Create new item which type is associated with this list.
+        /// </summary>
         public T NewItem => new T();
 
         /// <summary>
-        /// 
+        /// Create new WhereClause passing the current schema.
         /// </summary>
         public WhereClause WhereClause => new WhereClause(this.schema);
     }
