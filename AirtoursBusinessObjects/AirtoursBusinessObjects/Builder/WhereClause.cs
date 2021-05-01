@@ -25,6 +25,7 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public SqlParameter[] Parameters => this.parameters.ToArray();
+        public bool HasAny => this.parameters.Count > 0;
 
         #region Operators
         public WhereClause AndWhere(string columnName, dynamic value) => this.AndWhere(columnName, WhereOpreators.EqualTo, value);
