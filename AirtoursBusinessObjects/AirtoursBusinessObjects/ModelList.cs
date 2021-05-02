@@ -644,7 +644,21 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class ModelList<T> {
-        public virtual int UpdateMany(SetClause setClause, WhereClause whereClause) {
+        /// <summary>
+        /// Update many records from the database.
+        /// </summary>
+        /// <param name="set">Set clause to update all matching records</param>
+        /// <param name="where">Where clause to filter which records will be updated</param>
+        /// <returns></returns>
+        public virtual int Update(SetClause set, WhereClause where) {
+            if (set is null || !set.HasAny) {
+                throw new ArgumentNullException("SetClause cannot be null or empty. Dangerous operation.");
+            }
+
+            if (where is null || !where.HasAny) {
+                throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
+            }
+
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
