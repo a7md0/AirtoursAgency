@@ -512,7 +512,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Where clause filters</param>
         /// <param name="joinTable">Table name to join with</param>
         /// <param name="joinColumn">Join column between two tables</param>
-        /// <returns></returns>
+        /// <returns>Whether there were any matching results</returns>
         public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
