@@ -326,9 +326,9 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Populate 
+        /// Populate the current list based on provided filters
         /// </summary>
-        /// <param name="whereClause">Where clause filters</param>
+        /// <param name="whereClause">Where clause filters (Optional)</param>
         /// <returns></returns>
         public bool Populate(WhereClause whereClause) {
             using (var command = this.connection.CreateCommand()) {
