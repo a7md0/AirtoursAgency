@@ -274,7 +274,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(Model model, WhereClause where = null) {
-            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
+            using (var whereClause = where?.Clone() ?? this.WhereClause) {
                 var tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
 
                 string fkColumn = tableAttribute.PkColumn;
@@ -294,7 +294,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
-            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
+            using (var whereClause = where?.Clone() ?? this.WhereClause) {
                 whereClause.AndWhere(fkColumn, fkValue);
 
                 return this.Populate(whereClause);
