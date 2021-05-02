@@ -504,6 +504,23 @@ namespace AirtoursBusinessObjects {
         public bool CheckChildRecords(WhereClause where) {
             return this.TotalCount(where) > 0;
         }
+
+        public bool FilterJoin(WhereClause where, string joinTable, string fkColumn) {
+            using (var command = this.connection.CreateCommand()) {
+                SqlParameter[] sqlParameters = where?.Parameters;
+                string suffix = $" {where?.ToString()}" ?? "";
+
+                command.CommandText = $@"SELECT T.* FROM [{this.table}] T
+                                         INNER JOIN [{joinTable}] J
+                                            ON T.[{fkColumn}] = J.[{fkColumn}]
+                                         {suffix};";
+                if (sqlParameters is null == false) {
+                    command.Parameters.AddRange(sqlParameters);
+                }
+
+                return this.populateWithQuery(command);
+            }
+        }
     }
 
     partial class ModelList<T> {
