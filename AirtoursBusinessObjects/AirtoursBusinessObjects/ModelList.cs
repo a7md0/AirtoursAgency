@@ -662,9 +662,14 @@ namespace AirtoursBusinessObjects {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
-                if (setClause.HasAny) {
-                    command.Parameters.AddRange(setClause.Parameters);
-                    command.CommandText = $"UPDATE [{this.table}] {setClause.ToString()} {whereClause.ToString()};";
+                if (set.HasAny) {
+                    string setClause = set.ToString();
+                    command.Parameters.AddRange(set.Parameters);
+
+                    string whereClause = where.ToString();
+                    command.Parameters.AddRange(where.Parameters);
+
+                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
 
                     try {
                         this.openConnection();
