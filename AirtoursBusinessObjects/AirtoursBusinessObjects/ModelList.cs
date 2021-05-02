@@ -311,12 +311,13 @@ namespace AirtoursBusinessObjects {
         public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
-                string suffix = $" {where?.ToString()}" ?? "";
+                string suffix = $" {where?.ToString("T")}" ?? "";
 
                 command.CommandText = $@"SELECT T.* FROM [{this.table}] T
                                          INNER JOIN [{joinTable}] J
                                             ON T.[{joinColumn}] = J.[{joinColumn}]
                                          {suffix};";
+                Console.WriteLine(command.CommandText);
                 if (sqlParameters is null == false) {
                     command.Parameters.AddRange(sqlParameters);
                 }
