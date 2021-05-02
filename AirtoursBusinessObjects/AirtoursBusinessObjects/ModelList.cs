@@ -260,7 +260,7 @@ namespace AirtoursBusinessObjects {
         }
 
         public bool Populate(string field, object value) {
-            using (var whereClause = new WhereClause()) {
+            using (var whereClause = this.WhereClause) {
                 whereClause.AndWhere(field, value);
 
                 return this.Populate(whereClause);
@@ -429,7 +429,7 @@ namespace AirtoursBusinessObjects {
         public List<U> UniqueValues<U>(string column, bool ascending = true) {
             List<U> values = new List<U>();
 
-            var whereClause = new WhereClause().AndWhereIsNull(column, true);
+            var whereClause = this.WhereClause.AndWhereIsNull(column, true);
             var orderBy = ascending ? "ASC" : "DESC";
 
             using (var command = this.connection.CreateCommand()) {
@@ -469,7 +469,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(Model model, WhereClause where = null) {
-            using (var whereClause = (WhereClause) where?.Clone() ?? new WhereClause()) {
+            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
                 var tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
 
                 string fkColumn = tableAttribute.PkColumn;
@@ -489,7 +489,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
-            using (var whereClause = (WhereClause) where?.Clone() ?? new WhereClause()) {
+            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
                 whereClause.AndWhere(fkColumn, fkValue);
 
                 return this.Populate(whereClause);
