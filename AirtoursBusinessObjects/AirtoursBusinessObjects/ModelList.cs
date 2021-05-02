@@ -317,7 +317,6 @@ namespace AirtoursBusinessObjects {
                                          INNER JOIN [{joinTable}] J
                                             ON T.[{joinColumn}] = J.[{joinColumn}]
                                          {suffix};";
-                Console.WriteLine(command.CommandText);
                 if (sqlParameters is null == false) {
                     command.Parameters.AddRange(sqlParameters);
                 }
