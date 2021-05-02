@@ -649,7 +649,7 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         /// <param name="set">Set clause to update all matching records</param>
         /// <param name="where">Where clause to filter which records will be updated</param>
-        /// <returns></returns>
+        /// <returns>Number of affected rows</returns>
         public virtual int Update(SetClause set, WhereClause where) {
             if (set is null || !set.HasAny) {
                 throw new ArgumentNullException("SetClause cannot be null or empty. Dangerous operation.");
