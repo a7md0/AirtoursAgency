@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 namespace AirtoursBusinessObjects.Builder {
     using Schema;
 
-    public class WhereClause : IDisposable, ICloneable {
+    public class WhereClause : IDisposable {
         private List<Predicate> predicates;
         private List<SqlParameter> parameters;
 
@@ -199,13 +199,13 @@ namespace AirtoursBusinessObjects.Builder {
             return clause;
         }
 
-        #region ICloneable Support
+        #region Clone-able Support
         protected WhereClause(WhereClause another) {
             this.predicates = new List<Predicate>(another.predicates);
             this.parameters = new List<SqlParameter>(another.parameters);
         }
 
-        public object Clone() => new WhereClause(this);
+        public WhereClause Clone() => new WhereClause(this);
         #endregion
 
         #region IDisposable Support
@@ -245,7 +245,7 @@ namespace AirtoursBusinessObjects.Builder {
         #endregion
     }
 
-    abstract class Predicate : IDisposable, ICloneable {
+    abstract class Predicate : IDisposable {
         protected List<string> predicates;
 
         public Predicate() {
@@ -254,15 +254,12 @@ namespace AirtoursBusinessObjects.Builder {
 
         public List<string> Predicates => this.predicates;
 
-        #region ICloneable Support
+        #region Clone-able Support
         protected Predicate(Predicate another) {
             this.predicates = new List<string>(another.predicates);
-            /*foreach (var predicate in another.predicates) {
-                this.predicates.Add((string) predicate.Clone());
-            }*/
         }
 
-        public abstract object Clone();
+        public abstract Predicate Clone();
         #endregion
 
         #region IDisposable Support
@@ -302,20 +299,20 @@ namespace AirtoursBusinessObjects.Builder {
     class AndPredicate : Predicate {
         public AndPredicate() : base() { }
 
-        #region ICloneable Support
+        #region Clone-able Support
         protected AndPredicate(AndPredicate another) : base(another) { }
 
-        public override object Clone() => new AndPredicate(this);
+        public override Predicate Clone() => new AndPredicate(this);
         #endregion
     }
 
     class OrPredicate : Predicate {
         public OrPredicate() : base() { }
 
-        #region ICloneable Support
+        #region Clone-able Support
         protected OrPredicate(OrPredicate another) : base(another) { }
 
-        public override object Clone() => new OrPredicate(this);
+        public override Predicate Clone() => new OrPredicate(this);
         #endregion
     }
 
