@@ -13,7 +13,7 @@ namespace AirtoursBusinessObjects.Builder {
 
         private TableSchema schema = null;
 
-        public WhereClause() {
+        private WhereClause() {
             this.predicates = new List<Predicate>();
             this.parameters = new List<SqlParameter>();
 
