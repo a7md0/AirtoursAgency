@@ -308,17 +308,33 @@ namespace AirtoursBusinessObjects {
         /// <param name="joinTable">Table name to join with</param>
         /// <param name="joinColumn">Join column between two tables</param>
         /// <returns>Whether there were any matching results</returns>
-        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) {
+        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) => this.FilterJoin(where, null, joinTable, joinColumn);
+
+        /// <summary>
+        /// Filter the current list based on filters and being joined to another table.
+        /// </summary>
+        /// <param name="where">Where clause filters</param>
+        /// <param name="on">On clause filters</param>
+        /// <param name="joinTable">Table name to join with</param>
+        /// <param name="joinColumn">Join column between two tables</param>
+        /// <returns>Whether there were any matching results</returns>
+        /// <returns></returns>
+        public bool FilterJoin(WhereClause where, WhereClause on, string joinTable, string joinColumn) {
             using (var command = this.connection.CreateCommand()) {
-                SqlParameter[] sqlParameters = where?.Parameters;
-                string suffix = $" {where?.ToString("T")}" ?? "";
+                string whereClause = $" {where?.ToString("T")}" ?? "";
+                string onClause = $" {on?.ToString("J", "AND")}" ?? "";
 
                 command.CommandText = $@"SELECT T.* FROM [{this.table}] T
                                          INNER JOIN [{joinTable}] J
-                                            ON T.[{joinColumn}] = J.[{joinColumn}]
-                                         {suffix};";
-                if (sqlParameters is null == false) {
-                    command.Parameters.AddRange(sqlParameters);
+                                            ON T.[{joinColumn}] = J.[{joinColumn}] {onClause}
+                                         {whereClause};";
+                Console.WriteLine(command.CommandText);
+                if (where?.Parameters is null == false) {
+                    command.Parameters.AddRange(where?.Parameters);
+                }
+
+                if (on?.Parameters is null == false) {
+                    command.Parameters.AddRange(on?.Parameters);
                 }
 
                 return this.populateWithQuery(command);
