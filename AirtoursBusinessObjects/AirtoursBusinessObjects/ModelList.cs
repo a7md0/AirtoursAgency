@@ -325,6 +325,11 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Populate 
+        /// </summary>
+        /// <param name="whereClause">Where clause filters</param>
+        /// <returns></returns>
         public bool Populate(WhereClause whereClause) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = whereClause?.Parameters;
