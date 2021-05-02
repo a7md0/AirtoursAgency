@@ -388,8 +388,8 @@ namespace AirtoursBusinessObjects {
 
                         this.schema = new TableSchema(schemaTable);
                     }
-                } catch (SqlException) {
-
+                } catch (SqlException ex) {
+                    Debug.WriteLine(ex, "ModelList.fetchTableSchema");
                 } finally {
                     this.closeConnection();
                 }
@@ -453,7 +453,8 @@ namespace AirtoursBusinessObjects {
                             values.Add((U) value);
                         }
                     }
-                } catch (SqlException) {
+                } catch (SqlException ex) {
+                    Debug.WriteLine(ex, "ModelList.UniqueValues");
                 } finally {
                     this.closeConnection();
                 }
