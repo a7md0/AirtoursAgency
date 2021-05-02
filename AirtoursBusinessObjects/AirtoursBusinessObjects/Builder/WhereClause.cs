@@ -208,21 +208,21 @@ namespace AirtoursBusinessObjects.Builder {
             return null;
         }
 
-        public override string ToString() => this.ToString(null);
-        public string ToString(string columnPrefix = null) {
+        public override string ToString() => this.ToString();
+        public string ToString(string columnPrefix = null, string firstOp = null) {
             string clause = "";
             bool isFirst = true;
 
             foreach (var predicate in this.predicates) {
                 string op = predicate is AndPredicate ? " AND " : " OR ";
                 if (isFirst) {
-                    op = "WHERE ";
+                    op = $"{firstOp ?? "WHERE"} ";
                     isFirst = false;
                 }
 
                 var predicates = predicate.Predicates;
                 if (columnPrefix is null == false) {
-                    predicates = predicates.Select(p => $"{columnPrefix}.{p}").ToList();
+                    predicates = predicates.Select(p => p.Insert(p.IndexOf('['), $"{columnPrefix}.")).ToList();
                 }
 
                 clause += op + string.Join(" AND ", predicates);
