@@ -689,17 +689,20 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Delete many records from the databases matching the provided where criteria.
         /// </summary>
-        /// <param name="whereClause"></param>
-        /// <returns></returns>
-        public virtual int Delete(WhereClause whereClause) {
-            if (whereClause is null || !whereClause.HasAny) {
+        /// <param name="where">Where clause to filter which records will be updated</param>
+        /// <returns>Number of affected rows</returns>
+        public virtual int Delete(WhereClause where) {
+            if (where is null || !where.HasAny) {
                 throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
             }
 
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
-                command.CommandText = $"DELETE FROM [{this.table}] {whereClause.ToString()};";
+                string whereClause = where.ToString();
+                command.Parameters.AddRange(where.Parameters);
+
+                command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
 
                 try {
                     this.openConnection();
