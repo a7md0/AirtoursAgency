@@ -132,6 +132,32 @@ namespace AirtoursBusinessObjects.Builder {
             return this.AndWhereIsNull(columnName, not);
         }
 
+        public WhereClause AndWhereDate(string columnName, DateTime value) => this.AndWhereDate(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause AndWhereDate(string columnName, WhereOpreators @operator, DateTime value) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
+            var last = predicates.Last();
+            var whereOpreator = this.whereOpreatorToSymbol(@operator);
+
+            parameters.Add(new SqlParameter(columnName, value));
+            last.Predicates.Add($"CAST([{columnName}] as date) {whereOpreator} CAST(@{columnName} as date)");
+
+            return this;
+        }
+
+        public WhereClause OrWhereDate(string columnName, DateTime value) => this.OrWhereDate(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause OrWhereDate(string columnName, WhereOpreators @operator, DateTime value) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+
+            predicates.Add(new OrPredicate());
+
+            return this.AndWhereDate(columnName, @operator, value);
+        }
+
         public WhereClause Like(string columnName, object value, bool not = false) {
             throw new NotImplementedException();
 
