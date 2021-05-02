@@ -38,7 +38,7 @@ namespace AirtoursBusinessObjects.Builder {
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
 
             parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} {whereOpreator} @{columnName}");
+            last.Predicates.Add($"[{columnName}] {whereOpreator} @{columnName}");
 
             return this;
         }
@@ -67,7 +67,7 @@ namespace AirtoursBusinessObjects.Builder {
 
             parameters.Add(new SqlParameter(minPlaceholder, minValue));
             parameters.Add(new SqlParameter(maxPlaceholder, maxValue));
-            last.Predicates.Add($"{prefix}{columnName} BETWEEN @{minPlaceholder} AND @{maxPlaceholder}");
+            last.Predicates.Add($"{prefix}[{columnName}] BETWEEN @{minPlaceholder} AND @{maxPlaceholder}");
 
             return this;
         }
@@ -93,7 +93,7 @@ namespace AirtoursBusinessObjects.Builder {
             string strValue = value == true ? "TRUE" : "FALSE";
 
             parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{columnName} IS {prefix}{strValue}");
+            last.Predicates.Add($"[{columnName}] IS {prefix}{strValue}");
 
             return this;
         }
@@ -117,7 +117,7 @@ namespace AirtoursBusinessObjects.Builder {
 
             string prefix = not == true ? "NOT " : "";
 
-            last.Predicates.Add($"{columnName} IS {prefix}NULL");
+            last.Predicates.Add($"[{columnName}] IS {prefix}NULL");
 
             return this;
         }
@@ -141,7 +141,7 @@ namespace AirtoursBusinessObjects.Builder {
             string prefix = not == true ? "NOT " : "";
 
             parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{prefix}{columnName} LIKE @{columnName}");
+            last.Predicates.Add($"{prefix}[{columnName}] LIKE @{columnName}");
 
             return this;
 #pragma warning restore CS0162 // Unreachable code detected
@@ -156,7 +156,7 @@ namespace AirtoursBusinessObjects.Builder {
             //string fValues = "";
 
             parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{prefix}{columnName} LIKE @{columnName}");
+            last.Predicates.Add($"{prefix}[{columnName}] LIKE @{columnName}");
 
             return this;
 #pragma warning restore CS0162 // Unreachable code detected
