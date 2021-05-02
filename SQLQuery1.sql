@@ -12,3 +12,24 @@ SELECT DISTINCT [Manufacturer] FROM [Aircraft] WHERE [Manufacturer] IS NOT NULL 
 
 SELECT COUNT(DISTINCT [Manufacturer]) FROM [Aircraft] WHERE [Manufacturer] IS NOT NULL;
 
+SELECT *
+FROM [Passenger] P
+INNER JOIN [ReservedSeat] RS
+ON P.PassengerID = RS.PassengerID
+WHERE P.[ReservationID] = 58;
+
+BEGIN TRANSACTION;
+
+SELECT * FROM [Passenger] WHERE [PassengerID] = 1;
+SELECT * FROM [ReservedSeat] WHERE [PassengerID] = 1;
+
+DELETE RS, P
+FROM [Passenger] P
+INNER JOIN [ReservedSeat] RS
+	ON P.[PassengerID] = RS.[PassengerID]
+WHERE P.[PassengerID] = 1;
+
+SELECT * FROM [Passenger] WHERE [PassengerID] = 1;
+SELECT * FROM [ReservedSeat] WHERE [PassengerID] = 1;
+
+ROLLBACK;
