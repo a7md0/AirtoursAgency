@@ -28,8 +28,8 @@ namespace AirtoursBusinessObjects.Builder {
         public bool HasAny => this.parameters.Count > 0;
 
         #region Operators
-        public WhereClause AndWhere(string columnName, dynamic value) => this.AndWhere(columnName, WhereOpreators.EqualTo, value);
-        public WhereClause AndWhere(string columnName, WhereOpreators @operator, dynamic value) {
+        public WhereClause AndWhere(string columnName, object value) => this.AndWhere(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause AndWhere(string columnName, WhereOpreators @operator, object value) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -43,8 +43,8 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
-        public WhereClause OrWhere(string columnName, dynamic value) => this.OrWhere(columnName, WhereOpreators.EqualTo, value);
-        public WhereClause OrWhere(string columnName, WhereOpreators @operator, dynamic value) {
+        public WhereClause OrWhere(string columnName, object value) => this.OrWhere(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause OrWhere(string columnName, WhereOpreators @operator, object value) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -132,7 +132,7 @@ namespace AirtoursBusinessObjects.Builder {
             return this.AndWhereIsNull(columnName, not);
         }
 
-        public WhereClause Like(string columnName, dynamic value, bool not = false) {
+        public WhereClause Like(string columnName, object value, bool not = false) {
             throw new NotImplementedException();
 
 #pragma warning disable CS0162 // Unreachable code detected
@@ -147,7 +147,7 @@ namespace AirtoursBusinessObjects.Builder {
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        public WhereClause In(string columnName, dynamic value, bool not = false) {
+        public WhereClause In(string columnName, object value, bool not = false) {
             throw new NotImplementedException();
 #pragma warning disable CS0162 // Unreachable code detected
             var last = predicates.Last();

@@ -69,10 +69,10 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public override dynamic GetId() => this.passengerID;
-        public override void SetId(dynamic id) => this.PassengerID = id;
+        public override object GetId() => this.passengerID;
+        public override void SetId(object id) => this.PassengerID = (int) id;
 
-        public override dynamic GetJoinId() => this.scheduledFlightID;
-        public override void SetJoinId(dynamic joinId) => this.ScheduledFlightID = joinId;
+        public override object GetJoinId() => this.scheduledFlightID;
+        public override void SetJoinId(object joinId) => this.ScheduledFlightID = (int) joinId;
     }
 }

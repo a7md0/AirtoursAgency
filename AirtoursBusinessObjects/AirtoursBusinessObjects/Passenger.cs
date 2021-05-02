@@ -56,7 +56,7 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public override dynamic GetId() => this.passengerID;
-        public override void SetId(dynamic id) => this.PassengerID = id;
+        public override object GetId() => this.passengerID;
+        public override void SetId(object id) => this.PassengerID = (int) id;
     }
 }

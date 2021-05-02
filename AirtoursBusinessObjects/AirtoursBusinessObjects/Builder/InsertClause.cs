@@ -39,7 +39,7 @@ namespace AirtoursBusinessObjects.Builder {
             }
         }
 
-        public void Add(string column, dynamic value) {
+        public void Add(string column, object value) {
             object val = value;
 
             if (!this.schema.HasColumn(column)) {

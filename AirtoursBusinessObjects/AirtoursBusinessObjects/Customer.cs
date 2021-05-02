@@ -176,7 +176,7 @@
             }
         }
 
-        public override dynamic GetId() => this.customerID;
-        public override void SetId(dynamic id) => this.CustomerID = id;
+        public override object GetId() => this.customerID;
+        public override void SetId(object id) => this.CustomerID = (int) id;
     }
 }

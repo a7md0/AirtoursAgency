@@ -259,7 +259,7 @@ namespace AirtoursBusinessObjects {
             return this.Populate(null);
         }
 
-        public bool Populate(string field, dynamic value) {
+        public bool Populate(string field, object value) {
             using (var whereClause = new WhereClause()) {
                 whereClause.AndWhere(field, value);
 

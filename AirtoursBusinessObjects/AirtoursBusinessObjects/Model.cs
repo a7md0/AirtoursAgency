@@ -11,8 +11,8 @@ namespace AirtoursBusinessObjects {
 
         public Model() { }
 
-        public abstract dynamic GetId();
-        public abstract void SetId(dynamic id);
+        public abstract object GetId();
+        public abstract void SetId(object id);
 
         protected internal void SetError(string message) {
             this.Valid = message == null ? true : false;

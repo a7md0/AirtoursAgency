@@ -4,7 +4,7 @@ namespace AirtoursBusinessObjects {
 
         public ModelJoin() : base() { }
 
-        public abstract dynamic GetJoinId();
-        public abstract void SetJoinId(dynamic joinId);
+        public abstract object GetJoinId();
+        public abstract void SetJoinId(object joinId);
     }
 }

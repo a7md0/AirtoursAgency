@@ -123,7 +123,7 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        public override dynamic GetId() => this.employeeID;
-        public override void SetId(dynamic id) => this.EmployeeID = id;
+        public override object GetId() => this.employeeID;
+        public override void SetId(object id) => this.EmployeeID = (int) id;
     }
 }

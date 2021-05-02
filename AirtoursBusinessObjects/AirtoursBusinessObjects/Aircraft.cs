@@ -66,7 +66,7 @@
             }
         }
 
-        public override dynamic GetId() => this.aircraftID;
-        public override void SetId(dynamic id) => this.AircraftID = id;
+        public override object GetId() => this.aircraftID;
+        public override void SetId(object id) => this.AircraftID = (int) id;
     }
 }
