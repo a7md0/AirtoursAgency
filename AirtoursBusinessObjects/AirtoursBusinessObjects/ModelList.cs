@@ -506,14 +506,21 @@ namespace AirtoursBusinessObjects {
             return this.TotalCount(where) > 0;
         }
 
-        public bool FilterJoin(WhereClause where, string joinTable, string fkColumn) {
+        /// <summary>
+        /// Filter the current list based on filters and being joined to another table.
+        /// </summary>
+        /// <param name="where">Where clause filters</param>
+        /// <param name="joinTable">Table name to join with</param>
+        /// <param name="joinColumn">Join column between two tables</param>
+        /// <returns></returns>
+        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
                 string suffix = $" {where?.ToString()}" ?? "";
 
                 command.CommandText = $@"SELECT T.* FROM [{this.table}] T
                                          INNER JOIN [{joinTable}] J
-                                            ON T.[{fkColumn}] = J.[{fkColumn}]
+                                            ON T.[{joinColumn}] = J.[{joinColumn}]
                                          {suffix};";
                 if (sqlParameters is null == false) {
                     command.Parameters.AddRange(sqlParameters);
