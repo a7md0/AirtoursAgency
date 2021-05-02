@@ -81,14 +81,23 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         public WhereClause WhereClause => new WhereClause(this.schema);
 
+        /// <summary>
+        /// Open the connection if it is closed.
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="SqlException"></exception>
+        /// </summary>
         protected void openConnection() {
-            if (this.connection.State == ConnectionState.Closed) {
+            if (this.connection.State.HasFlag(ConnectionState.Closed)) {
                 this.connection.Open();
             }
         }
 
+        /// <summary>
+        /// Close the connection if it is opened.
+        /// <exception cref="SqlException"></exception>
+        /// </summary>
         protected void closeConnection() {
-            if (this.connection.State != ConnectionState.Closed) {
+            if (this.connection.State.HasFlag(ConnectionState.Open)) {
                 this.connection.Close();
             }
         }
