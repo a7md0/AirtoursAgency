@@ -1,17 +1,16 @@
-﻿using System;
-
+﻿
 namespace AirtoursBusinessObjects {
     using Schema;
 
     [Table("Passenger", "PassengerID")]
-    public class Passenger : Item {
+    public class Passenger : Model {
 
         private int passengerID;
         private string firstName; // null-able:	YES
         private string lastName;  // null-able:	YES
         private int? reservationID;	// null-able:	YES
 
-        public Passenger(int passengerID) : base(passengerID.ToString()) {
+        public Passenger(int passengerID) : base() {
             this.passengerID = passengerID;
         }
 
@@ -23,7 +22,6 @@ namespace AirtoursBusinessObjects {
             }
 
             set {
-                base.id = value.ToString();
                 this.passengerID = value;
             }
         }
@@ -57,5 +55,8 @@ namespace AirtoursBusinessObjects {
                 this.reservationID = value;
             }
         }
+
+        public override dynamic GetId() => this.passengerID;
+        public override void SetId(dynamic id) => this.PassengerID = id;
     }
 }
