@@ -717,5 +717,48 @@ namespace AirtoursBusinessObjects {
                 return affectedRows;
             }
         }
+
+        public virtual int Delete(WhereClause where, string joinTable, string joinColumn) {
+            if (where is null || !where.HasAny) {
+                throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
+            }
+
+            if (joinTable is null || joinColumn is null) {
+                throw new ArgumentNullException("Join table and column cannot be null.");
+            }
+
+            using (var command = this.connection.CreateCommand()) {
+                int affectedRows = 0;
+
+                string whereClause = where.ToString();
+                command.Parameters.AddRange(where.Parameters);
+
+                string[] commandsText = new[] {
+                    // 1st query, delete the joined rows
+                    $@"DELETE J
+                        FROM [{this.table}] T
+                        INNER JOIN [{joinTable}] J
+	                        ON T.[{joinColumn}] = J.[{joinColumn}]
+                        {whereClause};",
+                    // 2nd query, delete the original row
+                    $"DELETE FROM [{this.table}] {whereClause};"
+                };
+
+                try {
+                    this.openConnection();
+                    foreach (var commandText in commandsText) {
+                        command.CommandText = commandText;
+
+                        affectedRows += command.ExecuteNonQuery();
+                    }
+                } catch (SqlException ex) {
+                    Debug.WriteLine(ex, "ModelList.DeleteMany");
+                } finally {
+                    this.closeConnection();
+                }
+
+                return affectedRows;
+            }
+        }
     }
 }
