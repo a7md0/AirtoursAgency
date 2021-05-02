@@ -267,6 +267,64 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Filter list based on model being the foreign key with additional filtering. (Design Document Requirement #8)
+        /// </summary>
+        /// <param name="model">Model to be considered the foreign key</param>
+        /// <param name="where">Optional where clause for additional filters</param>
+        /// <returns>Whether there were any matching results</returns>
+        public bool FilterPlus(Model model, WhereClause where = null) {
+            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
+                var tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
+
+                string fkColumn = tableAttribute.PkColumn;
+                object fkValue = model.GetId();
+
+                whereClause.AndWhere(fkColumn, fkValue);
+
+                return this.Populate(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Filter list based on model being the foreign key with additional filtering. (Design Document Requirement #8)
+        /// </summary>
+        /// <param name="fkColumn">Foreign key column name</param>
+        /// <param name="fkValue">Foreign key value</param>
+        /// <param name="where">Optional where clause for additional filters</param>
+        /// <returns>Whether there were any matching results</returns>
+        public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
+            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
+                whereClause.AndWhere(fkColumn, fkValue);
+
+                return this.Populate(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Filter the current list based on filters and being joined to another table.
+        /// </summary>
+        /// <param name="where">Where clause filters</param>
+        /// <param name="joinTable">Table name to join with</param>
+        /// <param name="joinColumn">Join column between two tables</param>
+        /// <returns>Whether there were any matching results</returns>
+        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) {
+            using (var command = this.connection.CreateCommand()) {
+                SqlParameter[] sqlParameters = where?.Parameters;
+                string suffix = $" {where?.ToString()}" ?? "";
+
+                command.CommandText = $@"SELECT T.* FROM [{this.table}] T
+                                         INNER JOIN [{joinTable}] J
+                                            ON T.[{joinColumn}] = J.[{joinColumn}]
+                                         {suffix};";
+                if (sqlParameters is null == false) {
+                    command.Parameters.AddRange(sqlParameters);
+                }
+
+                return this.populateWithQuery(command);
+            }
+        }
+
         public bool Populate(WhereClause whereClause) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = whereClause?.Parameters;
@@ -464,70 +522,12 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Filter list based on model being the foreign key with additional filtering. (Design Document Requirement #8)
-        /// </summary>
-        /// <param name="model">Model to be considered the foreign key</param>
-        /// <param name="where">Optional where clause for additional filters</param>
-        /// <returns>Whether there were any matching results</returns>
-        public bool FilterPlus(Model model, WhereClause where = null) {
-            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
-                var tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
-
-                string fkColumn = tableAttribute.PkColumn;
-                object fkValue = model.GetId();
-
-                whereClause.AndWhere(fkColumn, fkValue);
-
-                return this.Populate(whereClause);
-            }
-        }
-
-        /// <summary>
-        /// Filter list based on model being the foreign key with additional filtering. (Design Document Requirement #8)
-        /// </summary>
-        /// <param name="fkColumn">Foreign key column name</param>
-        /// <param name="fkValue">Foreign key value</param>
-        /// <param name="where">Optional where clause for additional filters</param>
-        /// <returns>Whether there were any matching results</returns>
-        public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
-            using (var whereClause = (WhereClause) where?.Clone() ?? this.WhereClause) {
-                whereClause.AndWhere(fkColumn, fkValue);
-
-                return this.Populate(whereClause);
-            }
-        }
-
-        /// <summary>
         /// Checks if there are any records meet these conditions. (Design Document Requirement #9)
         /// </summary>
         /// <param name="where">Where clause instance</param>
         /// <returns>Whether there is any records matching the provided filters</returns>
         public bool CheckChildRecords(WhereClause where) {
             return this.TotalCount(where) > 0;
-        }
-
-        /// <summary>
-        /// Filter the current list based on filters and being joined to another table.
-        /// </summary>
-        /// <param name="where">Where clause filters</param>
-        /// <param name="joinTable">Table name to join with</param>
-        /// <param name="joinColumn">Join column between two tables</param>
-        /// <returns>Whether there were any matching results</returns>
-        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) {
-            using (var command = this.connection.CreateCommand()) {
-                SqlParameter[] sqlParameters = where?.Parameters;
-                string suffix = $" {where?.ToString()}" ?? "";
-
-                command.CommandText = $@"SELECT T.* FROM [{this.table}] T
-                                         INNER JOIN [{joinTable}] J
-                                            ON T.[{joinColumn}] = J.[{joinColumn}]
-                                         {suffix};";
-                if (sqlParameters is null == false) {
-                    command.Parameters.AddRange(sqlParameters);
-                }
-
-                return this.populateWithQuery(command);
-            }
         }
     }
 
