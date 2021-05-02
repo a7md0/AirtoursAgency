@@ -269,8 +269,6 @@ namespace AirtoursBusinessObjects {
 
         public bool Populate(WhereClause whereClause) {
             using (var command = this.connection.CreateCommand()) {
-                bool hasRows = false;
-
                 SqlParameter[] sqlParameters = whereClause?.Parameters;
                 string suffix = $" {whereClause?.ToString()}" ?? "";
 
@@ -279,31 +277,37 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(sqlParameters);
                 }
 
-                try {
-                    this.openConnection();
-
-                    using (var reader = command.ExecuteReader()) {
-                        hasRows = reader.HasRows;
-
-                        this.setColumnsOrdinals(reader);
-                        this.generateList(reader);
-                    }
-                } catch (SqlException) {
-
-                } finally {
-                    this.closeConnection();
-                }
-
-                return hasRows;
+                return this.populateWithQuery(command);
             }
         }
     }
 
     partial class ModelList<T> {
+        protected bool populateWithQuery(SqlCommand command) {
+            bool hasRows = false;
+
+            try {
+                this.openConnection();
+
+                using (var reader = command.ExecuteReader()) {
+                    hasRows = reader.HasRows;
+
+                    this.setColumnsOrdinals(reader);
+                    this.repopulateList(reader);
+                }
+            } catch (SqlException) {
+
+            } finally {
+                this.closeConnection();
+            }
+
+            return hasRows;
+        }
+
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
-        protected virtual void generateList(SqlDataReader reader) {
+        protected virtual void repopulateList(SqlDataReader reader) {
             this.list.Clear();
             this.dataTable.Rows.Clear();
 
