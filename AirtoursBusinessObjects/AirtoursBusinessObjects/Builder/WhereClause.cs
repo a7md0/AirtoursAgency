@@ -182,7 +182,8 @@ namespace AirtoursBusinessObjects.Builder {
             return null;
         }
 
-        public override string ToString() {
+        public override string ToString() => this.ToString(null);
+        public string ToString(string columnPrefix = null) {
             string clause = "";
             bool isFirst = true;
 
@@ -193,7 +194,12 @@ namespace AirtoursBusinessObjects.Builder {
                     isFirst = false;
                 }
 
-                clause += op + string.Join(" AND ", predicate.Predicates);
+                var predicates = predicate.Predicates;
+                if (columnPrefix is null == false) {
+                    predicates = predicates.Select(p => $"{columnPrefix}.{p}").ToList();
+                }
+
+                clause += op + string.Join(" AND ", predicates);
             }
 
             return clause;
