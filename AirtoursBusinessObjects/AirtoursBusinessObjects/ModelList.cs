@@ -433,7 +433,7 @@ namespace AirtoursBusinessObjects {
             var orderBy = ascending ? "ASC" : "DESC";
 
             using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"SELECT DISTINCT[{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
+                command.CommandText = $"SELECT DISTINCT [{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
 
                 try {
                     this.openConnection();
