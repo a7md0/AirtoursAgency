@@ -1,6 +1,8 @@
 ﻿using System;
 
 namespace AirtoursBusinessObjects {
+    using Builder;
+
     public class FlightList : ModelList<Flight> {
         public FlightList() : base() { }
 
@@ -14,7 +16,7 @@ namespace AirtoursBusinessObjects {
         public bool FlightsFilter(string origin, string destination, DateTime date) {
             var where = base.WhereClause.AndWhere("Origin", origin)
                                         .AndWhere("Destination", destination);
-            var on = new ScheduledFlightList().WhereClause.AndWhereDate("FlightDate", date);
+            var on = new WhereClause().AndWhereDate("FlightDate", date);
 
             return base.FilterJoin(where, on, "ScheduledFlight", "FlightID");
         }
