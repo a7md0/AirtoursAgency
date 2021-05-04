@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1500
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirtoursWebApplication", "AirtoursWebApplication\AirtoursWebApplication.csproj", "{8BFD8CC6-01AC-4D1E-A490-8AD3D0A5F3BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirtoursBusinessObjects", "..\AirtoursBusinessObjects\AirtoursBusinessObjects\AirtoursBusinessObjects.csproj", "{40EE3C06-C115-467B-A084-07715042C91F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BFD8CC6-01AC-4D1E-A490-8AD3D0A5F3BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BFD8CC6-01AC-4D1E-A490-8AD3D0A5F3BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BFD8CC6-01AC-4D1E-A490-8AD3D0A5F3BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BFD8CC6-01AC-4D1E-A490-8AD3D0A5F3BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40EE3C06-C115-467B-A084-07715042C91F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40EE3C06-C115-467B-A084-07715042C91F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40EE3C06-C115-467B-A084-07715042C91F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40EE3C06-C115-467B-A084-07715042C91F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E2D584E-3DAD-4D1F-AF80-51993E58EC22}
+	EndGlobalSection
+EndGlobal
