@@ -513,7 +513,7 @@ namespace AirtoursBusinessObjects {
 
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT DISTINCT [{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
-                Console.WriteLine(command.CommandText);
+
                 try {
                     this.openConnection();
 
