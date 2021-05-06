@@ -120,7 +120,10 @@ namespace AirtoursBusinessObjects {
         /// Re-fill the supplied model details from the database.
         /// </summary>
         /// <param name="model">Model with valid primary key</param>
-        public virtual void Fill(T model) {
+        /// <returns></returns>
+        public virtual bool Fill(T model) {
+            bool found = false;
+
             using (var command = this.connection.CreateCommand()) {
                 var whereClause = this.whereModelClause(command, model);
 
@@ -131,6 +134,7 @@ namespace AirtoursBusinessObjects {
 
                     using (var reader = command.ExecuteReader()) {
                         this.setColumnsOrdinals(reader);
+                        found = reader.HasRows;
 
                         if (reader.Read()) {
                             this.setValues(model, reader);
@@ -140,18 +144,23 @@ namespace AirtoursBusinessObjects {
                 } catch (SqlException ex) {
                     model.SetError(ex.Message);
 
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
+                    Debug.WriteLine(ex.Message, "ModelList.Fill");
                 } finally {
                     this.closeConnection();
                 }
             }
+
+            return found;
         }
 
         /// <summary>
         /// Add new model to the database.
         /// </summary>
         /// <param name="model">Model instance</param>
-        public virtual void Add(T model) {
+        /// <returns></returns>
+        public virtual bool Add(T model) {
+            bool added = false;
+
             using (var command = this.connection.CreateCommand())
             using (var insert = new InsertClause(this.schema)) {
                 insert.Add(model, modelProperties);
@@ -167,6 +176,7 @@ namespace AirtoursBusinessObjects {
                         this.openConnection();
 
                         object inserted_id = command.ExecuteScalar();
+                        added = true;
 
                         if (inserted_id is null == false && inserted_id is DBNull == false) {
                             model.SetId(inserted_id);
@@ -183,6 +193,8 @@ namespace AirtoursBusinessObjects {
                     }
                 }
             }
+
+            return added;
         }
 
         /// <summary>
@@ -233,8 +245,6 @@ namespace AirtoursBusinessObjects {
                 var whereClause = this.whereModelClause(command, model);
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
-
-
 
                 try {
                     this.openConnection();
@@ -321,7 +331,6 @@ namespace AirtoursBusinessObjects {
         /// <param name="joinTable">Table name to join with</param>
         /// <param name="joinColumn">Join column between two tables</param>
         /// <returns>Whether there were any matching results</returns>
-        /// <returns></returns>
         public bool FilterJoin(WhereClause where, WhereClause on, string joinTable, string joinColumn) {
             using (var command = this.connection.CreateCommand()) {
                 string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString("T")}" : "";
@@ -348,7 +357,7 @@ namespace AirtoursBusinessObjects {
         /// Populate the current list based on provided filters
         /// </summary>
         /// <param name="whereClause">Where clause filters (Optional)</param>
-        /// <returns></returns>
+        /// <returns>Whether there were any matching results</returns>
         public bool Populate(WhereClause where) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
@@ -378,7 +387,7 @@ namespace AirtoursBusinessObjects {
                     this.repopulateList(reader);
                 }
             } catch (SqlException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.setValues");
+                Debug.WriteLine(ex.Message, "ModelList.populateWithQuery");
             } finally {
                 this.closeConnection();
             }
