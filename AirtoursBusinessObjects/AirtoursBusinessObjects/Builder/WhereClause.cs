@@ -126,19 +126,25 @@ namespace AirtoursBusinessObjects.Builder {
 #pragma warning restore CS0162 // Unreachable code detected
         }
 
-        public WhereClause In(string columnName, object value, bool not = false) {
-            throw new NotImplementedException();
-#pragma warning disable CS0162 // Unreachable code detected
+        public WhereClause WhereIn(string columnName, object[] values, bool equal = true) {
             var last = predicates.Last();
 
-            string prefix = not == true ? "NOT " : "";
-            //string fValues = "";
+            string prefix = equal == false ? "NOT " : "";
+            var list = new List<string>();
+            
+            for (int i = 0; i < values.Length; i++) {
+                var value = values[i];
+                var placeholder = $"{columnName}Val{i}";
 
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"{prefix}[{columnName}] LIKE @{columnName}");
+                parameters.Add(new SqlParameter(placeholder, value));
+                list.Add($"@{placeholder}");
+            }
+
+            var joinedList = string.Join(", ", list);
+
+            last.Predicates.Add($"[{columnName}] {prefix}IN ({joinedList})");
 
             return this;
-#pragma warning restore CS0162 // Unreachable code detected
         }
         #endregion Operators
 
