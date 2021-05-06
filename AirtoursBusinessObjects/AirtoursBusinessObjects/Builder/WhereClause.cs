@@ -92,8 +92,24 @@ namespace AirtoursBusinessObjects.Builder {
             var last = predicates.Last();
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
 
-            parameters.Add(new SqlParameter(columnName, value));
-            last.Predicates.Add($"CAST([{columnName}] as date) {whereOpreator} CAST(@{columnName} as date)");
+            if (@operator == WhereOpreators.EqualTo) {
+                string minPlaceholder = $"Min{columnName}";
+                string maxPlaceholder = $"Max{columnName}";
+
+                parameters.Add(new SqlParameter(minPlaceholder, value.Date));
+                parameters.Add(new SqlParameter(maxPlaceholder, value.Date.AddDays(1).AddTicks(-1)));
+
+                Console.WriteLine(value.Date);
+                Console.WriteLine(value.Date.AddDays(1).AddTicks(-1));
+
+                last.Predicates.Add($"[{columnName}] >= @{minPlaceholder}");
+                last.Predicates.Add($"[{columnName}] < @{maxPlaceholder}");
+            } else {
+                parameters.Add(new SqlParameter(columnName, value.Date));
+                last.Predicates.Add($"[{columnName}] {whereOpreator} @{columnName}");
+            }
+            
+            // last.Predicates.Add($"CAST([{columnName}] as date) {whereOpreator} CAST(@{columnName} as date)");
 
             return this;
         }
