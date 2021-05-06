@@ -41,10 +41,10 @@ namespace AirtoursBusinessObjects.Builder {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
 
-            var last = predicates.Last();
+            var last = this.predicates.Last();
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
 
-            parameters.Add(new SqlParameter(columnName, value));
+            this.parameters.Add(new SqlParameter(columnName, value));
             last.Predicates.Add($"[{columnName}] {whereOpreator} @{columnName}");
 
             return this;
@@ -55,14 +55,14 @@ namespace AirtoursBusinessObjects.Builder {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
 
-            var last = predicates.Last();
+            var last = this.predicates.Last();
 
             string prefix = equal == false ? "NOT " : "";
             string minPlaceholder = $"Min{columnName}";
             string maxPlaceholder = $"Max{columnName}";
 
-            parameters.Add(new SqlParameter(minPlaceholder, minValue));
-            parameters.Add(new SqlParameter(maxPlaceholder, maxValue));
+            this.parameters.Add(new SqlParameter(minPlaceholder, minValue));
+            this.parameters.Add(new SqlParameter(maxPlaceholder, maxValue));
             last.Predicates.Add($"{prefix}[{columnName}] BETWEEN @{minPlaceholder} AND @{maxPlaceholder}");
 
             return this;
@@ -73,7 +73,7 @@ namespace AirtoursBusinessObjects.Builder {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
 
-            var last = predicates.Last();
+            var last = this.predicates.Last();
 
             string prefix = equal == false ? "NOT " : "";
             string strValue = value.HasValue ? (value == true ? "TRUE" : "FALSE") : "NULL";
@@ -89,20 +89,20 @@ namespace AirtoursBusinessObjects.Builder {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
 
-            var last = predicates.Last();
+            var last = this.predicates.Last();
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
 
             if (@operator == WhereOpreators.EqualTo) {
                 string minPlaceholder = $"Min{columnName}";
                 string maxPlaceholder = $"Max{columnName}";
 
-                parameters.Add(new SqlParameter(minPlaceholder, value.Date));
-                parameters.Add(new SqlParameter(maxPlaceholder, value.Date.AddDays(1)));
+                this.parameters.Add(new SqlParameter(minPlaceholder, value.Date));
+                this.parameters.Add(new SqlParameter(maxPlaceholder, value.Date.AddDays(1)));
 
                 last.Predicates.Add($"[{columnName}] >= @{minPlaceholder}");
                 last.Predicates.Add($"[{columnName}] < @{maxPlaceholder}");
             } else {
-                parameters.Add(new SqlParameter(columnName, value.Date));
+                this.parameters.Add(new SqlParameter(columnName, value.Date));
                 last.Predicates.Add($"[{columnName}] {whereOpreator} @{columnName}");
             }
             
@@ -115,11 +115,11 @@ namespace AirtoursBusinessObjects.Builder {
             throw new NotImplementedException();
 
 #pragma warning disable CS0162 // Unreachable code detected
-            var last = predicates.Last();
+            var last = this.predicates.Last();
 
             string prefix = not == true ? "NOT " : "";
 
-            parameters.Add(new SqlParameter(columnName, value));
+            this.parameters.Add(new SqlParameter(columnName, value));
             last.Predicates.Add($"{prefix}[{columnName}] LIKE @{columnName}");
 
             return this;
@@ -127,7 +127,7 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause WhereIn(string columnName, object[] values, bool equal = true) {
-            var last = predicates.Last();
+            var last = this.predicates.Last();
 
             string prefix = equal == false ? "NOT " : "";
             var list = new List<string>();
@@ -136,7 +136,7 @@ namespace AirtoursBusinessObjects.Builder {
                 var value = values[i];
                 var placeholder = $"{columnName}Val{i}";
 
-                parameters.Add(new SqlParameter(placeholder, value));
+                this.parameters.Add(new SqlParameter(placeholder, value));
                 list.Add($"@{placeholder}");
             }
 
