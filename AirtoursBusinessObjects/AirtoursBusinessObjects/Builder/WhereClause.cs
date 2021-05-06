@@ -27,9 +27,15 @@ namespace AirtoursBusinessObjects.Builder {
         public SqlParameter[] Parameters => this.parameters.ToArray();
         public bool HasAny => this.parameters.Count > 0;
 
+        public WhereClause Or() {
+            predicates.Add(new OrPredicate());
+
+            return this;
+        }
+
         #region Operators
-        public WhereClause AndWhere(string columnName, object value) => this.AndWhere(columnName, WhereOpreators.EqualTo, value);
-        public WhereClause AndWhere(string columnName, WhereOpreators @operator, object value) {
+        public WhereClause Where(string columnName, object value) => this.Where(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause Where(string columnName, WhereOpreators @operator, object value) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -43,18 +49,7 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
-        public WhereClause OrWhere(string columnName, object value) => this.OrWhere(columnName, WhereOpreators.EqualTo, value);
-        public WhereClause OrWhere(string columnName, WhereOpreators @operator, object value) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
-
-            predicates.Add(new OrPredicate());
-
-            return this.AndWhere(columnName, @operator, value);
-        }
-
-        public WhereClause AndWhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool equal = true) {
+        public WhereClause WhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool equal = true) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -72,17 +67,7 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
-        public WhereClause OrWhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool equal = true) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
-
-            predicates.Add(new OrPredicate());
-
-            return this.AndWhereBetween(columnName, minValue, maxValue, equal);
-        }
-
-        public WhereClause AndWhereIs(string columnName, bool? value, bool equal = true) {
+        public WhereClause WhereIs(string columnName, bool? value, bool equal = true) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -97,18 +82,8 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
-        public WhereClause OrWhereIs(string columnName, bool? value, bool equal = true) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
-
-            predicates.Add(new OrPredicate());
-
-            return this.AndWhereIs(columnName, value, equal);
-        }
-
-        public WhereClause AndWhereDate(string columnName, DateTime value) => this.AndWhereDate(columnName, WhereOpreators.EqualTo, value);
-        public WhereClause AndWhereDate(string columnName, WhereOpreators @operator, DateTime value) {
+        public WhereClause WhereDate(string columnName, DateTime value) => this.WhereDate(columnName, WhereOpreators.EqualTo, value);
+        public WhereClause WhereDate(string columnName, WhereOpreators @operator, DateTime value) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -120,17 +95,6 @@ namespace AirtoursBusinessObjects.Builder {
             last.Predicates.Add($"CAST([{columnName}] as date) {whereOpreator} CAST(@{columnName} as date)");
 
             return this;
-        }
-
-        public WhereClause OrWhereDate(string columnName, DateTime value) => this.OrWhereDate(columnName, WhereOpreators.EqualTo, value);
-        public WhereClause OrWhereDate(string columnName, WhereOpreators @operator, DateTime value) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
-
-            predicates.Add(new OrPredicate());
-
-            return this.AndWhereDate(columnName, @operator, value);
         }
 
         public WhereClause Like(string columnName, object value, bool not = false) {

@@ -261,7 +261,7 @@ namespace AirtoursBusinessObjects {
 
         public bool Populate(string field, object value) {
             using (var whereClause = this.WhereClause) {
-                whereClause.AndWhere(field, value);
+                whereClause.Where(field, value);
 
                 return this.Populate(whereClause);
             }
@@ -280,7 +280,7 @@ namespace AirtoursBusinessObjects {
                 string fkColumn = tableAttribute.PkColumn;
                 object fkValue = model.GetId();
 
-                whereClause.AndWhere(fkColumn, fkValue);
+                whereClause.Where(fkColumn, fkValue);
 
                 return this.Populate(whereClause);
             }
@@ -295,7 +295,7 @@ namespace AirtoursBusinessObjects {
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
             using (var whereClause = where?.Clone() ?? this.WhereClause) {
-                whereClause.AndWhere(fkColumn, fkValue);
+                whereClause.Where(fkColumn, fkValue);
 
                 return this.Populate(whereClause);
             }
@@ -508,7 +508,7 @@ namespace AirtoursBusinessObjects {
         public List<U> UniqueValues<U>(string column, bool ascending = true) {
             List<U> values = new List<U>();
 
-            var whereClause = this.WhereClause.AndWhereIs(column, null, false);
+            var whereClause = this.WhereClause.WhereIs(column, null, false);
             var orderBy = ascending ? "ASC" : "DESC";
 
             using (var command = this.connection.CreateCommand()) {
