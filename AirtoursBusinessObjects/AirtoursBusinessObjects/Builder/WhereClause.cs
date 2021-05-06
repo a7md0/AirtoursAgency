@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using System.Data.SqlClient;
 
@@ -148,15 +149,13 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public override string ToString() => this.ToString();
-        public string ToString(string columnPrefix = null, string firstOp = null) {
-            string clause = "";
-            bool isFirst = true;
+        public string ToString(string columnPrefix = null) {
+            StringBuilder clause = new StringBuilder();
 
             foreach (var predicate in this.predicates) {
                 string op = predicate is AndPredicate ? " AND " : " OR ";
-                if (isFirst) {
-                    op = $"{firstOp ?? "WHERE"} ";
-                    isFirst = false;
+                if (clause.Length == 0) {
+                    op = "";
                 }
 
                 var predicates = predicate.Predicates;
@@ -164,10 +163,10 @@ namespace AirtoursBusinessObjects.Builder {
                     predicates = predicates.Select(p => p.Insert(p.IndexOf('['), $"{columnPrefix}.")).ToList();
                 }
 
-                clause += op + string.Join(" AND ", predicates);
+                clause.Append(op + string.Join(" AND ", predicates));
             }
 
-            return clause;
+            return clause.ToString();
         }
 
         #region Clone-able Support

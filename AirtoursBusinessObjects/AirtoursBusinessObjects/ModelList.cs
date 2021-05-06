@@ -321,12 +321,12 @@ namespace AirtoursBusinessObjects {
         /// <returns></returns>
         public bool FilterJoin(WhereClause where, WhereClause on, string joinTable, string joinColumn) {
             using (var command = this.connection.CreateCommand()) {
-                string whereClause = $" {where?.ToString("T")}" ?? "";
-                string onClause = $" {on?.ToString("J", "AND")}" ?? "";
+                string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString("T")}" : "";
+                string onClause = (on?.HasAny ?? false) ? $" AND {on?.ToString("J")}" : "";
 
                 command.CommandText = $@"SELECT T.* FROM [{this.table}] T
                                          INNER JOIN [{joinTable}] J
-                                            ON T.[{joinColumn}] = J.[{joinColumn}] {onClause}
+                                            ON T.[{joinColumn}] = J.[{joinColumn}]{onClause}
                                          {whereClause};";
                 Console.WriteLine(command.CommandText);
                 if (where?.Parameters is null == false) {
@@ -346,12 +346,12 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         /// <param name="whereClause">Where clause filters (Optional)</param>
         /// <returns></returns>
-        public bool Populate(WhereClause whereClause) {
+        public bool Populate(WhereClause where) {
             using (var command = this.connection.CreateCommand()) {
-                SqlParameter[] sqlParameters = whereClause?.Parameters;
-                string suffix = $" {whereClause?.ToString()}" ?? "";
+                SqlParameter[] sqlParameters = where?.Parameters;
+                string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString()}" : "";
 
-                command.CommandText = $"SELECT * FROM [{this.table}]{suffix};";
+                command.CommandText = $"SELECT * FROM [{this.table}]{whereClause};";
                 if (sqlParameters is null == false) {
                     command.Parameters.AddRange(sqlParameters);
                 }
@@ -582,20 +582,20 @@ namespace AirtoursBusinessObjects {
             return this.aggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
         }
 
-        protected U aggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause whereClause = null) {
+        protected U aggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause where = null) {
             U value = default(U);
 
             string aggregate = aggregateFunction.ToString();
 
-            SqlParameter[] sqlParameters = whereClause?.Parameters;
-            string suffix = whereClause?.ToString() ?? "";
+            SqlParameter[] sqlParameters = where?.Parameters;
+            string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString()}" : "";
 
             if (!this.schema.HasColumn(column)) {
                 throw new ArgumentException($"{column} does not exists in this table schema.");
             }
 
             try {
-                value = this.scalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{suffix};", sqlParameters);
+                value = this.scalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
             } catch (InvalidCastException ex) {
                 Debug.WriteLine(ex, "ModelList.aggregateValue");
             }
@@ -682,10 +682,10 @@ namespace AirtoursBusinessObjects {
                     string setClause = set.ToString();
                     command.Parameters.AddRange(set.Parameters);
 
-                    string whereClause = where.ToString();
+                    string whereClause = $" WHERE {where.ToString()}";
                     command.Parameters.AddRange(where.Parameters);
 
-                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
+                    command.CommandText = $"UPDATE [{this.table}] {setClause}{whereClause};";
 
                     try {
                         this.openConnection();
@@ -715,10 +715,10 @@ namespace AirtoursBusinessObjects {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
-                string whereClause = where.ToString();
+                string whereClause = $" WHERE {where.ToString()}";
                 command.Parameters.AddRange(where.Parameters);
 
-                command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
+                command.CommandText = $"DELETE FROM [{this.table}]{whereClause};";
 
                 try {
                     this.openConnection();
@@ -746,7 +746,7 @@ namespace AirtoursBusinessObjects {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
-                string whereClause = where.ToString();
+                string whereClause = $" WHERE {where.ToString()}";
                 command.Parameters.AddRange(where.Parameters);
 
                 string[] commandsText = new[] {
