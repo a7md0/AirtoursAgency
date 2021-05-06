@@ -99,9 +99,6 @@ namespace AirtoursBusinessObjects.Builder {
                 parameters.Add(new SqlParameter(minPlaceholder, value.Date));
                 parameters.Add(new SqlParameter(maxPlaceholder, value.Date.AddDays(1).AddTicks(-1)));
 
-                Console.WriteLine(value.Date);
-                Console.WriteLine(value.Date.AddDays(1).AddTicks(-1));
-
                 last.Predicates.Add($"[{columnName}] >= @{minPlaceholder}");
                 last.Predicates.Add($"[{columnName}] < @{maxPlaceholder}");
             } else {
