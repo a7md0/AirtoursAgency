@@ -37,9 +37,7 @@ namespace AirtoursBusinessObjects.Builder {
         #region Operators
         public WhereClause Where(string columnName, object value) => this.Where(columnName, WhereOpreators.EqualTo, value);
         public WhereClause Where(string columnName, WhereOpreators @operator, object value) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
+            this.checkColumnName(columnName);
 
             var last = this.predicates.Last();
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
@@ -51,9 +49,7 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause WhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool equal = true) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
+            this.checkColumnName(columnName);
 
             var last = this.predicates.Last();
 
@@ -69,9 +65,7 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause WhereIs(string columnName, bool? value, bool equal = true) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
+            this.checkColumnName(columnName);
 
             var last = this.predicates.Last();
 
@@ -85,9 +79,7 @@ namespace AirtoursBusinessObjects.Builder {
 
         public WhereClause WhereDate(string columnName, DateTime value) => this.WhereDate(columnName, WhereOpreators.EqualTo, value);
         public WhereClause WhereDate(string columnName, WhereOpreators @operator, DateTime value) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
+            this.checkColumnName(columnName);
 
             var last = this.predicates.Last();
             var whereOpreator = this.whereOpreatorToSymbol(@operator);
@@ -105,7 +97,7 @@ namespace AirtoursBusinessObjects.Builder {
                 this.parameters.Add(new SqlParameter(columnName, value.Date));
                 last.Predicates.Add($"[{columnName}] {whereOpreator} @{columnName}");
             }
-            
+
             // last.Predicates.Add($"CAST([{columnName}] as date) {whereOpreator} CAST(@{columnName} as date)");
 
             return this;
@@ -127,11 +119,13 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public WhereClause WhereIn(string columnName, object[] values, bool equal = true) {
+            this.checkColumnName(columnName);
+
             var last = this.predicates.Last();
 
             string prefix = equal == false ? "NOT " : "";
             var list = new List<string>();
-            
+
             for (int i = 0; i < values.Length; i++) {
                 var value = values[i];
                 var placeholder = $"{columnName}Val{i}";
@@ -167,6 +161,12 @@ namespace AirtoursBusinessObjects.Builder {
             return null;
         }
 
+        private void checkColumnName(string columnName) {
+            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
+                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
+            }
+        }
+
         public override string ToString() => this.ToString();
         public string ToString(string columnPrefix = null) {
             StringBuilder clause = new StringBuilder();
@@ -182,7 +182,9 @@ namespace AirtoursBusinessObjects.Builder {
                     predicates = predicates.Select(p => p.Insert(p.IndexOf('['), $"{columnPrefix}.")).ToList();
                 }
 
-                clause.Append(op + string.Join(" AND ", predicates));
+                if (predicates.Count > 0) {
+                    clause.Append(op + string.Join(" AND ", predicates));
+                }
             }
 
             return clause.ToString();
