@@ -134,9 +134,12 @@ namespace AirtoursBusinessObjects {
 
                         if (reader.Read()) {
                             this.setValues(model, reader);
+                            model.SetError(null);
                         }
                     }
                 } catch (SqlException ex) {
+                    model.SetError(ex.Message);
+
                     Debug.WriteLine(ex.Message, "ModelList.setValues");
                 } finally {
                     this.closeConnection();
