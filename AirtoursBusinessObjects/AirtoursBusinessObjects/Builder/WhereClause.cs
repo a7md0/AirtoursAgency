@@ -192,6 +192,7 @@ namespace AirtoursBusinessObjects.Builder {
         protected WhereClause(WhereClause another) {
             this.predicates = new List<Predicate>(another.predicates);
             this.parameters = new List<SqlParameter>(another.parameters);
+            this.schema = another.schema;
         }
 
         public WhereClause Clone() => new WhereClause(this);
