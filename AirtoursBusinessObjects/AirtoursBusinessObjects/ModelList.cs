@@ -508,12 +508,12 @@ namespace AirtoursBusinessObjects {
         public List<U> UniqueValues<U>(string column, bool ascending = true) {
             List<U> values = new List<U>();
 
-            var whereClause = this.WhereClause.AndWhereIsNull(column, true);
+            var whereClause = this.WhereClause.AndWhereIs(column, null, false);
             var orderBy = ascending ? "ASC" : "DESC";
 
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT DISTINCT [{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
-
+                Console.WriteLine(command.CommandText);
                 try {
                     this.openConnection();
 

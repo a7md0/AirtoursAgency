@@ -82,7 +82,7 @@ namespace AirtoursBusinessObjects.Builder {
             return this.AndWhereBetween(columnName, minValue, maxValue, equal);
         }
 
-        public WhereClause AndWhereIs(string columnName, bool value, bool equal = true) {
+        public WhereClause AndWhereIs(string columnName, bool? value, bool equal = true) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -90,15 +90,14 @@ namespace AirtoursBusinessObjects.Builder {
             var last = predicates.Last();
 
             string prefix = equal == false ? "NOT " : "";
-            string strValue = value == true ? "TRUE" : "FALSE";
+            string strValue = value.HasValue ? (value == true ? "TRUE" : "FALSE") : "NULL";
 
-            parameters.Add(new SqlParameter(columnName, value));
             last.Predicates.Add($"[{columnName}] IS {prefix}{strValue}");
 
             return this;
         }
 
-        public WhereClause OrWhereIs(string columnName, bool value, bool equal = true) {
+        public WhereClause OrWhereIs(string columnName, bool? value, bool equal = true) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
             }
@@ -106,30 +105,6 @@ namespace AirtoursBusinessObjects.Builder {
             predicates.Add(new OrPredicate());
 
             return this.AndWhereIs(columnName, value, equal);
-        }
-
-        public WhereClause AndWhereIsNull(string columnName, bool equal = true) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
-
-            var last = predicates.Last();
-
-            string prefix = equal == false ? "NOT " : "";
-
-            last.Predicates.Add($"[{columnName}] IS {prefix}NULL");
-
-            return this;
-        }
-
-        public WhereClause OrWhereIsNull(string columnName, bool equal = true) {
-            if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
-                throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
-            }
-
-            predicates.Add(new OrPredicate());
-
-            return this.AndWhereIsNull(columnName, equal);
         }
 
         public WhereClause AndWhereDate(string columnName, DateTime value) => this.AndWhereDate(columnName, WhereOpreators.EqualTo, value);
