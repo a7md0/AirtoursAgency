@@ -26,7 +26,7 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         public SqlParameter[] Parameters => this.parameters.ToArray();
-        public bool HasAny => this.parameters.Count > 0;
+        public bool HasAny => this.parameters.Count > 0 || this.predicates[0].Predicates.Count > 0;
 
         public WhereClause Or() {
             predicates.Add(new OrPredicate());
