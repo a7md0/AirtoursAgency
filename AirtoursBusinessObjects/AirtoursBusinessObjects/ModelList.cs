@@ -516,15 +516,22 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class ModelList<T> {
-        public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, ascending);
-        public List<U> UniqueValues<U>(string column, bool ascending = true) {
+        public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, null, ascending);
+        public List<U> UniqueValues<U>(string column, bool ascending = true) => this.UniqueValues<U>(column, null, ascending);
+
+        public List<string> UniqueValues(string column, WhereClause where = null, bool ascending = true) => this.UniqueValues<string>(column, where, ascending);
+        public List<U> UniqueValues<U>(string column, WhereClause where = null, bool ascending = true) {
             List<U> values = new List<U>();
 
-            var whereClause = this.WhereClause.WhereIs(column, null, false);
-            var orderBy = ascending ? "ASC" : "DESC";
+            using (var command = this.connection.CreateCommand())
+            using (var whereClause = where?.Clone() ?? this.WhereClause) {
+                whereClause.WhereIs(column, null, false);
 
-            using (var command = this.connection.CreateCommand()) {
-                command.CommandText = $"SELECT DISTINCT [{column}] FROM [{this.table}] {whereClause.ToString()} ORDER BY [{column}] {orderBy};";
+                string whereString = (whereClause?.HasAny ?? false) ? $" WHERE {whereClause?.ToString()}" : "";
+                string orderBy = ascending ? "ASC" : "DESC";
+
+                command.CommandText = $"SELECT DISTINCT [{column}] FROM [{this.table}]{whereString} ORDER BY [{column}] {orderBy};";
+                command.Parameters.AddRange(whereClause.Parameters);
 
                 try {
                     this.openConnection();
