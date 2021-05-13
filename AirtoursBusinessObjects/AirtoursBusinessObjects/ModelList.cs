@@ -581,8 +581,7 @@ namespace AirtoursBusinessObjects {
             return this.aggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
 
-        public int TotalCount() => this.aggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn);
-        public int TotalCount(WhereClause whereClause) {
+        public int TotalCount(WhereClause whereClause = null) {
             return this.aggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
         }
 
