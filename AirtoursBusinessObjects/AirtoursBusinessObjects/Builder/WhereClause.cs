@@ -157,6 +157,11 @@ namespace AirtoursBusinessObjects.Builder {
             return null;
         }
 
+        /// <summary>
+        /// Validate column name if possible
+        /// </summary>
+        /// <param name="columnName">Column name to check</param>
+        /// <exception cref="ArgumentOutOfRangeException">Invalid column name</exception>
         private void checkColumnName(string columnName) {
             if (this.schema is null == false && !this.schema.HasColumn(columnName)) {
                 throw new ArgumentOutOfRangeException(columnName, "This column does not exist in the table schema.");
@@ -192,6 +197,10 @@ namespace AirtoursBusinessObjects.Builder {
             this.schema = another.schema;
         }
 
+        /// <summary>
+        /// Shallow clone the object.
+        /// </summary>
+        /// <returns>Shallow clone of the current object</returns>
         public WhereClause Clone() => new WhereClause(this);
         #endregion
 
