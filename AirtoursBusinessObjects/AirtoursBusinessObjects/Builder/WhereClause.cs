@@ -165,25 +165,24 @@ namespace AirtoursBusinessObjects.Builder {
 
         public override string ToString() => this.ToString();
         public string ToString(string columnPrefix = null) {
-            StringBuilder clause = new StringBuilder();
+            StringBuilder clause = new StringBuilder(); // New string builder
 
             foreach (var predicate in this.predicates) {
-                string op = predicate is AndPredicate ? " AND " : " OR ";
-                if (clause.Length == 0) {
-                    op = "";
-                }
-
                 var predicates = predicate.Predicates;
                 if (columnPrefix is null == false) {
                     predicates = predicates.Select(p => p.Insert(p.IndexOf('['), $"{columnPrefix}.")).ToList();
                 }
 
-                if (predicates.Count > 0) {
-                    clause.Append(op + string.Join(" AND ", predicates));
+                if (predicates.Count > 0) { // If there's items in the predicates
+                    if (clause.Length > 0) { // If the clause already have something appended
+                        clause.Append($" {predicate.ToString()} "); // Append the operator (either an AND or OR based on the current predicate)
+                    }
+
+                    clause.Append(string.Join(" AND ", predicates)); // Append the predicates joined with AND
                 }
             }
 
-            return clause.ToString();
+            return clause.ToString(); // Return the string from StringBuilder
         }
 
         #region Clone-able Support
