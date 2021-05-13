@@ -103,19 +103,15 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
-        public WhereClause Like(string columnName, object value, bool not = false) {
-            throw new NotImplementedException();
-
-#pragma warning disable CS0162 // Unreachable code detected
+        public WhereClause WhereLike(string columnName, string like, bool equal = true) {
             var last = this.predicates.Last();
 
-            string prefix = not == true ? "NOT " : "";
+            string prefix = equal == false ? "NOT " : "";
 
-            this.parameters.Add(new SqlParameter(columnName, value));
+            this.parameters.Add(new SqlParameter(columnName, like));
             last.Predicates.Add($"{prefix}[{columnName}] LIKE @{columnName}");
 
             return this;
-#pragma warning restore CS0162 // Unreachable code detected
         }
 
         public WhereClause WhereIn(string columnName, object[] values, bool equal = true) {
