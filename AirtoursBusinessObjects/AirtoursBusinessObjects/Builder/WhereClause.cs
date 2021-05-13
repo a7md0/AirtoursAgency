@@ -286,6 +286,10 @@ namespace AirtoursBusinessObjects.Builder {
     class AndPredicate : Predicate {
         public AndPredicate() : base() { }
 
+        public override string ToString() {
+            return "AND";
+        }
+
         #region Clone-able Support
         protected AndPredicate(AndPredicate another) : base(another) { }
 
@@ -295,6 +299,10 @@ namespace AirtoursBusinessObjects.Builder {
 
     class OrPredicate : Predicate {
         public OrPredicate() : base() { }
+
+        public override string ToString() {
+            return "OR";
+        }
 
         #region Clone-able Support
         protected OrPredicate(OrPredicate another) : base(another) { }
