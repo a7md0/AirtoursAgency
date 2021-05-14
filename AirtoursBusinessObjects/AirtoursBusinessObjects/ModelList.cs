@@ -153,6 +153,46 @@ namespace AirtoursBusinessObjects {
             return found;
         }
 
+        public virtual T FindOne(WhereClause where) {
+            T model = null;
+
+            if (where is null || !where.HasAny) {
+                throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
+            }
+
+            using (var command = this.connection.CreateCommand()) {
+                SqlParameter[] sqlParameters = where?.Parameters;
+                string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
+
+                command.CommandText = $"SELECT TOP 1 * FROM [{this.table}]{whereClause};";
+                if (sqlParameters is null == false) {
+                    command.Parameters.AddRange(sqlParameters);
+                }
+
+                try {
+                    this.openConnection();
+
+                    using (var reader = command.ExecuteReader()) {
+                        this.setColumnsOrdinals(reader);
+
+                        if (reader.Read()) {
+                            model = new T {
+                                Inserted = true
+                            };
+
+                            this.setValues(model, reader);
+                        }
+                    }
+                } catch (SqlException ex) {
+                    Debug.WriteLine(ex.Message, "ModelList.Fill");
+                } finally {
+                    this.closeConnection();
+                }
+            }
+
+            return model;
+        }
+
         /// <summary>
         /// Add new model to the database.
         /// </summary>
