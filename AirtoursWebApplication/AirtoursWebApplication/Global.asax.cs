@@ -14,5 +14,16 @@ namespace AirtoursWebApplication {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        void Session_Start() {
+            if (Request.IsAuthenticated) {
+                object customer = Session["customer"];
+
+                if (customer is null) {
+                    FormsAuthentication.SignOut();
+                    FormsAuthentication.RedirectToLoginPage();
+                }
+            }
+        }
     }
 }
