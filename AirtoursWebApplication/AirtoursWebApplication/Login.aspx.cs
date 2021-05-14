@@ -39,7 +39,7 @@ namespace AirtoursWebApplication {
             var customer = customerList.FindOne(where);
 
             if (customer is null == false) {
-                Session.Add("customer", customer);
+                this.Session.Add("customer", customer);
 
                 FormsAuthentication.RedirectFromLoginPage(customer.Email, true);
             }
