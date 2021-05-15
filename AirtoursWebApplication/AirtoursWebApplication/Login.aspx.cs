@@ -15,8 +15,8 @@ namespace AirtoursWebApplication {
         }
 
         protected void cmdLogin_Click(object sender, System.EventArgs e) {
-            var email = txtUserName.Value;
-            var password = txtUserPass.Value;
+            var email = txtUserName.Text;
+            var password = txtUserPass.Text;
 
             if ((null == email) || (0 == email.Length) || (email.Length > 40)) {
                 System.Diagnostics.Debug.WriteLine("[ValidateUser] Input validation of userName failed.");
