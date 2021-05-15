@@ -60,12 +60,21 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
+                    <% if (!Request.IsAuthenticated) { %>
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/register">Register</a>
                     </li>
+                    <% } else { %>
+                    <li class="nav-item">
+                        <span class="navbar-text" ID="UserDisplayName" runat="server"></span>
+                    </li>
+                    <li class="nav-item">
+                        <asp:LinkButton ID="LogoutButton" runat="server" class="nav-link" style="cursor: pointer;" OnClick="LogoutButton_Click">Logout</asp:LinkButton>
+                    </li>
+                    <% } %>
                 </ul>
             </div>
         </nav>
