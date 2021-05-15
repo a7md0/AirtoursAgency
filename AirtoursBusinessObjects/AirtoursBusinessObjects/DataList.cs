@@ -689,7 +689,13 @@ namespace AirtoursBusinessObjects {
             }
 
             try {
-                value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
+                object result = this.ScalarQuery($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
+
+                if (typeof(U) == result.GetType()) {
+                    value = (U) result;
+                } else {
+                    value = (U) Convert.ChangeType(result, typeof(U));
+                }
             } catch (Exception ex) {
                 Debug.WriteLine(ex.Message, "DataList.aggregateValue");
             }
@@ -706,20 +712,12 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Execute scalar query and convert to appropriate type.
         /// </summary>
-        /// <param name="query">The query to execute</param>
-        /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
-        /// <returns>Scalar result</returns>
-        protected object ScalarQuery(string query, SqlParameter[] parameters = null) => this.ScalarQuery<object>(query, parameters);
-
-        /// <summary>
-        /// Execute scalar query and convert to appropriate type.
-        /// </summary>
         /// <typeparam name="U">Result data type</typeparam>
         /// <param name="query">The query to execute</param>
         /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
         /// <returns>Scalar result</returns>
-        protected U ScalarQuery<U>(string query, SqlParameter[] parameters = null) {
-            U value = default(U);
+        protected object ScalarQuery(string query, SqlParameter[] parameters = null) {
+            object result = null;
 
             try {
                 using (var command = this.connection.CreateCommand()) {
@@ -730,12 +728,7 @@ namespace AirtoursBusinessObjects {
                     }
 
                     this.OpenConnection();
-                    object result = command.ExecuteScalar();
-                    if (typeof(U) == result.GetType()) {
-                        value = (U) result;
-                    } else {
-                        value = (U) Convert.ChangeType(result, typeof(U));
-                    }
+                    result = command.ExecuteScalar();
                 }
             } catch (Exception ex) {
                 Debug.WriteLine(ex.Message, "DataList.scalarQuery");
@@ -743,7 +736,7 @@ namespace AirtoursBusinessObjects {
                 this.CloseConnection();
             }
 
-            return value;
+            return result;
         }
     }
 
