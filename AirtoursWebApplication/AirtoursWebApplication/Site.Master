@@ -13,6 +13,9 @@
     </asp:PlaceHolder>
 
     <webopt:BundleReference runat="server" Path="~/Content/css" />
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
 </head>
@@ -73,7 +76,7 @@
         </main>
 
         <footer class="container">
-            <p>&copy; Airtours - <%: DateTime.Now.Year %></p>
+            <p class="mt-5 mb-3 text-muted text-center">&copy; Airtours - <%: DateTime.Now.Year %></p>
         </footer>
         <%--<div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
@@ -83,7 +86,6 @@
                 <p>&copy; <%: DateTime.Now.Year %> - Airtours</p>
             </footer>
         </div>--%>
-
     </form>
 </body>
 </html>
