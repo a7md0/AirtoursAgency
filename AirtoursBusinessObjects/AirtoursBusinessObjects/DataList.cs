@@ -554,10 +554,40 @@ namespace AirtoursBusinessObjects {
     }
 
     partial class DataList<T> {
+        /// <summary>
+        /// Query sorted list of unique values for given column (Design Document Requirement #7)
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <param name="ascending">Sort the list ascendingly</param>
+        /// <returns>Sorted list of unique values</returns>
         public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, null, ascending);
+
+        /// <summary>
+        /// Query sorted list of unique values for given column
+        /// </summary>
+        /// <typeparam name="U">Expected list items data-type</typeparam>
+        /// <param name="column">Column name</param>
+        /// <param name="ascending">Sort the list ascendingly</param>
+        /// <returns>Sorted list of unique values</returns>
         public List<U> UniqueValues<U>(string column, bool ascending = true) => this.UniqueValues<U>(column, null, ascending);
 
+        /// <summary>
+        /// Query sorted list of unique values for given column with some filters
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <param name="where">Optional where clause filter</param>
+        /// <param name="ascending">Sort the list ascendingly</param>
+        /// <returns>Sorted list of unique values</returns>
         public List<string> UniqueValues(string column, WhereClause where = null, bool ascending = true) => this.UniqueValues<string>(column, where, ascending);
+
+        /// <summary>
+        /// Query sorted list of unique values for given column with some filters
+        /// </summary>
+        /// <typeparam name="U">Expected list items data-type</typeparam>
+        /// <param name="column">Column name</param>
+        /// <param name="where">Optional where clause filter</param>
+        /// <param name="ascending">Sort the list ascendingly</param>
+        /// <returns>Sorted list of unique values</returns>
         public List<U> UniqueValues<U>(string column, WhereClause where = null, bool ascending = true) {
             List<U> values = new List<U>();
 
