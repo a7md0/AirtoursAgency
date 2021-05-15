@@ -118,6 +118,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
+    <Content Include="Flights\Outward.aspx" />
+    <Content Include="Flights\Return.aspx" />
     <Content Include="Global.asax" />
     <Content Include=".editorconfig" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -143,6 +145,7 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Flights\Web.config" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
@@ -274,6 +277,20 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="Flights\Outward.aspx.cs">
+      <DependentUpon>Outward.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Flights\Outward.aspx.designer.cs">
+      <DependentUpon>Outward.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Flights\Return.aspx.cs">
+      <DependentUpon>Return.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Flights\Return.aspx.designer.cs">
+      <DependentUpon>Return.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
