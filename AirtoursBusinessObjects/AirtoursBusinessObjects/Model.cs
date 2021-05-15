@@ -1,7 +1,14 @@
 ﻿
 namespace AirtoursBusinessObjects {
     public abstract class Model {
+        /// <summary>
+        /// If this model has any previous errors
+        /// </summary>
         public bool Valid { get; protected internal set; }
+
+        /// <summary>
+        /// Latest errors with this model
+        /// </summary>
         public string ErrorMessage { get; protected internal set; }
 
         /// <summary>
@@ -11,9 +18,22 @@ namespace AirtoursBusinessObjects {
 
         public Model() { }
 
+        /// <summary>
+        /// Get the primary key values of this model
+        /// </summary>
+        /// <returns></returns>
         public abstract object GetId();
+
+        /// <summary>
+        /// Set the primary key value of this model
+        /// </summary>
+        /// <param name="id"></param>
         public abstract void SetId(object id);
 
+        /// <summary>
+        /// Set error message for this model
+        /// </summary>
+        /// <param name="message">The error message or null</param>
         protected internal void SetError(string message) {
             this.Valid = message == null ? true : false;
             this.ErrorMessage = message;
