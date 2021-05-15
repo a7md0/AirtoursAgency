@@ -11,7 +11,7 @@
                 <div class="col-6 form-group">
                     <label class="form-label" for="FirstNameTextBox">First Name*</label>
                     <div class="controls">
-                        <asp:TextBox ID="FirstNameTextBox" runat="server" class="form-control" autocomplete="given-name" MaxLength="15" placeholder="First name"></asp:TextBox>
+                        <asp:TextBox ID="FirstNameTextBox" runat="server" class="form-control" autocomplete="given-name" MaxLength="15" placeholder="First name" autofocus="true"></asp:TextBox>
                     </div>
                 </div>
                 <div class="col-6 form-group">
