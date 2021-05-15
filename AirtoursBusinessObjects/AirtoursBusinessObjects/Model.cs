@@ -19,15 +19,15 @@ namespace AirtoursBusinessObjects {
         public Model() { }
 
         /// <summary>
-        /// Get the primary key values of this model
+        /// Get the id value of this model
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Id value</returns>
         public abstract object GetId();
 
         /// <summary>
-        /// Set the primary key value of this model
+        /// Set the id value of this model
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">New id</param>
         public abstract void SetId(object id);
 
         /// <summary>
