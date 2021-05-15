@@ -614,30 +614,68 @@ namespace AirtoursBusinessObjects {
             AVG, COUNT, MAX, MIN, SUM
         }
 
-        public double TotalValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        /// <summary>
+        /// Calculates the total of all values for a column parameter (Design Document Requirements #1 + #3 + #5)
+        /// </summary>
+        /// <typeparam name="U">Expected value data-type</typeparam>
+        /// <param name="column">Column name to sum</param>
+        /// <param name="whereClause">Optional where clause filter</param>
+        /// <returns>Sum of all matched values</returns>
         public U TotalValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
             return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
 
+        /// <summary>
+        /// Count the rows that match the provided filter conditions (Design Document Requirements #6)
+        /// </summary>
+        /// <param name="whereClause">Optional where clause filter</param>
+        /// <returns>Count of matched rows</returns>
         public int TotalCount(WhereClause whereClause = null) {
             return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
         }
 
-        public int MinValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MIN, column, whereClause);
+        /// <summary>
+        /// Find the minimum value of a given column parameter
+        /// </summary>
+        /// <typeparam name="U">Expected value data-type</typeparam>
+        /// <param name="column">Column name to compare</param>
+        /// <param name="whereClause">Optional where clause filter</param>
+        /// <returns>Minimum value of the passed column matching the conditions</returns>
         public U MinValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
             return this.AggregateValue<U>(AggregateFunctions.MIN, column, whereClause);
         }
 
-        public int MaxValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MAX, column, whereClause);
+
+        /// <summary>
+        /// Find the maximum value of a given column parameter
+        /// </summary>
+        /// <typeparam name="U">Expected value data-type</typeparam>
+        /// <param name="column">Column name to compare</param>
+        /// <param name="whereClause">Optional where clause filter</param>
+        /// <returns>Maximum value of the passed column matching the conditions</returns>
         public U MaxValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
             return this.AggregateValue<U>(AggregateFunctions.MAX, column, whereClause);
         }
 
-        public double AvgValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.AVG, column, whereClause);
+        /// <summary>
+        /// Find the average value of a given column parameter
+        /// </summary>
+        /// <typeparam name="U">Expected value data-type</typeparam>
+        /// <param name="column">Column name to compare</param>
+        /// <param name="whereClause">Optional where clause filter</param>
+        /// <returns>Average value of the passed column matching the conditions</returns>
         public U AvgValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
             return this.AggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
         }
 
+        /// <summary>
+        /// Perform aggregate value query
+        /// </summary>
+        /// <typeparam name="U">Expected value data-type</typeparam>
+        /// <param name="aggregateFunction">Aggregate function to be used</param>
+        /// <param name="column">Column name to be used in the aggregate function</param>
+        /// <param name="where">Optional where clause filter</param>
+        /// <returns>Aggregate value of the passed column matching the conditions</returns>
         protected U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause where = null) {
             U value = default(U);
 
@@ -660,11 +698,17 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Query the maximum primary key value.
+        /// Query the maximum primary key value. (Design Document Requirement #2)
         /// </summary>
         /// <returns>Maximum id value</returns>
         public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
 
+        /// <summary>
+        /// Execute scalar query and convert to appropriate type.
+        /// </summary>
+        /// <param name="query">The query to execute</param>
+        /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
+        /// <returns>Scalar result</returns>
         protected object ScalarQuery(string query, SqlParameter[] parameters = null) => this.ScalarQuery<object>(query, parameters);
 
         /// <summary>
@@ -673,7 +717,7 @@ namespace AirtoursBusinessObjects {
         /// <typeparam name="U">Result data type</typeparam>
         /// <param name="query">The query to execute</param>
         /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
-        /// <returns></returns>
+        /// <returns>Scalar result</returns>
         protected U ScalarQuery<U>(string query, SqlParameter[] parameters = null) {
             U value = default(U);
 
@@ -778,6 +822,13 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Delete many joined records from the databases matching the provided where criteria.
+        /// </summary>
+        /// <param name="where">Filter conditions</param>
+        /// <param name="joinTable">Table name to join with</param>
+        /// <param name="joinColumn">Join column name</param>
+        /// <returns>Number of affected rows</returns>
         public virtual int Delete(WhereClause where, string joinTable, string joinColumn) {
             if (where is null || !where.HasAny) {
                 throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
