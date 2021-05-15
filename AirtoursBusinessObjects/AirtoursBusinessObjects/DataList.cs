@@ -815,7 +815,7 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Delete many records from the databases matching the provided where criteria.
+        /// Delete many records from the databases matching the provided where criteria. (Design Document Requirements #10)
         /// </summary>
         /// <param name="where">Where clause to filter which records will be updated</param>
         /// <returns>Number of affected rows</returns>
@@ -847,7 +847,7 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Delete many joined records from the databases matching the provided where criteria.
+        /// Delete many joined records from the databases matching the provided where criteria (Design Document Requirements #11)
         /// </summary>
         /// <param name="where">Filter conditions</param>
         /// <param name="joinTable">Table name to join with</param>
