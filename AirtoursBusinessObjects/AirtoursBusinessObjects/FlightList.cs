@@ -3,7 +3,7 @@
 namespace AirtoursBusinessObjects {
     using Builder;
 
-    public class FlightList : ModelList<Flight> {
+    public class FlightList : DataList<Flight> {
         public FlightList() : base() { }
 
         public bool FlightsFilter(string origin, string destination) {

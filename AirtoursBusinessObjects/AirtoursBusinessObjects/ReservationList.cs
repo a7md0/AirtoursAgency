@@ -1,5 +1,5 @@
 ﻿namespace AirtoursBusinessObjects {
-    public class ReservationList : ModelList<Reservation> {
+    public class ReservationList : DataList<Reservation> {
         public ReservationList() : base() { }
 
         public decimal ReservationsTotalPrice() {

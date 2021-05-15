@@ -11,7 +11,7 @@ namespace AirtoursBusinessObjects {
     using Builder;
     using Schema;
 
-    public abstract partial class ModelList<T> where T : Model, new() {
+    public abstract partial class DataList<T> where T : Model, new() {
         protected readonly string table;
         protected readonly string pkColumn;
 
@@ -26,7 +26,7 @@ namespace AirtoursBusinessObjects {
 
         protected string[] nonUpdateableColumns = new string[2];
 
-        public ModelList() {
+        public DataList() {
             var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>(); // Get the table attribute linked to the model type
 
             this.table = tableAttribute.Name; // Extract the table name from the table attribute
@@ -103,7 +103,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class ModelList<T> {
+    partial class DataList<T> {
         /// <summary>
         /// Construct the where clause for given model by the primary key
         /// </summary>
@@ -143,7 +143,7 @@ namespace AirtoursBusinessObjects {
                 } catch (Exception ex) {
                     model.SetError(ex.Message);
 
-                    Debug.WriteLine(ex.Message, "ModelList.Fill");
+                    Debug.WriteLine(ex.Message, "DataList.Fill");
                 } finally {
                     this.CloseConnection();
                 }
@@ -183,7 +183,7 @@ namespace AirtoursBusinessObjects {
                         }
                     }
                 } catch (Exception ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.FindOne");
+                    Debug.WriteLine(ex.Message, "DataList.FindOne");
                 } finally {
                     this.CloseConnection();
                 }
@@ -226,7 +226,7 @@ namespace AirtoursBusinessObjects {
                         model.SetError(null);
                     } catch (Exception ex) {
                         model.SetError(ex.Message);
-                        Debug.WriteLine(ex.Message, "ModelList.Add");
+                        Debug.WriteLine(ex.Message, "DataList.Add");
                     } finally {
                         this.CloseConnection();
                     }
@@ -271,7 +271,7 @@ namespace AirtoursBusinessObjects {
                         model.SetError(null);
                     } catch (Exception ex) {
                         model.SetError(ex.Message);
-                        Debug.WriteLine(ex.Message, "ModelList.Update");
+                        Debug.WriteLine(ex.Message, "DataList.Update");
                     } finally {
                         this.CloseConnection();
                     }
@@ -306,7 +306,7 @@ namespace AirtoursBusinessObjects {
                     model.SetError(null);
                 } catch (Exception ex) {
                     model.SetError(ex.Message);
-                    Debug.WriteLine(ex.Message, "ModelList.Delete");
+                    Debug.WriteLine(ex.Message, "DataList.Delete");
                 } finally {
                     this.CloseConnection();
                 }
@@ -316,7 +316,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class ModelList<T> {
+    partial class DataList<T> {
         /// <summary>
         /// Populate the list (SELECT *)
         /// </summary>
@@ -425,7 +425,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class ModelList<T> {
+    partial class DataList<T> {
         protected bool PopulateWithQuery(SqlCommand command) {
             bool hasRows = false;
 
@@ -439,7 +439,7 @@ namespace AirtoursBusinessObjects {
                     this.RepopulateList(reader);
                 }
             } catch (Exception ex) {
-                Debug.WriteLine(ex.Message, "ModelList.populateWithQuery");
+                Debug.WriteLine(ex.Message, "DataList.populateWithQuery");
             } finally {
                 this.CloseConnection();
             }
@@ -481,7 +481,7 @@ namespace AirtoursBusinessObjects {
 
                     property.SetValue(model, value);
                 } catch (Exception ex) { // Dictionary throws if key not found
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
+                    Debug.WriteLine(ex.Message, "DataList.setValues");
                 }
             }
         }
@@ -500,7 +500,7 @@ namespace AirtoursBusinessObjects {
 
                     this.columnsOrdinals.Add(propertyName, columnOrdinal);
                 } catch (Exception ex) { // No column with the specified name was found.
-                    Debug.WriteLine(ex.Message, "ModelList.setColumnsOrdinals");
+                    Debug.WriteLine(ex.Message, "DataList.setColumnsOrdinals");
                 }
             }
         }
@@ -518,7 +518,7 @@ namespace AirtoursBusinessObjects {
                         this.schema = new TableSchema(schemaTable);
                     }
                 } catch (Exception ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.fetchTableSchema");
+                    Debug.WriteLine(ex.Message, "DataList.fetchTableSchema");
                 } finally {
                     this.CloseConnection();
                 }
@@ -553,7 +553,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class ModelList<T> {
+    partial class DataList<T> {
         public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, null, ascending);
         public List<U> UniqueValues<U>(string column, bool ascending = true) => this.UniqueValues<U>(column, null, ascending);
 
@@ -590,7 +590,7 @@ namespace AirtoursBusinessObjects {
                         }
                     }
                 } catch (Exception ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.UniqueValues");
+                    Debug.WriteLine(ex.Message, "DataList.UniqueValues");
                 } finally {
                     this.CloseConnection();
                 }
@@ -609,7 +609,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class ModelList<T> {
+    partial class DataList<T> {
         protected enum AggregateFunctions {
             AVG, COUNT, MAX, MIN, SUM
         }
@@ -653,7 +653,7 @@ namespace AirtoursBusinessObjects {
             try {
                 value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
             } catch (Exception ex) {
-                Debug.WriteLine(ex.Message, "ModelList.aggregateValue");
+                Debug.WriteLine(ex.Message, "DataList.aggregateValue");
             }
 
             return value;
@@ -694,7 +694,7 @@ namespace AirtoursBusinessObjects {
                     }
                 }
             } catch (Exception ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
+                Debug.WriteLine(ex.Message, "DataList.scalarQuery");
             } finally {
                 this.CloseConnection();
             }
@@ -703,7 +703,7 @@ namespace AirtoursBusinessObjects {
         }
     }
 
-    partial class ModelList<T> {
+    partial class DataList<T> {
         /// <summary>
         /// Update many records from the database.
         /// </summary>
@@ -736,7 +736,7 @@ namespace AirtoursBusinessObjects {
 
                         affectedRows = command.ExecuteNonQuery();
                     } catch (Exception ex) {
-                        Debug.WriteLine(ex.Message, "ModelList.UpdateMany");
+                        Debug.WriteLine(ex.Message, "DataList.UpdateMany");
                     } finally {
                         this.CloseConnection();
                     }
@@ -769,7 +769,7 @@ namespace AirtoursBusinessObjects {
 
                     affectedRows = command.ExecuteNonQuery();
                 } catch (Exception ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.DeleteMany");
+                    Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
                     this.CloseConnection();
                 }
@@ -812,7 +812,7 @@ namespace AirtoursBusinessObjects {
                         affectedRows += command.ExecuteNonQuery();
                     }
                 } catch (Exception ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.DeleteMany");
+                    Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
                     this.CloseConnection();
                 }

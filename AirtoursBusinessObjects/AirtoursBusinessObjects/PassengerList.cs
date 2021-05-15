@@ -1,5 +1,5 @@
 ﻿namespace AirtoursBusinessObjects {
-    public class PassengerList : ModelList<Passenger> {
+    public class PassengerList : DataList<Passenger> {
         public PassengerList() : base() { }
 
         public bool PassengersFilter(Reservation reservation) {
