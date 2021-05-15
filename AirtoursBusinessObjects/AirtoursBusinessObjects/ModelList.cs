@@ -107,14 +107,9 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Construct the where clause for given model by the primary key
         /// </summary>
-        /// <param name="command">Current SqlCommand instance</param>
-        /// <param name="model">Model to be used for the value</param>
-        /// <returns>Where clause string for the query</returns>
-        protected virtual string WhereModelClause(SqlCommand command, T model) {
-            command.Parameters.AddWithValue(this.pkColumn, model.GetId());
-
-            return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
-        }
+        /// <param name="model"></param>
+        /// <returns>Where clause matching the model by primary key</returns>
+        protected virtual WhereClause ModelWhereClause(T model) => this.WhereClause.Where(this.pkColumn, model.GetId());
 
         /// <summary>
         /// Re-fill the supplied model details from the database.
@@ -124,10 +119,14 @@ namespace AirtoursBusinessObjects {
         public virtual bool Fill(T model) {
             bool found = false;
 
-            using (var command = this.connection.CreateCommand()) {
-                var whereClause = this.WhereModelClause(command, model);
+            using (var command = this.connection.CreateCommand())
+            using (var where = this.ModelWhereClause(model)) {
+                string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
 
-                command.CommandText = $"SELECT * FROM [{this.table}] {whereClause};";
+                command.CommandText = $"SELECT * FROM [{this.table}]{whereClause};";
+                if (where?.Parameters is null == false) {
+                    command.Parameters.AddRange(where?.Parameters);
+                }
 
                 try {
                     this.OpenConnection();
@@ -244,17 +243,25 @@ namespace AirtoursBusinessObjects {
         /// <returns>Whether the row was updated or not</returns>
         public virtual bool Update(T model) {
             using (var command = this.connection.CreateCommand())
-            using (var set = new SetClause(this.schema)) {
+            using (var set = new SetClause(this.schema))
+            using (var where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
 
                 set.Add(model, modelProperties, this.nonUpdateableColumns);
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
-                    var whereClause = this.WhereModelClause(command, model);
+                    string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
 
-                    command.Parameters.AddRange(set.Parameters);
-                    command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
+                    command.CommandText = $"UPDATE [{this.table}] {setClause}{whereClause};";
+
+                    if (set?.Parameters is null == false) {
+                        command.Parameters.AddRange(set.Parameters);
+                    }
+
+                    if (where?.Parameters is null == false) {
+                        command.Parameters.AddRange(where.Parameters);
+                    }
 
                     try {
                         this.OpenConnection();
@@ -280,11 +287,16 @@ namespace AirtoursBusinessObjects {
         /// <param name="model">Model instance, with valid primary key. The equivalent row will be deleted permanently from the database.</param>
         /// <returns>Whether the row was deleted or not</returns>
         public virtual bool Delete(T model) {
-            using (var command = this.connection.CreateCommand()) {
+            using (var command = this.connection.CreateCommand())
+            using (var where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
-                var whereClause = this.WhereModelClause(command, model);
 
-                command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
+                string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
+
+                command.CommandText = $"DELETE FROM [{this.table}]{whereClause};";
+                if (where?.Parameters is null == false) {
+                    command.Parameters.AddRange(where.Parameters);
+                }
 
                 try {
                     this.OpenConnection();

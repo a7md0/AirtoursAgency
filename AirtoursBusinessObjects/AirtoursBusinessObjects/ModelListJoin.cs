@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 
 namespace AirtoursBusinessObjects {
+    using Builder;
     using Schema;
 
     public abstract class ModelListJoin<T> : ModelList<T> where T : ModelJoin, new() {
@@ -14,10 +15,6 @@ namespace AirtoursBusinessObjects {
             base.nonUpdateableColumns[1] = this.pkJoinColumn;
         }
 
-        protected override string WhereModelClause(SqlCommand command, T item) {
-            command.Parameters.AddWithValue(this.pkJoinColumn, item.GetJoinId());
-
-            return $"{base.WhereModelClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
-        }
+        protected override WhereClause ModelWhereClause(T model) => base.ModelWhereClause(model).Where(this.pkJoinColumn, model.GetJoinId());
     }
 }
