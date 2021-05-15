@@ -52,6 +52,25 @@
                     <li class="nav-item active">
                         <a runat="server" href="~/" class="nav-link">Home <span class="sr-only">(current)</span></a>
                     </li>
+                    <% if (Request.IsAuthenticated) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="flightsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Flights</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/Flights/Outward">Outward</a>
+                            <a class="dropdown-item" href="/Flights/Return">Return</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="reservationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reservations</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                            <a class="dropdown-item" href="/Reservations">View Reservations</a>
+                            <a class="dropdown-item" href="/Reservations/New">Make a Reservation</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/Reservations/New">Add Passenger Details</a>
+                        </div>
+                    </li>
+                    <% } %>
                     <li class="nav-item">
                         <a runat="server" href="~/About" class="nav-link">About</a>
                     </li>
@@ -68,11 +87,11 @@
                         <a class="nav-link" href="/register">Register</a>
                     </li>
                     <% } else { %>
-                    <li class="nav-item">
-                        <span class="navbar-text" ID="UserDisplayName" runat="server"></span>
-                    </li>
-                    <li class="nav-item">
-                        <asp:LinkButton ID="LogoutButton" runat="server" class="nav-link" style="cursor: pointer;" OnClick="LogoutButton_Click">Logout</asp:LinkButton>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="UserDisplayName" runat="server"></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <asp:LinkButton ID="LinkButton1" runat="server" class="dropdown-item" Style="cursor: pointer;" OnClick="LogoutButton_Click">Logout</asp:LinkButton>
+                        </div>
                     </li>
                     <% } %>
                 </ul>

@@ -12,7 +12,7 @@ namespace AirtoursWebApplication {
     public partial class SiteMaster : MasterPage {
         protected void Page_Load(object sender, EventArgs e) {
             var customer = (Customer) this.Session["customer"];
-            this.UserDisplayName.InnerText = $"Welcome {customer?.Fname} {customer?.Lname}";
+            this.UserDisplayName.InnerText = $"{customer?.Fname} {customer?.Lname}";
         }
 
         protected void LogoutButton_Click(object sender, EventArgs e) {
