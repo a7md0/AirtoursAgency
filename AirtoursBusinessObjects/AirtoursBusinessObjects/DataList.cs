@@ -406,7 +406,7 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Populate the current list based on provided filters
+        /// Populate the current list based on provided filters (Design Document Requirement #4)
         /// </summary>
         /// <param name="whereClause">Where clause filters (Optional)</param>
         /// <returns>Whether there were any matching results</returns>
