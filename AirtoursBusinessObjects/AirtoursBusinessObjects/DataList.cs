@@ -676,6 +676,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="column">Column name to be used in the aggregate function</param>
         /// <param name="where">Optional where clause filter</param>
         /// <returns>Aggregate value of the passed column matching the conditions</returns>
+        /// <exception cref="ArgumentException">If invalid column name is passed</exception>
         protected U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause where = null) {
             U value = default(U);
 
