@@ -27,23 +27,23 @@ namespace AirtoursBusinessObjects {
         protected string[] nonUpdateableColumns = new string[2];
 
         public ModelList() {
-            var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
+            var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>(); // Get the table attribute linked to the model type
 
-            this.table = tableAttribute.Name;
-            this.pkColumn = tableAttribute.PkColumn;
+            this.table = tableAttribute.Name; // Extract the table name from the table attribute
+            this.pkColumn = tableAttribute.PkColumn; // Extract the table pk from the table attribute
 
-            this.connection = new SqlConnection(Properties.Settings.Default.AirtoursConnectionString);
+            this.connection = new SqlConnection(Properties.Settings.Default.AirtoursConnectionString); // Create new SQL connection from the connection string in the settings
 
-            this.list = new List<T>();
-            this.dataTable = new DataTable(table);
+            this.list = new List<T>(); // Create new list of type T where T is the model passed 
+            this.dataTable = new DataTable(table); // Create new data table by the name of the current table
 
-            this.modelProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            this.columnsOrdinals = new Dictionary<string, int>();
+            this.modelProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly); // Get the specific model T properties, for later usage
+            this.columnsOrdinals = new Dictionary<string, int>(); // Create dictionary to hold column ordinals (sorting order from the database table)
 
             this.nonUpdateableColumns[0] = this.pkColumn;
 
-            this.SetDataTableColumns();
-            this.FetchTableSchema();
+            this.SetDataTableColumns(); // Prepare data table column from the model properties
+            this.FetchTableSchema(); // Fetch table schema for later usage
         }
 
         /// <summary>
