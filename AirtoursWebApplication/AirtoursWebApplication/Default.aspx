@@ -12,8 +12,6 @@
     </div>
 
     <div class="container">
-        <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
-
         <!-- Example row of columns -->
         <div class="row">
             <div class="col-md-4">
