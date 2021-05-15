@@ -140,7 +140,7 @@ namespace AirtoursBusinessObjects {
                             model.SetError(null);
                         }
                     }
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     model.SetError(ex.Message);
 
                     Debug.WriteLine(ex.Message, "ModelList.Fill");
@@ -182,7 +182,7 @@ namespace AirtoursBusinessObjects {
                             this.SetValues(model, reader);
                         }
                     }
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "ModelList.FindOne");
                 } finally {
                     this.CloseConnection();
@@ -224,7 +224,7 @@ namespace AirtoursBusinessObjects {
                         model.Inserted = true;
 
                         model.SetError(null);
-                    } catch (SqlException ex) {
+                    } catch (Exception ex) {
                         model.SetError(ex.Message);
                         Debug.WriteLine(ex.Message, "ModelList.Add");
                     } finally {
@@ -269,7 +269,7 @@ namespace AirtoursBusinessObjects {
                         affectedRows = command.ExecuteNonQuery();
 
                         model.SetError(null);
-                    } catch (SqlException ex) {
+                    } catch (Exception ex) {
                         model.SetError(ex.Message);
                         Debug.WriteLine(ex.Message, "ModelList.Update");
                     } finally {
@@ -304,7 +304,7 @@ namespace AirtoursBusinessObjects {
                     affectedRows = command.ExecuteNonQuery();
 
                     model.SetError(null);
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     model.SetError(ex.Message);
                     Debug.WriteLine(ex.Message, "ModelList.Delete");
                 } finally {
@@ -438,7 +438,7 @@ namespace AirtoursBusinessObjects {
                     this.SetColumnsOrdinals(reader);
                     this.RepopulateList(reader);
                 }
-            } catch (SqlException ex) {
+            } catch (Exception ex) {
                 Debug.WriteLine(ex.Message, "ModelList.populateWithQuery");
             } finally {
                 this.CloseConnection();
@@ -480,17 +480,7 @@ namespace AirtoursBusinessObjects {
                     }
 
                     property.SetValue(model, value);
-                } catch (KeyNotFoundException ex) { // Dictionary throws if key not found
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
-                } catch (InvalidOperationException ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
-                } catch (ArgumentException ex) { // PropertyInfo.SetValue throws
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
-                } catch (TargetException ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
-                } catch (MethodAccessException ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.setValues");
-                } catch (TargetInvocationException ex) {
+                } catch (Exception ex) { // Dictionary throws if key not found
                     Debug.WriteLine(ex.Message, "ModelList.setValues");
                 }
             }
@@ -509,11 +499,7 @@ namespace AirtoursBusinessObjects {
                     int columnOrdinal = reader.GetOrdinal(propertyName); // throws IndexOutOfRangeException
 
                     this.columnsOrdinals.Add(propertyName, columnOrdinal);
-                } catch (IndexOutOfRangeException ex) { // No column with the specified name was found.
-                    Debug.WriteLine(ex.Message, "ModelList.setColumnsOrdinals");
-                } catch (ArgumentNullException ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.setColumnsOrdinals");
-                } catch (ArgumentException ex) {
+                } catch (Exception ex) { // No column with the specified name was found.
                     Debug.WriteLine(ex.Message, "ModelList.setColumnsOrdinals");
                 }
             }
@@ -531,7 +517,7 @@ namespace AirtoursBusinessObjects {
 
                         this.schema = new TableSchema(schemaTable);
                     }
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "ModelList.fetchTableSchema");
                 } finally {
                     this.CloseConnection();
@@ -603,7 +589,7 @@ namespace AirtoursBusinessObjects {
                             values.Add((U) value);
                         }
                     }
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "ModelList.UniqueValues");
                 } finally {
                     this.CloseConnection();
@@ -666,7 +652,7 @@ namespace AirtoursBusinessObjects {
 
             try {
                 value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
-            } catch (InvalidCastException ex) {
+            } catch (Exception ex) {
                 Debug.WriteLine(ex.Message, "ModelList.aggregateValue");
             }
 
@@ -707,19 +693,7 @@ namespace AirtoursBusinessObjects {
                         value = (U) Convert.ChangeType(result, typeof(U));
                     }
                 }
-            } catch (InvalidCastException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
-            } catch (SqlException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
-            } catch (InvalidOperationException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
-            } catch (System.IO.IOException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
-            } catch (FormatException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
-            } catch (OverflowException ex) {
-                Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
-            } catch (ArgumentNullException ex) {
+            } catch (Exception ex) {
                 Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
             } finally {
                 this.CloseConnection();
@@ -761,7 +735,7 @@ namespace AirtoursBusinessObjects {
                         this.OpenConnection();
 
                         affectedRows = command.ExecuteNonQuery();
-                    } catch (SqlException ex) {
+                    } catch (Exception ex) {
                         Debug.WriteLine(ex.Message, "ModelList.UpdateMany");
                     } finally {
                         this.CloseConnection();
@@ -794,7 +768,7 @@ namespace AirtoursBusinessObjects {
                     this.OpenConnection();
 
                     affectedRows = command.ExecuteNonQuery();
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "ModelList.DeleteMany");
                 } finally {
                     this.CloseConnection();
@@ -837,7 +811,7 @@ namespace AirtoursBusinessObjects {
 
                         affectedRows += command.ExecuteNonQuery();
                     }
-                } catch (SqlException ex) {
+                } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "ModelList.DeleteMany");
                 } finally {
                     this.CloseConnection();
