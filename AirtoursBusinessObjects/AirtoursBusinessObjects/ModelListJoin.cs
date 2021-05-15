@@ -14,10 +14,10 @@ namespace AirtoursBusinessObjects {
             base.nonUpdateableColumns[1] = this.pkJoinColumn;
         }
 
-        protected override string whereModelClause(SqlCommand command, T item) {
+        protected override string WhereModelClause(SqlCommand command, T item) {
             command.Parameters.AddWithValue(this.pkJoinColumn, item.GetJoinId());
 
-            return $"{base.whereModelClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
+            return $"{base.WhereModelClause(command, item)} AND [{this.pkJoinColumn}] = @{this.pkJoinColumn}";
         }
     }
 }

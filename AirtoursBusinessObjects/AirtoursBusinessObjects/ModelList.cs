@@ -42,8 +42,8 @@ namespace AirtoursBusinessObjects {
 
             this.nonUpdateableColumns[0] = this.pkColumn;
 
-            this.setDataTableColumns();
-            this.fetchTableSchema();
+            this.SetDataTableColumns();
+            this.FetchTableSchema();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace AirtoursBusinessObjects {
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="SqlException"></exception>
         /// </summary>
-        protected void openConnection() {
+        protected void OpenConnection() {
             if (this.connection.State.HasFlag(ConnectionState.Closed)) {
                 this.connection.Open();
             }
@@ -96,7 +96,7 @@ namespace AirtoursBusinessObjects {
         /// Close the connection if it is opened.
         /// <exception cref="SqlException"></exception>
         /// </summary>
-        protected void closeConnection() {
+        protected void CloseConnection() {
             if (this.connection.State.HasFlag(ConnectionState.Open)) {
                 this.connection.Close();
             }
@@ -110,7 +110,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="command">Current SqlCommand instance</param>
         /// <param name="model">Model to be used for the value</param>
         /// <returns>Where clause string for the query</returns>
-        protected virtual string whereModelClause(SqlCommand command, T model) {
+        protected virtual string WhereModelClause(SqlCommand command, T model) {
             command.Parameters.AddWithValue(this.pkColumn, model.GetId());
 
             return $"WHERE [{this.pkColumn}] = @{this.pkColumn}";
@@ -125,19 +125,19 @@ namespace AirtoursBusinessObjects {
             bool found = false;
 
             using (var command = this.connection.CreateCommand()) {
-                var whereClause = this.whereModelClause(command, model);
+                var whereClause = this.WhereModelClause(command, model);
 
                 command.CommandText = $"SELECT * FROM [{this.table}] {whereClause};";
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
 
                     using (var reader = command.ExecuteReader()) {
-                        this.setColumnsOrdinals(reader);
+                        this.SetColumnsOrdinals(reader);
                         found = reader.HasRows;
 
                         if (reader.Read()) {
-                            this.setValues(model, reader);
+                            this.SetValues(model, reader);
                             model.SetError(null);
                         }
                     }
@@ -146,7 +146,7 @@ namespace AirtoursBusinessObjects {
 
                     Debug.WriteLine(ex.Message, "ModelList.Fill");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
             }
 
@@ -170,23 +170,23 @@ namespace AirtoursBusinessObjects {
                 }
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
 
                     using (var reader = command.ExecuteReader()) {
-                        this.setColumnsOrdinals(reader);
+                        this.SetColumnsOrdinals(reader);
 
                         if (reader.Read()) {
                             model = new T {
                                 Inserted = true
                             };
 
-                            this.setValues(model, reader);
+                            this.SetValues(model, reader);
                         }
                     }
                 } catch (SqlException ex) {
                     Debug.WriteLine(ex.Message, "ModelList.Fill");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
             }
 
@@ -213,7 +213,7 @@ namespace AirtoursBusinessObjects {
                     command.CommandText = $"INSERT INTO [{this.table}] ({insertFields}) OUTPUT INSERTED.{this.pkColumn} VALUES ({insertValues});";
 
                     try {
-                        this.openConnection();
+                        this.OpenConnection();
 
                         object inserted_id = command.ExecuteScalar();
                         added = true;
@@ -229,7 +229,7 @@ namespace AirtoursBusinessObjects {
                         model.SetError(ex.Message);
                         Debug.WriteLine(ex.Message, "ModelList.Add");
                     } finally {
-                        this.closeConnection();
+                        this.CloseConnection();
                     }
                 }
             }
@@ -251,13 +251,13 @@ namespace AirtoursBusinessObjects {
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
-                    var whereClause = this.whereModelClause(command, model);
+                    var whereClause = this.WhereModelClause(command, model);
 
                     command.Parameters.AddRange(set.Parameters);
                     command.CommandText = $"UPDATE [{this.table}] {setClause} {whereClause};";
 
                     try {
-                        this.openConnection();
+                        this.OpenConnection();
 
                         affectedRows = command.ExecuteNonQuery();
 
@@ -266,7 +266,7 @@ namespace AirtoursBusinessObjects {
                         model.SetError(ex.Message);
                         Debug.WriteLine(ex.Message, "ModelList.Update");
                     } finally {
-                        this.closeConnection();
+                        this.CloseConnection();
                     }
                 }
 
@@ -282,12 +282,12 @@ namespace AirtoursBusinessObjects {
         public virtual bool Delete(T model) {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
-                var whereClause = this.whereModelClause(command, model);
+                var whereClause = this.WhereModelClause(command, model);
 
                 command.CommandText = $"DELETE FROM [{this.table}] {whereClause};";
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
 
                     affectedRows = command.ExecuteNonQuery();
 
@@ -296,7 +296,7 @@ namespace AirtoursBusinessObjects {
                     model.SetError(ex.Message);
                     Debug.WriteLine(ex.Message, "ModelList.Delete");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
 
                 return affectedRows > 0;
@@ -389,7 +389,7 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(on?.Parameters);
                 }
 
-                return this.populateWithQuery(command);
+                return this.PopulateWithQuery(command);
             }
         }
 
@@ -408,28 +408,28 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(sqlParameters);
                 }
 
-                return this.populateWithQuery(command);
+                return this.PopulateWithQuery(command);
             }
         }
     }
 
     partial class ModelList<T> {
-        protected bool populateWithQuery(SqlCommand command) {
+        protected bool PopulateWithQuery(SqlCommand command) {
             bool hasRows = false;
 
             try {
-                this.openConnection();
+                this.OpenConnection();
 
                 using (var reader = command.ExecuteReader()) {
                     hasRows = reader.HasRows;
 
-                    this.setColumnsOrdinals(reader);
-                    this.repopulateList(reader);
+                    this.SetColumnsOrdinals(reader);
+                    this.RepopulateList(reader);
                 }
             } catch (SqlException ex) {
                 Debug.WriteLine(ex.Message, "ModelList.populateWithQuery");
             } finally {
-                this.closeConnection();
+                this.CloseConnection();
             }
 
             return hasRows;
@@ -438,18 +438,18 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Recreate the current list with the values from the reader. It does empty the list at start.
         /// </summary>
-        protected virtual void repopulateList(SqlDataReader reader) {
+        protected virtual void RepopulateList(SqlDataReader reader) {
             this.list.Clear();
             this.dataTable.Rows.Clear();
 
             while (reader.Read()) {
                 T model = new T();
 
-                this.setValues(model, reader);
+                this.SetValues(model, reader);
                 model.Inserted = true;
 
                 this.list.Add(model);
-                this.addDataTableRow(model);
+                this.AddDataTableRow(model);
             }
         }
 
@@ -457,7 +457,7 @@ namespace AirtoursBusinessObjects {
         /// Set values of given model from the current reader.
         /// </summary>
         /// <param name="model">Model to set properties value from the current reader.</param>
-        protected void setValues(T model, SqlDataReader reader) {
+        protected void SetValues(T model, SqlDataReader reader) {
             foreach (var property in modelProperties) {
                 try {
                     int ordinal = columnsOrdinals[property.Name]; // Find value by matching property name
@@ -488,7 +488,7 @@ namespace AirtoursBusinessObjects {
         /// Set columns ordinals (integer order of each column by name). It is inefficient to call within loop, so it being called once after each query and cached for usage.
         /// </summary>
         /// <param name="reader">Data reader to read ordinal from</param>
-        protected void setColumnsOrdinals(SqlDataReader reader) {
+        protected void SetColumnsOrdinals(SqlDataReader reader) {
             this.columnsOrdinals.Clear();
 
             foreach (var property in this.modelProperties) {
@@ -507,12 +507,12 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        protected void fetchTableSchema() {
+        protected void FetchTableSchema() {
             using (var command = this.connection.CreateCommand()) {
                 command.CommandText = $"SELECT * FROM [{this.table}] WHERE 1 = 0;";
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
 
                     using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) {
                         var schemaTable = reader.GetSchemaTable();
@@ -522,12 +522,12 @@ namespace AirtoursBusinessObjects {
                 } catch (SqlException ex) {
                     Debug.WriteLine(ex.Message, "ModelList.fetchTableSchema");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
             }
         }
 
-        protected void setDataTableColumns() {
+        protected void SetDataTableColumns() {
             this.dataTable.Clear();
             this.dataTable.Rows.Clear();
             this.dataTable.Columns.Clear();
@@ -544,7 +544,7 @@ namespace AirtoursBusinessObjects {
             }
         }
 
-        protected void addDataTableRow(T model) {
+        protected void AddDataTableRow(T model) {
             DataRow row = this.dataTable.NewRow();
 
             foreach (var property in this.modelProperties) {
@@ -574,7 +574,7 @@ namespace AirtoursBusinessObjects {
                 command.Parameters.AddRange(whereClause.Parameters);
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
 
                     using (var reader = command.ExecuteReader()) {
                         while (reader.Read()) {
@@ -594,7 +594,7 @@ namespace AirtoursBusinessObjects {
                 } catch (SqlException ex) {
                     Debug.WriteLine(ex.Message, "ModelList.UniqueValues");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
             }
 
@@ -616,31 +616,31 @@ namespace AirtoursBusinessObjects {
             AVG, COUNT, MAX, MIN, SUM
         }
 
-        public double TotalValue(string column, WhereClause whereClause = null) => this.aggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
+        public double TotalValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.SUM, column, whereClause);
         public U TotalValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.aggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
+            return this.AggregateValue<U>(AggregateFunctions.SUM, column, whereClause);
         }
 
         public int TotalCount(WhereClause whereClause = null) {
-            return this.aggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
+            return this.AggregateValue<int>(AggregateFunctions.COUNT, this.pkColumn, whereClause);
         }
 
-        public int MinValue(string column, WhereClause whereClause = null) => this.aggregateValue<int>(AggregateFunctions.MIN, column, whereClause);
+        public int MinValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MIN, column, whereClause);
         public U MinValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.aggregateValue<U>(AggregateFunctions.MIN, column, whereClause);
+            return this.AggregateValue<U>(AggregateFunctions.MIN, column, whereClause);
         }
 
-        public int MaxValue(string column, WhereClause whereClause = null) => this.aggregateValue<int>(AggregateFunctions.MAX, column, whereClause);
+        public int MaxValue(string column, WhereClause whereClause = null) => this.AggregateValue<int>(AggregateFunctions.MAX, column, whereClause);
         public U MaxValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.aggregateValue<U>(AggregateFunctions.MAX, column, whereClause);
+            return this.AggregateValue<U>(AggregateFunctions.MAX, column, whereClause);
         }
 
-        public double AvgValue(string column, WhereClause whereClause = null) => this.aggregateValue<double>(AggregateFunctions.AVG, column, whereClause);
+        public double AvgValue(string column, WhereClause whereClause = null) => this.AggregateValue<double>(AggregateFunctions.AVG, column, whereClause);
         public U AvgValue<U>(string column, WhereClause whereClause = null) where U : struct, IComparable, IFormattable, IConvertible, IComparable<U>, IEquatable<U> {
-            return this.aggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
+            return this.AggregateValue<U>(AggregateFunctions.AVG, column, whereClause);
         }
 
-        protected U aggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause where = null) {
+        protected U AggregateValue<U>(AggregateFunctions aggregateFunction, string column, WhereClause where = null) {
             U value = default(U);
 
             string aggregate = aggregateFunction.ToString();
@@ -653,7 +653,7 @@ namespace AirtoursBusinessObjects {
             }
 
             try {
-                value = this.scalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
+                value = this.ScalarQuery<U>($"SELECT {aggregate}([{column}]) FROM [{this.table}]{whereClause};", sqlParameters);
             } catch (InvalidCastException ex) {
                 Debug.WriteLine(ex.Message, "ModelList.aggregateValue");
             }
@@ -665,9 +665,9 @@ namespace AirtoursBusinessObjects {
         /// Query the maximum primary key value.
         /// </summary>
         /// <returns>Maximum id value</returns>
-        public virtual int GetMaxID() => this.aggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
+        public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
 
-        protected object scalarQuery(string query, SqlParameter[] parameters = null) => this.scalarQuery<object>(query, parameters);
+        protected object ScalarQuery(string query, SqlParameter[] parameters = null) => this.ScalarQuery<object>(query, parameters);
 
         /// <summary>
         /// Execute scalar query and convert to appropriate type.
@@ -676,7 +676,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="query">The query to execute</param>
         /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
         /// <returns></returns>
-        protected U scalarQuery<U>(string query, SqlParameter[] parameters = null) {
+        protected U ScalarQuery<U>(string query, SqlParameter[] parameters = null) {
             U value = default(U);
 
             try {
@@ -687,7 +687,7 @@ namespace AirtoursBusinessObjects {
                         command.Parameters.AddRange(parameters);
                     }
 
-                    this.openConnection();
+                    this.OpenConnection();
                     object result = command.ExecuteScalar();
                     if (typeof(U) == result.GetType()) {
                         value = (U) result;
@@ -710,7 +710,7 @@ namespace AirtoursBusinessObjects {
             } catch (ArgumentNullException ex) {
                 Debug.WriteLine(ex.Message, "ModelList.scalarQuery");
             } finally {
-                this.closeConnection();
+                this.CloseConnection();
             }
 
             return value;
@@ -746,13 +746,13 @@ namespace AirtoursBusinessObjects {
                     command.CommandText = $"UPDATE [{this.table}] {setClause}{whereClause};";
 
                     try {
-                        this.openConnection();
+                        this.OpenConnection();
 
                         affectedRows = command.ExecuteNonQuery();
                     } catch (SqlException ex) {
                         Debug.WriteLine(ex.Message, "ModelList.UpdateMany");
                     } finally {
-                        this.closeConnection();
+                        this.CloseConnection();
                     }
                 }
 
@@ -779,13 +779,13 @@ namespace AirtoursBusinessObjects {
                 command.CommandText = $"DELETE FROM [{this.table}]{whereClause};";
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
 
                     affectedRows = command.ExecuteNonQuery();
                 } catch (SqlException ex) {
                     Debug.WriteLine(ex.Message, "ModelList.DeleteMany");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
 
                 return affectedRows;
@@ -819,7 +819,7 @@ namespace AirtoursBusinessObjects {
                 };
 
                 try {
-                    this.openConnection();
+                    this.OpenConnection();
                     foreach (var commandText in commandsText) {
                         command.CommandText = commandText;
 
@@ -828,7 +828,7 @@ namespace AirtoursBusinessObjects {
                 } catch (SqlException ex) {
                     Debug.WriteLine(ex.Message, "ModelList.DeleteMany");
                 } finally {
-                    this.closeConnection();
+                    this.CloseConnection();
                 }
 
                 return affectedRows;
