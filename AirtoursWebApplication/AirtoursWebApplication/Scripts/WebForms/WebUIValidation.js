@@ -5,6 +5,12 @@ var Page_BlockSubmit = false;
 var Page_InvalidControlToBeFocused = null;
 var Page_TextTypes = /^(text|password|file|search|tel|url|email|number|range|color|datetime|date|month|week|time|datetime-local)$/i;
 function ValidatorUpdateDisplay(val) {
+    var control = document.getElementById(val.controltovalidate);
+
+    if (control && control.classList.contains("form-control")) {
+        control.classList.toggle("is-invalid", !val.isvalid);
+    }
+
     if (typeof(val.display) == "string") {
         if (val.display == "None") {
             return;
