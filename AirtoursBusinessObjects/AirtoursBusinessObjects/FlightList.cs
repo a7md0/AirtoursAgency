@@ -18,7 +18,7 @@ namespace AirtoursBusinessObjects {
                                         .Where("Destination", destination);
             var on = new WhereClause().WhereDate("FlightDate", date);
 
-            return base.FilterJoin(where, on, "ScheduledFlight", "FlightID");
+            return base.FilterJoin(where, "ScheduledFlight", "FlightID", on);
         }
     }
 }

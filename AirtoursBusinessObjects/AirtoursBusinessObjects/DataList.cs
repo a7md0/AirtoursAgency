@@ -367,23 +367,23 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Filter the current list based on filters and being joined to another table.
+        /// Filter the current list based on filters and being joined to another table. (Design Document Requirements #12)
         /// </summary>
         /// <param name="where">Where clause filters</param>
         /// <param name="joinTable">Table name to join with</param>
         /// <param name="joinColumn">Join column between two tables</param>
         /// <returns>Whether there were any matching results</returns>
-        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) => this.FilterJoin(where, null, joinTable, joinColumn);
+        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn) => this.FilterJoin(where, joinTable, joinColumn, null);
 
         /// <summary>
-        /// Filter the current list based on filters and being joined to another table.
+        /// Filter the current list based on filters and being joined to another table. (Design Document Requirements #13)
         /// </summary>
         /// <param name="where">Where clause filters</param>
         /// <param name="on">On clause filters</param>
         /// <param name="joinTable">Table name to join with</param>
         /// <param name="joinColumn">Join column between two tables</param>
         /// <returns>Whether there were any matching results</returns>
-        public bool FilterJoin(WhereClause where, WhereClause on, string joinTable, string joinColumn) {
+        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn, WhereClause on) {
             using (var command = this.connection.CreateCommand()) {
                 string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString("T")}" : "";
                 string onClause = (on?.HasAny ?? false) ? $" AND {on?.ToString("J")}" : "";
