@@ -18,22 +18,26 @@ namespace AirtoursWebApplication {
         }
 
         protected void RegisterButton_Click(object sender, EventArgs e) {
-            var customerList = new CustomerList();
-            var customer = new Customer {
-                Fname = this.FirstNameTextBox.Text.NullIfWhiteSpace(),
-                Lname = this.LastNameTextBox.Text.NullIfWhiteSpace(),
-                Phone = this.PhoneTextBox.Text.NullIfWhiteSpace(),
-                Address = this.AddressTextBox.Text.NullIfWhiteSpace(),
-                City = this.CityTextBox.Text.NullIfWhiteSpace(),
-                Country = this.CountryDropDownList.SelectedValue.NullIfWhiteSpace(),
-                Email = this.EmailTextBox.Text.NullIfWhiteSpace(),
-                Password = this.PasswordTextBox.Text.NullIfWhiteSpace(),
-            };
+            if (Page.IsValid) {
+                var customerList = new CustomerList();
+                var customer = new Customer {
+                    Fname = this.FirstNameTextBox.Text.NullIfWhiteSpace(),
+                    Lname = this.LastNameTextBox.Text.NullIfWhiteSpace(),
+                    Phone = this.PhoneTextBox.Text.NullIfWhiteSpace(),
+                    Address = this.AddressTextBox.Text.NullIfWhiteSpace(),
+                    City = this.CityTextBox.Text.NullIfWhiteSpace(),
+                    Country = this.CountryDropDownList.SelectedValue.NullIfWhiteSpace(),
+                    Email = this.EmailTextBox.Text.NullIfWhiteSpace(),
+                    Password = this.PasswordTextBox.Text.NullIfWhiteSpace(),
+                };
 
-            if (customerList.Add(customer)) { 
-                this.Session.Add("customer", customer);
+                if (customerList.Add(customer)) {
+                    this.Session.Add("customer", customer);
 
-                FormsAuthentication.RedirectFromLoginPage(customer.Email, true);
+                    FormsAuthentication.RedirectFromLoginPage(customer.Email, true);
+                }
+            } else {
+                ValidationSummary.Visible = true;
             }
         }
     }
