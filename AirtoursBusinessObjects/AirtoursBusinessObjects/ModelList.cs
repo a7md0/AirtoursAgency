@@ -183,7 +183,7 @@ namespace AirtoursBusinessObjects {
                         }
                     }
                 } catch (SqlException ex) {
-                    Debug.WriteLine(ex.Message, "ModelList.Fill");
+                    Debug.WriteLine(ex.Message, "ModelList.FindOne");
                 } finally {
                     this.CloseConnection();
                 }
