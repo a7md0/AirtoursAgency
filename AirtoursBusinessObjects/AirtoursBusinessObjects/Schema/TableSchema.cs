@@ -56,7 +56,7 @@ namespace AirtoursBusinessObjects.Schema {
         //public bool IsLong { get; set; }
         //public bool IsReadOnly { get; set; }
         //public Type ProviderSpecificDataType { get; set; }
-        //public string DataTypeName { get; set; }
+        public string DataTypeName { get; set; }
         //public string XmlSchemaCollectionDatabase { get; set; }
         //public string XmlSchemaCollectionOwningSchema { get; set; }
         //public string XmlSchemaCollectionName { get; set; }
