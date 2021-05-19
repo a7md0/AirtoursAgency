@@ -69,6 +69,8 @@ namespace AirtoursBusinessObjects.Builder {
                 sqlParameter = new SqlParameter(column, val);
             }
 
+            this.parameters.Add(sqlParameter); // Add to the parameters
+
             this.columns.Add($"[{column}]");
             this.values.Add($"@{column}");
         }
