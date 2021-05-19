@@ -35,16 +35,24 @@ namespace AirtoursBusinessObjects.Builder {
                 var name = property.Name; // Get field name
                 var value = property.GetValue(item); // Get value
 
-                this.Add(name, value);
+                if (!this.schema.HasColumn(name)) {
+                    continue;
+                }
+
+                this.AddPredicate(name, value);
             }
         }
 
         public void Add(string column, object value) {
-            object val = value;
-
             if (!this.schema.HasColumn(column)) {
                 throw new ArgumentException($"{column} does not exists in this table schema.");
             }
+
+            this.AddPredicate(column, value);
+        }
+
+        public void AddPredicate(string column, object value) {
+            object val = value;
 
             var schemaColumn = this.schema[column];
 
