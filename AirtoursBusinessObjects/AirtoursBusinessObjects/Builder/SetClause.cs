@@ -59,7 +59,16 @@ namespace AirtoursBusinessObjects.Builder {
                 val = DBNull.Value;
             }
 
-            this.parameters.Add(new SqlParameter(column, val)); // Add to the parameters
+            SqlParameter sqlParameter;
+
+            if (schemaColumn.DataTypeName == "image") {
+                sqlParameter = new SqlParameter(column, System.Data.SqlDbType.Image);
+                sqlParameter.Value = val;
+            } else {
+                sqlParameter = new SqlParameter(column, val);
+            }
+
+            this.parameters.Add(sqlParameter); // Add to the parameters
 
             this.predicates.Add($"[{column}] = @{column}");
         }
