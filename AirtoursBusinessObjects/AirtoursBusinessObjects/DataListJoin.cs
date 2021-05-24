@@ -11,7 +11,7 @@ namespace AirtoursBusinessObjects {
             var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
 
             this.pkJoinColumn = tableAttribute.PkJoinColumn;
-            base.nonUpdateableColumns[1] = this.pkJoinColumn;
+            base.nonUpdateableColumns = new[] { base.pkColumn, this.pkJoinColumn };
         }
 
         protected override WhereClause ModelWhereClause(T model) => base.ModelWhereClause(model).Where(this.pkJoinColumn, model.GetJoinId());

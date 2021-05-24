@@ -24,7 +24,7 @@ namespace AirtoursBusinessObjects {
         protected PropertyInfo[] modelProperties;
         protected Dictionary<string, int> columnsOrdinals;
 
-        protected string[] nonUpdateableColumns = new string[2];
+        protected string[] nonUpdateableColumns;
 
         public DataList() {
             var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>(); // Get the table attribute linked to the model type
@@ -40,7 +40,7 @@ namespace AirtoursBusinessObjects {
             this.modelProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly); // Get the specific model T properties, for later usage
             this.columnsOrdinals = new Dictionary<string, int>(); // Create dictionary to hold column ordinals (sorting order from the database table)
 
-            this.nonUpdateableColumns[0] = this.pkColumn;
+            this.nonUpdateableColumns = new[] { this.pkColumn };
 
             this.SetDataTableColumns(); // Prepare data table column from the model properties
             this.FetchTableSchema(); // Fetch table schema for later usage
