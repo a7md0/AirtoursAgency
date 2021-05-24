@@ -578,7 +578,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause filter</param>
         /// <param name="ascending">Sort the list ascendingly</param>
         /// <returns>Sorted list of unique values</returns>
-        public List<string> UniqueValues(string column, WhereClause where = null, bool ascending = true) => this.UniqueValues<string>(column, where, ascending);
+        public List<string> UniqueValues(string column, WhereClause where, bool ascending = true) => this.UniqueValues<string>(column, where, ascending);
 
         /// <summary>
         /// Query sorted list of unique values for given column with some filters
@@ -588,7 +588,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause filter</param>
         /// <param name="ascending">Sort the list ascendingly</param>
         /// <returns>Sorted list of unique values</returns>
-        public List<U> UniqueValues<U>(string column, WhereClause where = null, bool ascending = true) {
+        public List<U> UniqueValues<U>(string column, WhereClause where, bool ascending = true) {
             List<U> values = new List<U>();
 
             using (var command = this.connection.CreateCommand())
