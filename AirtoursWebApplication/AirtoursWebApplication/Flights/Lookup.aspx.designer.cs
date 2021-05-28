@@ -10,7 +10,7 @@
 namespace AirtoursWebApplication.Flights {
     
     
-    public partial class Outward {
+    public partial class Lookup {
         
         /// <summary>
         /// OriginsDropDownList control.
@@ -40,6 +40,24 @@ namespace AirtoursWebApplication.Flights {
         protected global::System.Web.UI.WebControls.TextBox DepartureDateTextBox;
         
         /// <summary>
+        /// BookReturnFlight control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox BookReturnFlight;
+        
+        /// <summary>
+        /// ReturnDateTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ReturnDateTextBox;
+        
+        /// <summary>
         /// SearchButton control.
         /// </summary>
         /// <remarks>
@@ -49,12 +67,30 @@ namespace AirtoursWebApplication.Flights {
         protected global::System.Web.UI.WebControls.Button SearchButton;
         
         /// <summary>
-        /// ResultsGridView control.
+        /// OutwardFlightsGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView ResultsGridView;
+        protected global::System.Web.UI.WebControls.GridView OutwardFlightsGridView;
+        
+        /// <summary>
+        /// ReturnFlightsGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView ReturnFlightsGridView;
+        
+        /// <summary>
+        /// ReserveFlightsButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ReserveFlightsButton;
     }
 }

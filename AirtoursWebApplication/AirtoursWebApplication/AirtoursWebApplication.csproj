@@ -118,8 +118,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
-    <Content Include="Flights\Outward.aspx" />
-    <Content Include="Flights\Return.aspx" />
+    <Content Include="Flights\Lookup.aspx" />
     <Content Include="Global.asax" />
     <Content Include=".editorconfig" />
     <Content Include="Reservations\Default.aspx" />
@@ -280,19 +279,12 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="Flights\Outward.aspx.cs">
-      <DependentUpon>Outward.aspx</DependentUpon>
+    <Compile Include="Flights\Lookup.aspx.cs">
+      <DependentUpon>Lookup.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Flights\Outward.aspx.designer.cs">
-      <DependentUpon>Outward.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Flights\Return.aspx.cs">
-      <DependentUpon>Return.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Flights\Return.aspx.designer.cs">
-      <DependentUpon>Return.aspx</DependentUpon>
+    <Compile Include="Flights\Lookup.aspx.designer.cs">
+      <DependentUpon>Lookup.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
