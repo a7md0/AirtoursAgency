@@ -118,6 +118,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
+    <Content Include="Flights\Choose.aspx" />
     <Content Include="Flights\Lookup.aspx" />
     <Content Include="Global.asax" />
     <Content Include=".editorconfig" />
@@ -279,6 +280,13 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
+    <Compile Include="Flights\Choose.aspx.cs">
+      <DependentUpon>Choose.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Flights\Choose.aspx.designer.cs">
+      <DependentUpon>Choose.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Flights\Lookup.aspx.cs">
       <DependentUpon>Lookup.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

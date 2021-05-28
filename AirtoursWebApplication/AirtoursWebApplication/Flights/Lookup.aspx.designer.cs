@@ -40,13 +40,13 @@ namespace AirtoursWebApplication.Flights {
         protected global::System.Web.UI.WebControls.TextBox DepartureDateTextBox;
         
         /// <summary>
-        /// BookReturnFlight control.
+        /// ReturnDateSection control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox BookReturnFlight;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ReturnDateSection;
         
         /// <summary>
         /// ReturnDateTextBox control.
@@ -58,6 +58,15 @@ namespace AirtoursWebApplication.Flights {
         protected global::System.Web.UI.WebControls.TextBox ReturnDateTextBox;
         
         /// <summary>
+        /// BookReturnFlight control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox BookReturnFlight;
+        
+        /// <summary>
         /// SearchButton control.
         /// </summary>
         /// <remarks>
@@ -65,32 +74,5 @@ namespace AirtoursWebApplication.Flights {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button SearchButton;
-        
-        /// <summary>
-        /// OutwardFlightsGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView OutwardFlightsGridView;
-        
-        /// <summary>
-        /// ReturnFlightsGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView ReturnFlightsGridView;
-        
-        /// <summary>
-        /// ReserveFlightsButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ReserveFlightsButton;
     }
 }

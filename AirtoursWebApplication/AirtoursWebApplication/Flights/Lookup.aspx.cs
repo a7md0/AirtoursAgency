@@ -53,7 +53,7 @@ namespace AirtoursWebApplication.Flights {
         protected void ControlsVisiblity() {
             bool showBookReturnFlight = this.BookReturnFlight.Checked;
 
-            this.ReturnDateTextBox.Visible = showBookReturnFlight;
+            this.ReturnDateSection.Visible = showBookReturnFlight;
 
 
             /*this.ReturnFlightControls.Visible = showBookReturnFlight;
@@ -67,6 +67,28 @@ namespace AirtoursWebApplication.Flights {
                 return;
             }
 
+            if (this.BookReturnFlight.Checked == true && this.ReturnDateTextBox.Text == string.Empty) {
+                return;
+            }
+
+            string origin = this.OriginsDropDownList.SelectedValue;
+            string destination = this.DestinationsDropDownList.SelectedValue;
+
+            string departureDate = this.DepartureDateTextBox.Text;
+            string returnDate = this.ReturnDateTextBox.Text;
+
+            string route = $"Choose.aspx?origin={origin}&destination={destination}&departureDate={departureDate}";
+
+            if (this.BookReturnFlight.Checked == true) {
+                route += $"&returnDate={returnDate}";
+            }
+
+            Response.Redirect(route, endResponse: true);
+
+            /* if (this.DepartureDateTextBox.Text == string.Empty) {
+                return;
+            }
+
             string origin = this.OriginsDropDownList.SelectedValue;
             string destination = this.DestinationsDropDownList.SelectedValue;
             DateTime departureDate = DateTime.ParseExact(this.DepartureDateTextBox.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -75,7 +97,7 @@ namespace AirtoursWebApplication.Flights {
 
             DataTable outwardDataTable = flightList.DataTable.Copy();
 
-            this.OutwardFlightsGridView.DataSource = outwardDataTable;
+           this.OutwardFlightsGridView.DataSource = outwardDataTable;
             this.OutwardFlightsGridView.DataBind();
 
             if (this.ReturnDateTextBox.Text != string.Empty) {
@@ -87,11 +109,11 @@ namespace AirtoursWebApplication.Flights {
 
                 this.ReturnFlightsGridView.DataSource = returnDataTable;
                 this.ReturnFlightsGridView.DataBind();
-            }
+            }*/
         }
 
         protected void ReserveFlightsButton_Click(object sender, EventArgs e) {
-            int? outwardFlightId = this.GetValueFromCheckedRow(this.OutwardFlightsGridView, 1);
+            /*int? outwardFlightId = this.GetValueFromCheckedRow(this.OutwardFlightsGridView, 1);
             int? returnFlightId = this.GetValueFromCheckedRow(this.ReturnFlightsGridView, 1);
 
             if (!outwardFlightId.HasValue) {
@@ -105,7 +127,7 @@ namespace AirtoursWebApplication.Flights {
                 redirectURL += $"&returnFlight={returnFlightId.Value}";
             }
 
-            Response.Redirect(redirectURL);
+            Response.Redirect(redirectURL);*/
         }
 
         protected int? GetValueFromCheckedRow(GridView gv, int cellIdx) {
