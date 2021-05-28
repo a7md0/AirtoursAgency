@@ -37,6 +37,7 @@ namespace AirtoursWebApplication.Flights {
 
             this.OutwardFlightsGridView.DataSource = this.GenerateTableForFlight(flightList.List);
             this.OutwardFlightsGridView.DataBind();
+            this.OutwardFlightsGridView.Caption = $"Outward flights ({this.departureDate})";
 
             if (this.returnDate != string.Empty && this.returnDate != null) {
                 DateTime returnDate = DateTime.ParseExact(this.returnDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -45,6 +46,7 @@ namespace AirtoursWebApplication.Flights {
 
                 this.ReturnFlightsGridView.DataSource = this.GenerateTableForFlight(flightList.List);
                 this.ReturnFlightsGridView.DataBind();
+                this.ReturnFlightsGridView.Caption = $"Return flights ({this.returnDate})";
             }
 
             if (Session["Outward_FlightIdx"] != null) {
