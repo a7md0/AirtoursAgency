@@ -36,8 +36,7 @@
             </div>
         </div>
 
-        <h2>Outward flights:</h2>
-        <asp:GridView ID="OutwardFlightsGridView" runat="server">
+        <asp:GridView ID="OutwardFlightsGridView" runat="server" UseAccessibleHeader="true" CssClass="table table-bordered table-striped table-hover" Width="50%" Caption="Outward flights" CaptionAlign="Top">
             <Columns>
                 <asp:TemplateField HeaderText="Select">
                     <ItemTemplate>
@@ -47,8 +46,7 @@
             </Columns>
         </asp:GridView>
 
-        <h2>Return flights:</h2>
-        <asp:GridView ID="ReturnFlightsGridView" runat="server">
+        <asp:GridView ID="ReturnFlightsGridView" runat="server" UseAccessibleHeader="true" CssClass="table table-bordered table-striped table-hover" Caption="Return flights" CaptionAlign="Top">
             <Columns>
                 <asp:TemplateField HeaderText="Select">
                     <ItemTemplate>
