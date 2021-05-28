@@ -30,24 +30,20 @@ namespace AirtoursWebApplication.Flights {
             this.PopulateControl();
         }
 
-        private void PopulateControl() {
+        protected void PopulateControl() {
             DateTime departureDate = DateTime.ParseExact(this.departureDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
             flightList.FlightsFilter(origin, destination, departureDate);
 
-            DataTable outwardDataTable = flightList.DataTable.Copy();
-
-            this.OutwardFlightsGridView.DataSource = outwardDataTable;
+            this.OutwardFlightsGridView.DataSource = this.GenerateTableForFlight(flightList.List);
             this.OutwardFlightsGridView.DataBind();
 
             if (this.returnDate != string.Empty && this.returnDate != null) {
                 DateTime returnDate = DateTime.ParseExact(this.returnDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-                bool found = flightList.FlightsFilter(destination, origin, returnDate);
+                flightList.FlightsFilter(destination, origin, returnDate);
 
-                DataTable returnDataTable = flightList.DataTable.Copy();
-
-                this.ReturnFlightsGridView.DataSource = returnDataTable;
+                this.ReturnFlightsGridView.DataSource = this.GenerateTableForFlight(flightList.List);
                 this.ReturnFlightsGridView.DataBind();
             }
 
@@ -62,18 +58,48 @@ namespace AirtoursWebApplication.Flights {
             }
         }
 
+        protected DataTable GenerateTableForFlight(List<Flight> flights) {
+            DataTable dataTable = new DataTable();
+
+            dataTable.Columns.Add(new DataColumn("Flight ID", typeof(int)));
+            dataTable.Columns.Add(new DataColumn("Flight Number", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Origin", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Destination", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Departure Time", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Arrival Time", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Airline", typeof(string)));
+            dataTable.Columns.Add(new DataColumn("Fare", typeof(string)));
+
+            foreach (Flight flight in flights) {
+                DataRow row = dataTable.NewRow();
+
+                row["Flight ID"] = flight.FlightID;
+                row["Flight Number"] = flight.FlightNumber;
+                row["Origin"] = flight.Origin;
+                row["Destination"] = flight.Destination;
+                row["Departure Time"] = flight.Departure?.ToShortTimeString() ?? "";
+                row["Arrival Time"] = flight.Arrival?.ToShortTimeString() ?? "";
+                row["Airline"] = flight.Airline;
+                row["Fare"] = $"${flight.Fare?.ToString("0.00")}";
+
+                dataTable.Rows.Add(row);
+            }
+
+            return dataTable;
+        }
+
         protected void OutwardFlightsGridView_SelectedIndexChanged(object sender, EventArgs e) {
             GridViewRow selectedRow = this.OutwardFlightsGridView.SelectedRow;
 
             Session["Outward_FlightIdx"] = selectedRow.RowIndex;
             Session["Outward_FlightID"] = int.Parse(selectedRow.Cells[1].Text);
-            Session["Outward_FlightNumber"] = selectedRow.Cells[7].Text;
-            Session["Outward_FlightAirline"] = selectedRow.Cells[2].Text;
+            /*Session["Outward_FlightNumber"] = selectedRow.Cells[2].Text;
+            Session["Outward_FlightAirline"] = selectedRow.Cells[7].Text;
             Session["Outward_FlightOrigin"] = selectedRow.Cells[3].Text;
             Session["Outward_FlightDestination"] = selectedRow.Cells[4].Text;
             Session["Outward_FlightDate"] = null;
             Session["Outward_FlightDepartureTime"] = selectedRow.Cells[5].Text;
-            Session["Outward_FlightArrivalTime"] = selectedRow.Cells[6].Text;
+            Session["Outward_FlightArrivalTime"] = selectedRow.Cells[6].Text;*/
 
             selectedRow.BackColor = Color.Cyan;
         }
@@ -83,13 +109,13 @@ namespace AirtoursWebApplication.Flights {
 
             Session["Return_FlightIdx"] = selectedRow.RowIndex;
             Session["Return_FlightID"] = int.Parse(selectedRow.Cells[1].Text);
-            Session["Return_FlightNumber"] = selectedRow.Cells[7].Text;
+            /*Session["Return_FlightNumber"] = selectedRow.Cells[7].Text;
             Session["Return_FlightAirline"] = selectedRow.Cells[2].Text;
             Session["Return_FlightOrigin"] = selectedRow.Cells[3].Text;
             Session["Return_FlightDestination"] = selectedRow.Cells[4].Text;
             Session["Return_FlightDate"] = null;
             Session["Return_FlightDepartureTime"] = selectedRow.Cells[5].Text;
-            Session["Return_FlightArrivalTime"] = selectedRow.Cells[6].Text;
+            Session["Return_FlightArrivalTime"] = selectedRow.Cells[6].Text;*/
 
             selectedRow.BackColor = Color.Cyan;
         }

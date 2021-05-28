@@ -9,7 +9,7 @@
                 <h3>Choose flight(s)</h3>
             </div>
         </div>
-        <asp:GridView ID="OutwardFlightsGridView" runat="server" CssClass="table table-bordered table-striped table-hover" Width="50%" Caption="Outward flights" CaptionAlign="Top" OnSelectedIndexChanged="OutwardFlightsGridView_SelectedIndexChanged">
+        <asp:GridView ID="OutwardFlightsGridView" runat="server" CssClass="table table-bordered table-striped table-hover" Caption="Outward flights" CaptionAlign="Top" OnSelectedIndexChanged="OutwardFlightsGridView_SelectedIndexChanged">
             <Columns>
                 <asp:CommandField ButtonType="Button" ShowSelectButton="True">
                     <ControlStyle CssClass="btn btn-primary" />
