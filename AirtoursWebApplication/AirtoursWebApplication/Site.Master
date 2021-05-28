@@ -54,11 +54,7 @@
                     </li>
                     <% if (Request.IsAuthenticated) { %>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="flightsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Flights</a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/Flights/Outward">Outward</a>
-                            <a class="dropdown-item" href="/Flights/Return">Return</a>
-                        </div>
+                        <a runat="server" href="~/Flights" class="nav-link">Flights</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="reservationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reservations</a>
