@@ -119,7 +119,7 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Flights\Choose.aspx" />
-    <Content Include="Flights\Lookup.aspx" />
+    <Content Include="Flights\Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include=".editorconfig" />
     <Content Include="Reservations\Default.aspx" />
@@ -287,12 +287,12 @@
     <Compile Include="Flights\Choose.aspx.designer.cs">
       <DependentUpon>Choose.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Flights\Lookup.aspx.cs">
-      <DependentUpon>Lookup.aspx</DependentUpon>
+    <Compile Include="Flights\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Flights\Lookup.aspx.designer.cs">
-      <DependentUpon>Lookup.aspx</DependentUpon>
+    <Compile Include="Flights\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

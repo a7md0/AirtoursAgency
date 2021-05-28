@@ -10,7 +10,7 @@ using System.Web.UI.WebControls;
 using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication.Flights {
-    public partial class Lookup : System.Web.UI.Page {
+    public partial class Default : System.Web.UI.Page {
         private static FlightList flightList = new FlightList();
 
         protected void Page_Load(object sender, EventArgs e) {

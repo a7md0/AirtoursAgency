@@ -10,7 +10,7 @@
 namespace AirtoursWebApplication.Flights {
     
     
-    public partial class Lookup {
+    public partial class Default {
         
         /// <summary>
         /// OriginsDropDownList control.
