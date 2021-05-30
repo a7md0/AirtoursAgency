@@ -385,8 +385,16 @@ namespace AirtoursBusinessObjects {
         /// <returns>Whether there were any matching results</returns>
         public bool FilterJoin(WhereClause where, string joinTable, string joinColumn, WhereClause on) {
             using (var command = this.connection.CreateCommand()) {
-                string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString("T")}" : "";
-                string onClause = (on?.HasAny ?? false) ? $" AND {on?.ToString("J")}" : "";
+                string whereClause = string.Empty;
+                string onClause = string.Empty;
+
+                if (where is null == false && where.HasAny) {
+                    whereClause = $" WHERE {where.ToString("T")}";
+                }
+
+                if (on is null == false && on.HasAny) {
+                    onClause = $" AND {on?.ToString("J")}";
+                }
 
                 command.CommandText = $@"SELECT T.* FROM [{this.table}] T
                                          INNER JOIN [{joinTable}] J
@@ -413,7 +421,11 @@ namespace AirtoursBusinessObjects {
         public bool Populate(WhereClause where) {
             using (var command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
-                string whereClause = (where?.HasAny ?? false) ? $" WHERE {where?.ToString()}" : "";
+                string whereClause = string.Empty;
+
+                if (where is null == false && where.HasAny) {
+                    whereClause = $" WHERE {where?.ToString()}";
+                }
 
                 command.CommandText = $"SELECT * FROM [{this.table}]{whereClause};";
                 if (sqlParameters is null == false) {
@@ -595,7 +607,7 @@ namespace AirtoursBusinessObjects {
             using (var whereClause = where?.Clone() ?? this.WhereClause) {
                 whereClause.WhereIs(column, null, false);
 
-                string whereString = (whereClause?.HasAny ?? false) ? $" WHERE {whereClause?.ToString()}" : "";
+                string whereString = whereClause.HasAny ? $" WHERE {whereClause?.ToString()}" : string.Empty;
                 string orderBy = ascending ? "ASC" : "DESC";
 
                 command.CommandText = $"SELECT DISTINCT [{column}] FROM [{this.table}]{whereString} ORDER BY [{column}] {orderBy};";
