@@ -122,6 +122,7 @@
     <Content Include="Flights\Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include=".editorconfig" />
+    <Content Include="Reservations\All.aspx" />
     <Content Include="Reservations\Default.aspx" />
     <Content Include="Reservations\Edit.aspx" />
     <Content Include="Reservations\New.aspx" />
@@ -312,6 +313,13 @@
     </Compile>
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reservations\All.aspx.cs">
+      <DependentUpon>All.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reservations\All.aspx.designer.cs">
+      <DependentUpon>All.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reservations\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
