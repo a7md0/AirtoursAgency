@@ -29,6 +29,8 @@ namespace AirtoursWebApplication {
                     Country = this.CountryDropDownList.SelectedValue.NullIfWhiteSpace(),
                     Email = this.EmailTextBox.Text.NullIfWhiteSpace(),
                     Password = this.PasswordTextBox.Text.NullIfWhiteSpace(),
+                    CreditCardNumber = this.CreditCardNumberTextBox.Text.NullIfWhiteSpace(),
+                    SecurityCode = int.Parse(this.SecurityCodeTextBox.Text.DefaultIfWhiteSpace("000")),
                 };
 
                 if (customerList.Add(customer)) {

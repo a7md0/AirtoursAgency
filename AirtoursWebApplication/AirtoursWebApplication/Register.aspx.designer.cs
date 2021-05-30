@@ -94,6 +94,24 @@ namespace AirtoursWebApplication {
         protected global::System.Web.UI.WebControls.TextBox PhoneTextBox;
         
         /// <summary>
+        /// CreditCardNumberTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox CreditCardNumberTextBox;
+        
+        /// <summary>
+        /// SecurityCodeTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox SecurityCodeTextBox;
+        
+        /// <summary>
         /// RegisterButton control.
         /// </summary>
         /// <remarks>
