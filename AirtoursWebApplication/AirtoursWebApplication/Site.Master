@@ -59,11 +59,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="reservationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reservations</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                            <a class="dropdown-item" href="/Reservations">View Reservations</a>
-                            <a class="dropdown-item" href="/Reservations/New">Make a Reservation</a>
+                            <a class="dropdown-item" href="/Reservations">Reservations</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/Reservations/New">Add Passenger Details</a>
+                            <a class="dropdown-item" href="/UpcomingReservations">Upcoming Reservations</a>
                         </div>
                     </li>
                     <% } %>
