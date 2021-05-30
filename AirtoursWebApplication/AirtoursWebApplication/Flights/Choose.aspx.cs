@@ -63,12 +63,13 @@ namespace AirtoursWebApplication.Flights {
             object flightID = gridView.DataKeys[selectedRow.RowIndex]["FlightID"];
             DateTime flightDate = this.departureDate;
 
+            Flight flight = this.FindFlight(flightID);
             ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
 
             if (scheduledFlight is null == false) { 
                 Session["Outward_FlightIdx"] = selectedRow.RowIndex;
-                Session["Outward_FlightID"] = flightID;
-                Session["Outward_ScheduledFlightID"] = scheduledFlight.ScheduledFlightID;
+                Session["Outward_Flight"] = flight;
+                Session["Outward_ScheduledFlight"] = scheduledFlight;
                 Session["Outward_FlightDate"] = scheduledFlight.FlightDate;
             }
         }
@@ -80,21 +81,22 @@ namespace AirtoursWebApplication.Flights {
             object flightID = gridView.DataKeys[selectedRow.RowIndex]["FlightID"];
             DateTime flightDate = this.returnDate;
 
+            Flight flight = this.FindFlight(flightID);
             ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
 
             if (scheduledFlight is null == false) {
                 Session["Return_FlightIdx"] = selectedRow.RowIndex;
-                Session["Return_FlightID"] = flightID;
-                Session["Return_ScheduledFlightID"] = scheduledFlight.ScheduledFlightID;
+                Session["Return_Flight"] = flight;
+                Session["Return_ScheduledFlight"] = scheduledFlight;
                 Session["Return_FlightDate"] = scheduledFlight.FlightDate;
             }
         }
 
         protected void ReserveFlightsButton_Click(object sender, EventArgs e) {
-            object outwardFlightId = Session["Outward_FlightID"];
-            object returnFlightId = Session["Return_FlightID"];
+            object outwardFlight = Session["Outward_Flight"];
+            object returnFlight = Session["Return_Flight"];
 
-            if (outwardFlightId == null) {
+            if (outwardFlight == null) {
                 Response.Write("Please select a flight");
                 return;
             }
@@ -102,6 +104,12 @@ namespace AirtoursWebApplication.Flights {
             Response.Redirect("/Reservations/New.aspx");
         }
 
+        protected Flight FindFlight(object flightID) {
+            Flight flight = new Flight((int) flightID);
+            flightList.Fill(flight);
+
+            return flight;
+        }
 
         protected ScheduledFlight FindScheduledFlight(object flightID, DateTime flightDate) {
             AirtoursBusinessObjects.Builder.WhereClause whereClause = scheduledFlightList.WhereClause;
