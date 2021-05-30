@@ -414,6 +414,54 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
+        /// Filter the current list based on filters and being joined to three tables.
+        /// </summary>
+        /// <param name="where">Where clause filters</param>
+        /// <param name="joinTable">Table name to join with</param>
+        /// <param name="joinColumn">Join column with the previous table</param>
+        /// <param name="joinTable2">Table name to join with</param>
+        /// <param name="joinColumn2">Join column with the previous table</param>
+        /// <param name="joinTable3">Table name to join with</param>
+        /// <param name="joinColumn3">Join column with the previous table</param>
+        /// <param name="on3">On clause filters for third join</param>
+        /// <returns></returns>
+        public bool FilterJoin(WhereClause where, string joinTable, string joinColumn, string joinTable2, string joinColumn2, string joinTable3, string joinColumn3, WhereClause on3) {
+            using (var command = this.connection.CreateCommand()) {
+                string whereClause = string.Empty;
+                string onClause = string.Empty;
+
+                if (where is null == false && where.HasAny) {
+                    whereClause = $" WHERE {where.ToString("T")}";
+                }
+
+                if (on3 is null == false && on3.HasAny) {
+                    onClause = $" AND {on3?.ToString("J3")}";
+                }
+
+                command.CommandText = $@"SELECT DISTINCT T.* FROM [{this.table}] T
+
+                                        INNER JOIN [{joinTable}] J1
+                                            ON T.{joinColumn} = J1.{joinColumn}
+                                        INNER JOIN [{joinTable2}] J2
+                                            ON J1.[{joinColumn2}] = J2.[{joinColumn2}]
+                                        INNER JOIN [{joinTable3}] J3
+                                            ON J2.[{joinColumn3}] = J3.[{joinColumn3}]{onClause}
+
+                                        {whereClause};";
+
+                if (where?.Parameters is null == false) {
+                    command.Parameters.AddRange(where?.Parameters);
+                }
+
+                if (on3?.Parameters is null == false) {
+                    command.Parameters.AddRange(on3?.Parameters);
+                }
+
+                return this.PopulateWithQuery(command);
+            }
+        }
+
+        /// <summary>
         /// Populate the current list based on provided filters (Design Document Requirement #4)
         /// </summary>
         /// <param name="whereClause">Where clause filters (Optional)</param>
