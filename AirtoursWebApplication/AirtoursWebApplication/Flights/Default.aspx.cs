@@ -17,6 +17,8 @@ namespace AirtoursWebApplication.Flights {
             if (!Page.IsPostBack) {
                 List<string> origins = flightList.UniqueValues("Origin");
                 // List<string> destinations = flightList.UniqueValues("Destination");
+                this.Session["Outward_FlightIdx"] = null;
+                this.Session["Return_FlightIdx"] = null;
 
                 /*var whereClause = flightList.WhereClause;
                 whereClause.WhereIn("Origin", origins.ToArray());
