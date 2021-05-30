@@ -79,11 +79,11 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="FirstNameTextBox">First name:</label>
-                        <asp:TextBox ID="FirstNameTextBox" runat="server" class="form-control" minlength="2" maxlength="32" required="true"></asp:TextBox>
+                        <asp:TextBox ID="FirstNameTextBox" runat="server" class="form-control" maxlength="32"></asp:TextBox>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="LastNameTextBox">Last name</label>
-                        <asp:TextBox ID="LastNameTextBox" runat="server" class="form-control" minlength="2" maxlength="32" required="true"></asp:TextBox>
+                        <asp:TextBox ID="LastNameTextBox" runat="server" class="form-control" maxlength="32"></asp:TextBox>
                     </div>
 
                     <div class="col-md-12 mb-3">
