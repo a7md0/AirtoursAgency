@@ -10,6 +10,8 @@ using AirtoursBusinessObjects;
 namespace AirtoursWebApplication.Reservations {
     public partial class View : System.Web.UI.Page {
         protected Customer customer;
+
+        protected string reservationID;
         protected Reservation reservation;
 
         /****************************************************/
@@ -22,14 +24,14 @@ namespace AirtoursWebApplication.Reservations {
 
         protected void Page_Load(object sender, EventArgs e) {
             this.customer = (Customer) this.Session["customer"];
-            string reservationID = this.Request.QueryString["reservationID"];
+            this.reservationID = this.Request.QueryString["reservationID"];
 
             if (!Page.IsPostBack) {
                 ReservationList reservationList = new ReservationList();
 
                 var whereClause = reservationList.WhereClause;
                 whereClause.Where("CustomerID", this.customer.CustomerID);
-                whereClause.Where("ReservationID", reservationID);
+                whereClause.Where("ReservationID", this.reservationID);
 
                 this.reservation = reservationList.FindOne(whereClause);
 
@@ -126,6 +128,44 @@ namespace AirtoursWebApplication.Reservations {
 
                     returnFlight = flightList.FindOne(flightWhere);
                 }
+            }
+        }
+
+        protected void EditReservationButton_Click(object sender, EventArgs e) {
+            Response.Redirect($"/Reservations/Edit.aspx?reservationID={this.reservationID}", true);
+        }
+
+        protected void DeleteReservationButton_Click(object sender, EventArgs e) {
+            PassengerList passengerList = new PassengerList();
+            var passengerListWhere = passengerList.WhereClause;
+            passengerListWhere.Where("ReservationID", this.reservationID);
+
+            int affectedRows = passengerList.Delete(passengerListWhere, "ReservedSeat", "PassengerID");
+
+            /**********************************************************/
+
+            if (affectedRows > 0) {
+                ReservationList reservationList = new ReservationList();
+
+                var reservationWhereClause = reservationList.WhereClause;
+                reservationWhereClause.Where("CustomerID", this.customer.CustomerID);
+                reservationWhereClause.Where("ReservationID", this.reservationID);
+
+                affectedRows = reservationList.Delete(reservationWhereClause, "Passenger", "ReservationID");
+
+                if (affectedRows > 0) {
+                    affectedRows = reservationList.Delete(reservationWhereClause);
+
+                    if (affectedRows > 0) {
+                        Response.Redirect("/Reservations", true);
+                    } else {
+                        Response.Write("Failed to delete reservation.");
+                    }
+                } else {
+                    Response.Write("Failed to delete passengers.");
+                }
+            } else {
+                Response.Write("Failed to delete reserved seats.");
             }
         }
     }
