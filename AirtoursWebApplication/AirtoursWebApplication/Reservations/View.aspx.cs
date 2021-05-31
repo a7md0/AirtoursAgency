@@ -109,6 +109,8 @@ namespace AirtoursWebApplication.Reservations {
             ScheduledFlight returnScheduledFlight = null;
 
             foreach (ReservedSeat reservedSeat in reservedSeatList.List) {
+                this.ReservationClassLabel.Text = reservedSeat.Class;
+
                 var scheduledFlightWhere = scheduledFlightList.WhereClause;
                 scheduledFlightWhere.Where("ScheduledFlightID", reservedSeat.ScheduledFlightID);
 
