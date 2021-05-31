@@ -65,12 +65,6 @@
                         </div>
                     </li>
                     <% } %>
-                    <li class="nav-item">
-                        <a runat="server" href="~/About" class="nav-link">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a runat="server" href="~/Contact" class="nav-link">Contact</a>
-                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <% if (!Request.IsAuthenticated) { %>
