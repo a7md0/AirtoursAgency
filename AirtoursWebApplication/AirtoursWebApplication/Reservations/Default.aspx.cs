@@ -17,14 +17,7 @@ namespace AirtoursWebApplication.Reservations {
 
             if (!Page.IsPostBack) {
                 ReservationList reservationList = new ReservationList();
-
-                var whereClause = reservationList.WhereClause;
-                whereClause.Where("CustomerID", this.customer.CustomerID);
-
-                var onClause = new WhereClause();
-                onClause.WhereDate("FlightDate", WhereOpreators.GreaterThan, DateTime.Parse("2015-12-31 00:00:00.000"));
-
-                reservationList.FilterJoin(whereClause, "Passenger", "ReservationID", "ReservedSeat", "PassengerID", "ScheduledFlight", "ScheduledFlightID", onClause);
+                reservationList.FilterFutureReservations(this.customer);
 
                 this.ReservationsGridView.DataSource = reservationList.DataTable;
                 this.ReservationsGridView.DataBind();
