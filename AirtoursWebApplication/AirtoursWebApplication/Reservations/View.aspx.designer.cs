@@ -94,24 +94,6 @@ namespace AirtoursWebApplication.Reservations {
         protected global::System.Web.UI.WebControls.Label OutwardFlightDestinationLabel;
         
         /// <summary>
-        /// OutwardFlightDepartureLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label OutwardFlightDepartureLabel;
-        
-        /// <summary>
-        /// OutwardFlightArrivalLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label OutwardFlightArrivalLabel;
-        
-        /// <summary>
         /// OutwardFlightDateLabel control.
         /// </summary>
         /// <remarks>
@@ -128,6 +110,24 @@ namespace AirtoursWebApplication.Reservations {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label OutwardFlightFareLabel;
+        
+        /// <summary>
+        /// OutwardFlightDepartureLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label OutwardFlightDepartureLabel;
+        
+        /// <summary>
+        /// OutwardFlightArrivalLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label OutwardFlightArrivalLabel;
         
         /// <summary>
         /// ReturnFlightView control.
@@ -175,24 +175,6 @@ namespace AirtoursWebApplication.Reservations {
         protected global::System.Web.UI.WebControls.Label ReturnFlightDestinationLabel;
         
         /// <summary>
-        /// ReturnFlightDepartureLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ReturnFlightDepartureLabel;
-        
-        /// <summary>
-        /// ReturnFlightArrivalLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ReturnFlightArrivalLabel;
-        
-        /// <summary>
         /// ReturnFlightDateLabel control.
         /// </summary>
         /// <remarks>
@@ -209,5 +191,23 @@ namespace AirtoursWebApplication.Reservations {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label ReturnFlightFareLabel;
+        
+        /// <summary>
+        /// ReturnFlightDepartureLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ReturnFlightDepartureLabel;
+        
+        /// <summary>
+        /// ReturnFlightArrivalLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ReturnFlightArrivalLabel;
     }
 }
