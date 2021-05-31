@@ -3,10 +3,25 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="container">
+    <div class="container"  style="padding-bottom: 4em;">
 
-        <h3 style="text-align: center;">View Reservation</h3>
-        <br /><br />
+
+
+        <div class="row">
+            <div class="col-1 align-self-start">
+                <asp:Button ID="Button3" runat="server" Text="Back" class="btn btn-info" OnClientClick="JavaScript:window.history.back(1); return false;" />
+            </div>
+            <div class="col-9 align-self-center">
+                <h3 style="text-align: center;">View Reservation</h3>
+            </div>
+            <div class="col-2 align-self-end">
+                <asp:Button ID="EditReservationButton" runat="server" Text="Edit" class="btn btn-primary" OnClick="EditReservationButton_Click" />
+                <asp:Button ID="DeleteReservationButton" runat="server" Text="Delete" class="btn btn-danger" OnClientClick="return confirm('Confirm deleation\nAre you sure to delete this reservation?')" OnClick="DeleteReservationButton_Click" />
+            </div>
+        </div>
+
+        <br />
+        <br />
 
         <div class="row" style="display: flex; align-items: center; text-align: center;">
             <div class="col-md-6 mb-2 border-right">
@@ -53,7 +68,8 @@
             </div>
         </div>
 
-        <br /><br />
+        <br />
+        <br />
 
         <div class="row" style="display: flex; align-items: center; text-align: center;">
             <div class="col-md">
