@@ -896,6 +896,7 @@ namespace AirtoursBusinessObjects {
                     this.OpenConnection();
 
                     affectedRows = command.ExecuteNonQuery();
+                    command.Parameters.Clear();
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
@@ -938,6 +939,7 @@ namespace AirtoursBusinessObjects {
                     this.OpenConnection();
 
                     affectedRows = command.ExecuteNonQuery();
+                    command.Parameters.Clear();
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
