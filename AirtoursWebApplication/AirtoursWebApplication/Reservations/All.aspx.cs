@@ -26,5 +26,13 @@ namespace AirtoursWebApplication.Reservations {
                 this.ReservationsGridView.DataBind();
             }
         }
+
+        protected void ReservationsGridView_SelectedIndexChanged(object sender, EventArgs e) {
+            GridView gridView = (GridView) sender;
+            GridViewRow selectedRow = gridView.SelectedRow;
+
+            object reservationID = gridView.DataKeys[selectedRow.RowIndex]["ReservationID"];
+            Response.Redirect($"/Reservations/View.aspx?reservationID={reservationID}", true);
+        }
     }
 }
