@@ -925,27 +925,19 @@ namespace AirtoursBusinessObjects {
             using (var command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
-                string whereClause = $" WHERE {where.ToString()}";
+                string whereClause = $" WHERE {where.ToString("T")}";
                 command.Parameters.AddRange(where.Parameters);
 
-                string[] commandsText = new[] {
-                    // 1st query, delete the joined rows
-                    $@"DELETE J
+                command.CommandText = $@"DELETE J
                         FROM [{this.table}] T
                         INNER JOIN [{joinTable}] J
 	                        ON T.[{joinColumn}] = J.[{joinColumn}]
-                        {whereClause};",
-                    // 2nd query, delete the original row
-                    $"DELETE FROM [{this.table}] {whereClause};"
-                };
+                        {whereClause};";
 
                 try {
                     this.OpenConnection();
-                    foreach (var commandText in commandsText) {
-                        command.CommandText = commandText;
 
-                        affectedRows += command.ExecuteNonQuery();
-                    }
+                    affectedRows = command.ExecuteNonQuery();
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
