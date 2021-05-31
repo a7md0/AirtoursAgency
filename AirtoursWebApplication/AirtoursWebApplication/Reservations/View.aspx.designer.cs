@@ -112,13 +112,13 @@ namespace AirtoursWebApplication.Reservations {
         protected global::System.Web.UI.WebControls.Label OutwardFlightArrivalLabel;
         
         /// <summary>
-        /// OutwardFlightTerminalLabel control.
+        /// OutwardFlightDateLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label OutwardFlightTerminalLabel;
+        protected global::System.Web.UI.WebControls.Label OutwardFlightDateLabel;
         
         /// <summary>
         /// OutwardFlightFareLabel control.
@@ -193,13 +193,13 @@ namespace AirtoursWebApplication.Reservations {
         protected global::System.Web.UI.WebControls.Label ReturnFlightArrivalLabel;
         
         /// <summary>
-        /// ReturnFlightTerminalLabel control.
+        /// ReturnFlightDateLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ReturnFlightTerminalLabel;
+        protected global::System.Web.UI.WebControls.Label ReturnFlightDateLabel;
         
         /// <summary>
         /// ReturnFlightFareLabel control.

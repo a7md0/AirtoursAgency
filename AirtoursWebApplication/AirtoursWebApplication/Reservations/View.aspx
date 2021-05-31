@@ -94,8 +94,8 @@
 
 
                     <div class="col-md-6">
-                        <h6>Terminal</h6>
-                        <asp:Label ID="OutwardFlightTerminalLabel" runat="server"></asp:Label>
+                        <h6>Flight date</h6>
+                        <asp:Label ID="OutwardFlightDateLabel" runat="server"></asp:Label>
                     </div>
 
                     <div class="col-md-6">
@@ -143,8 +143,8 @@
 
 
                     <div class="col-md-6">
-                        <h6>Terminal</h6>
-                        <asp:Label ID="ReturnFlightTerminalLabel" runat="server"></asp:Label>
+                        <h6>Flight date</h6>
+                        <asp:Label ID="ReturnFlightDateLabel" runat="server"></asp:Label>
                     </div>
 
                     <div class="col-md-6">
