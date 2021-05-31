@@ -20,11 +20,6 @@ namespace AirtoursWebApplication.Reservations {
         protected ScheduledFlight returnScheduledFlight;
         /****************************************************/
 
-        /****************************************************/
-        protected ReservedSeatList reservedSeatList;
-        protected ReservedSeat reservedSeat;
-        /****************************************************/
-
         protected void Page_Load(object sender, EventArgs e) {
             this.customer = (Customer) this.Session["customer"];
             string reservationID = this.Request.QueryString["reservationID"];
@@ -36,14 +31,17 @@ namespace AirtoursWebApplication.Reservations {
                 whereClause.Where("CustomerID", this.customer.CustomerID);
                 whereClause.Where("ReservationID", reservationID);
 
-                Reservation reservation = reservationList.FindOne(whereClause);
+                this.reservation = reservationList.FindOne(whereClause);
 
-                if (reservation is null == false) {
+                if (this.reservation is null == false) {
                     this.PopulateReservation(reservation);
-                    int passengerID = this.PopulatePassengers(reservation);
+                    int passengerID = this.FindAndPopulatePassengers(this.reservation);
 
                     if (passengerID > 0) {
-                        this.PopulateFlights(passengerID);
+                        this.FindFlights(passengerID);
+
+                        this.PopulateOutwardFlight();
+                        this.PopulateReturnFlight();
                     }
                 }
             }
@@ -55,37 +53,7 @@ namespace AirtoursWebApplication.Reservations {
             this.ReservationPaidLabel.Text = (reservation?.Paid ?? false) ? "Yes" : "No";
         }
 
-        protected void PopulateOutwardFlight(Flight flight, ScheduledFlight scheduledFlight) {
-            this.OutwardFlightNumberLabel.Text = flight.FlightNumber;
-            this.OutwardFlightAirlineLabel.Text = flight.Airline;
-
-            this.OutwardFlightOriginLabel.Text = flight.Origin;
-            this.OutwardFlightDestinationLabel.Text = flight.Destination;
-
-            this.OutwardFlightDepartureLabel.Text = flight.Departure?.ToShortTimeString();
-            this.OutwardFlightArrivalLabel.Text = flight.Arrival?.ToShortTimeString();
-
-            this.OutwardFlightDateLabel.Text = scheduledFlight.FlightDate?.ToLongDateString();
-            this.OutwardFlightFareLabel.Text = string.Format("{0:C}", flight.Fare ?? 0m);
-        }
-
-        protected void PopulateReturnFlight(Flight flight, ScheduledFlight scheduledFlight) {
-            this.ReturnFlightNumberLabel.Text = flight.FlightNumber;
-            this.ReturnFlightAirlineLabel.Text = flight.Airline;
-
-            this.ReturnFlightOriginLabel.Text = flight.Origin;
-            this.ReturnFlightDestinationLabel.Text = flight.Destination;
-
-            this.ReturnFlightDepartureLabel.Text = flight.Departure?.ToShortTimeString();
-            this.ReturnFlightArrivalLabel.Text = flight.Arrival?.ToShortTimeString();
-
-            this.ReturnFlightDateLabel.Text = scheduledFlight.FlightDate?.ToLongDateString();
-            this.ReturnFlightFareLabel.Text = string.Format("{0:C}", flight.Fare ?? 0m);
-
-            this.ReturnFlightView.Visible = true;
-        }
-
-        protected int PopulatePassengers(Reservation reservation) {
+        protected int FindAndPopulatePassengers(Reservation reservation) {
             PassengerList passengerList = new PassengerList();
             passengerList.Populate("ReservationID", reservation.ReservationID);
 
@@ -95,18 +63,47 @@ namespace AirtoursWebApplication.Reservations {
             return passengerList.List[0]?.PassengerID ?? 0;
         }
 
-        protected void PopulateFlights(int passengerID) {
+        protected void PopulateOutwardFlight() {
+            if (outwardFlight is null == false && outwardScheduledFlight is null == false) {
+                this.OutwardFlightNumberLabel.Text = this.outwardFlight.FlightNumber;
+                this.OutwardFlightAirlineLabel.Text = this.outwardFlight.Airline;
+
+                this.OutwardFlightOriginLabel.Text = this.outwardFlight.Origin;
+                this.OutwardFlightDestinationLabel.Text = this.outwardFlight.Destination;
+
+                this.OutwardFlightDepartureLabel.Text = this.outwardFlight.Departure?.ToShortTimeString();
+                this.OutwardFlightArrivalLabel.Text = this.outwardFlight.Arrival?.ToShortTimeString();
+
+                this.OutwardFlightDateLabel.Text = this.outwardScheduledFlight.FlightDate?.ToLongDateString();
+                this.OutwardFlightFareLabel.Text = string.Format("{0:C}", this.outwardFlight.Fare ?? 0m);
+            }
+        }
+
+        protected void PopulateReturnFlight() {
+
+            if (returnFlight is null == false && returnScheduledFlight is null == false) {
+                this.ReturnFlightNumberLabel.Text = this.returnFlight.FlightNumber;
+                this.ReturnFlightAirlineLabel.Text = this.returnFlight.Airline;
+
+                this.ReturnFlightOriginLabel.Text = this.returnFlight.Origin;
+                this.ReturnFlightDestinationLabel.Text = this.returnFlight.Destination;
+
+                this.ReturnFlightDepartureLabel.Text = this.returnFlight.Departure?.ToShortTimeString();
+                this.ReturnFlightArrivalLabel.Text = this.returnFlight.Arrival?.ToShortTimeString();
+
+                this.ReturnFlightDateLabel.Text = this.returnScheduledFlight.FlightDate?.ToLongDateString();
+                this.ReturnFlightFareLabel.Text = string.Format("{0:C}", this.returnFlight.Fare ?? 0m);
+
+                this.ReturnFlightView.Visible = true;
+            }
+        }
+
+        protected void FindFlights(int passengerID) {
             ReservedSeatList reservedSeatList = new ReservedSeatList();
             reservedSeatList.Populate("PassengerID", passengerID);
 
             FlightList flightList = new FlightList();
             ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
-
-            Flight outwardFlight = null;
-            ScheduledFlight outwardScheduledFlight = null;
-
-            Flight returnFlight = null;
-            ScheduledFlight returnScheduledFlight = null;
 
             foreach (ReservedSeat reservedSeat in reservedSeatList.List) {
                 this.ReservationClassLabel.Text = reservedSeat.Class;
@@ -115,12 +112,12 @@ namespace AirtoursWebApplication.Reservations {
                 scheduledFlightWhere.Where("ScheduledFlightID", reservedSeat.ScheduledFlightID);
 
                 if (reservedSeat.Sector == "Outward") {
-                    outwardScheduledFlight = scheduledFlightList.FindOne(scheduledFlightWhere);
+                    this.outwardScheduledFlight = scheduledFlightList.FindOne(scheduledFlightWhere);
 
                     var flightWhere = flightList.WhereClause;
-                    flightWhere.Where("FlightID", outwardScheduledFlight.FlightID);
+                    flightWhere.Where("FlightID", this.outwardScheduledFlight.FlightID);
 
-                    outwardFlight = flightList.FindOne(flightWhere);
+                    this.outwardFlight = flightList.FindOne(flightWhere);
                 } else if (reservedSeat.Sector == "Return") {
                     returnScheduledFlight = scheduledFlightList.FindOne(scheduledFlightWhere);
 
@@ -129,14 +126,6 @@ namespace AirtoursWebApplication.Reservations {
 
                     returnFlight = flightList.FindOne(flightWhere);
                 }
-            }
-
-            if (outwardFlight is null == false && outwardScheduledFlight is null == false) {
-                this.PopulateOutwardFlight(outwardFlight, outwardScheduledFlight);
-            }
-
-            if (returnFlight is null == false && returnScheduledFlight is null == false) {
-                this.PopulateReturnFlight(returnFlight, returnScheduledFlight);
             }
         }
     }
