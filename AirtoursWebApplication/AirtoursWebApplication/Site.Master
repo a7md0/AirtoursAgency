@@ -49,7 +49,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item<% if (Request.Url.LocalPath == "/default.aspx") { %> active<% } %>">
+                    <li class="nav-item<% if (Request.Url.LocalPath.StartsWith("/default") || Request.Url.LocalPath.StartsWith("/Default")) { %> active<% } %>">
                         <a runat="server" href="~/" class="nav-link">Home</a>
                     </li>
                     <% if (Request.IsAuthenticated) { %>
@@ -86,7 +86,7 @@
             </div>
         </nav>
 
-        <main role="main" class="d-flex align-items-center min-vh-100">
+        <main role="main" class="<% if (!Request.Url.LocalPath.StartsWith("/default") && !Request.Url.LocalPath.StartsWith("/Default")) { %>d-flex align-items-center min-vh-100<% } %>">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
         </main>
