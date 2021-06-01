@@ -167,15 +167,9 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected decimal CalculateTotalFlight(Flight flight) {
-            decimal total = 0m;
             List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
-            if (flight is null == false) {
-                total = flight.Fare ?? 0m;
-                total *= passengers.Count;
-            }
-
-            return total;
+            return FlightList.CalclauteFlightCost(flight, passengers.Count);
         }
 
         protected decimal CalculateTotalFlights() {
