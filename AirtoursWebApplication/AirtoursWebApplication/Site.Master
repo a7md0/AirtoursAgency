@@ -86,7 +86,7 @@
             </div>
         </nav>
 
-        <main role="main">
+        <main role="main" class="d-flex align-items-center min-vh-100">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
         </main>
