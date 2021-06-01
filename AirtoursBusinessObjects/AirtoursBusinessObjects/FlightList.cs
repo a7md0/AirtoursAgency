@@ -20,5 +20,13 @@ namespace AirtoursBusinessObjects {
 
             return base.FilterJoin(where, "ScheduledFlight", "FlightID", on);
         }
+
+        public static decimal CalclauteFlightCost(Flight flight, int numberOfPassengers = 1) {
+            if (!flight.Fare.HasValue) {
+                return 0;
+            }
+
+            return flight.Fare.Value * numberOfPassengers;
+        }
     }
 }
