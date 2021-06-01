@@ -2,7 +2,7 @@
 namespace AirtoursBusinessObjects {
     using Schema;
 
-    [Table("Passenger", "PassengerID")]
+    [Table("Passenger", "PassengerID"), System.Serializable]
     public class Passenger : Model {
 
         private int passengerID;

@@ -1,5 +1,6 @@
 ﻿
 namespace AirtoursBusinessObjects {
+    [System.Serializable]
     public abstract class Model {
         /// <summary>
         /// If this model has any previous errors

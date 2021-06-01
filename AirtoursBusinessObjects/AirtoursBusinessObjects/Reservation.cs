@@ -3,7 +3,7 @@
 namespace AirtoursBusinessObjects {
     using Schema;
 
-    [Table("Reservation", "ReservationID")]
+    [Table("Reservation", "ReservationID"), Serializable]
     public class Reservation : Model {
 
         private int reservationID;
