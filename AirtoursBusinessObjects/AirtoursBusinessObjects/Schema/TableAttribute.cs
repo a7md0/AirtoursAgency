@@ -12,6 +12,7 @@ namespace AirtoursBusinessObjects.Schema {
         /// </summary>
         /// <param name="name">Table name</param>
         /// <param name="pkColumn">Primary column name</param>
+        /// <param name="pkJoinColumn">Optional second primary key</param>
         public TableAttribute(string name, string pkColumn = null, string pkJoinColumn = null) : base() {
             this.Name = name;
             this.PkColumn = pkColumn;
