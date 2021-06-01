@@ -47,6 +47,15 @@ namespace AirtoursWebApplication.Reservations {
                     }
                 }
             }
+
+            this.ControlVisiblity();
+        }
+
+        private void ControlVisiblity() {
+            if (this.outwardScheduledFlight.FlightDate >= DateTime.Now || this.returnScheduledFlight?.FlightDate >= DateTime.Now) {
+                this.EditReservationButton.Visible = true;
+                this.DeleteReservationButton.Visible = true;
+            }
         }
 
         protected void PopulateReservation(Reservation reservation) {
