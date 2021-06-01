@@ -8,12 +8,18 @@ using System.Data.SqlClient;
 namespace AirtoursBusinessObjects.Builder {
     using Schema;
 
+    /// <summary>
+    /// Where clause class structure for dynamic building of the query where part, with the use of parameters and placeholder in the query string.
+    /// </summary>
     public class WhereClause : IDisposable {
         private List<Predicate> predicates;
         private List<SqlParameter> parameters;
 
         private TableSchema schema = null;
 
+        /// <summary>
+        /// Construct an where clause object.
+        /// </summary>
         public WhereClause() {
             this.predicates = new List<Predicate>();
             this.parameters = new List<SqlParameter>();
@@ -21,13 +27,28 @@ namespace AirtoursBusinessObjects.Builder {
             this.predicates.Add(new AndPredicate());
         }
 
+        /// <summary>
+        /// Construct an where clause object while passing the table schema for additional checks.
+        /// </summary>
+        /// <param name="schema"></param>
         public WhereClause(TableSchema schema) : this() {
             this.schema = schema;
         }
 
+        /// <summary>
+        /// Current SQL parameters for the where clause
+        /// </summary>
         public SqlParameter[] Parameters => this.parameters.ToArray();
+
+        /// <summary>
+        /// Indicate whether there are any clauses (conditions) applied
+        /// </summary>
         public bool HasAny => this.parameters.Count > 0 || this.predicates[0].Predicates.Count > 0;
 
+        /// <summary>
+        /// Add an OR predicate for the where clause
+        /// </summary>
+        /// <returns></returns>
         public WhereClause Or() {
             predicates.Add(new OrPredicate());
 
@@ -35,7 +56,21 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         #region Operators
+        /// <summary>
+        /// Where a column match the given value.
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="value">Value to match against</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause Where(string columnName, object value) => this.Where(columnName, WhereOpreators.EqualTo, value);
+
+        /// <summary>
+        /// Where a column match the given value with the provided operator.
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="operator">Operator to be used for the comparison in matching the column and the value</param>
+        /// <param name="value">Value to match against</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause Where(string columnName, WhereOpreators @operator, object value) {
             this.checkColumnName(columnName);
 
@@ -48,6 +83,14 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
+        /// <summary>
+        /// Where a column is between the given values.
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="minValue">Minimum value for the match</param>
+        /// <param name="maxValue">Maximum value for the match</param>
+        /// <param name="equal">Whether to the condition should be matching or not (Default to true). Setting this to false will use the NOT operator on the clause.</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause WhereBetween(string columnName, IComparable minValue, IComparable maxValue, bool equal = true) {
             this.checkColumnName(columnName);
 
@@ -64,6 +107,13 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
+        /// <summary>
+        /// Where a column is true, false or null. ("WHERE x IS TRUE", "WHERE x IS NOT FALSE", "WHERE x IS NULL")
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="value">Value of the column, or null</param>
+        /// <param name="equal">Whether to the condition should be matching or not (Default to true). Setting this to false will use the NOT operator on the clause.</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause WhereIs(string columnName, bool? value, bool equal = true) {
             this.checkColumnName(columnName);
 
@@ -77,7 +127,21 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
+        /// <summary>
+        /// Where a column is matched against date time object.
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="value">The date object to match</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause WhereDate(string columnName, DateTime value) => this.WhereDate(columnName, WhereOpreators.EqualTo, value);
+
+        /// <summary>
+        /// Where a column is matched against date time object, with the provided operator.
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="operator">Operator to be used for the comparison in matching the column and the value</param>
+        /// <param name="value">The date object to match</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause WhereDate(string columnName, WhereOpreators @operator, DateTime value) {
             this.checkColumnName(columnName);
 
@@ -103,6 +167,13 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
+        /// <summary>
+        /// Where a column value is like the provided expression (LIKE "%A")
+        /// </summary>
+        /// <param name="columnName">Column name in the table</param>
+        /// <param name="like">The like expression</param>
+        /// <param name="equal">Whether to the condition should be matching or not (Default to true). Setting this to false will use the NOT operator on the clause.</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause WhereLike(string columnName, string like, bool equal = true) {
             var last = this.predicates.Last();
 
@@ -114,6 +185,13 @@ namespace AirtoursBusinessObjects.Builder {
             return this;
         }
 
+        /// <summary>
+        /// Where a column is in a list of values.
+        /// </summary>
+        /// <param name="columnName"></param>
+        /// <param name="values">List of values to be matched against</param>
+        /// <param name="equal">Whether to the condition should be matching or not (Default to true). Setting this to false will use the NOT operator on the clause.</param>
+        /// <returns>Current instance of the object for chaining</returns>
         public WhereClause WhereIn(string columnName, object[] values, bool equal = true) {
             this.checkColumnName(columnName);
 
@@ -168,7 +246,17 @@ namespace AirtoursBusinessObjects.Builder {
             }
         }
 
+        /// <summary>
+        /// Generate the query string for the where clause
+        /// </summary>
+        /// <returns>SQL where clause</returns>
         public override string ToString() => this.ToString();
+
+        /// <summary>
+        /// Generate the query string for the where clause
+        /// </summary>
+        /// <param name="columnPrefix">Add prefix to all columns</param>
+        /// <returns>SQL where clause</returns>
         public string ToString(string columnPrefix = null) {
             StringBuilder clause = new StringBuilder(); // New string builder
 
@@ -191,6 +279,10 @@ namespace AirtoursBusinessObjects.Builder {
         }
 
         #region Clone-able Support
+        /// <summary>
+        /// Construct where clause from existing one (for cloning)
+        /// </summary>
+        /// <param name="another"></param>
         protected WhereClause(WhereClause another) {
             this.predicates = new List<Predicate>(another.predicates);
             this.parameters = new List<SqlParameter>(another.parameters);
