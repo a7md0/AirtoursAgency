@@ -53,6 +53,6 @@
             <label class="form-label" for="txtUserPass">Password</label>
             <asp:TextBox ID="txtUserPass" runat="server" type="password" class="form-control" placeholder="Password" required="true" autocomplete="current-password"></asp:TextBox>
         </div>
-        <asp:Button ID="Button1" runat="server" Text="Log in" class="btn btn-lg btn-primary btn-block" OnClick="cmdLogin_Click" />
+        <asp:Button ID="LoginButton" runat="server" Text="Log in" class="btn btn-lg btn-primary btn-block" OnClick="LoginButton_Click" />
     </div>
 </asp:Content>

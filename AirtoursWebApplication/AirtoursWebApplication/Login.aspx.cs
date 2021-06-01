@@ -7,18 +7,21 @@ using System.Web.UI.WebControls;
 using System.Web.Security;
 
 using AirtoursBusinessObjects;
+using AirtoursBusinessObjects.Builder;
 
 namespace AirtoursWebApplication {
     public partial class Login : System.Web.UI.Page {
+        protected static CustomerList customerList = new CustomerList();
+
         protected void Page_Load(object sender, EventArgs e) {
 
         }
 
-        protected void cmdLogin_Click(object sender, System.EventArgs e) {
+        protected void LoginButton_Click(object sender, System.EventArgs e) {
             var email = txtUserName.Text;
             var password = txtUserPass.Text;
 
-            if ((null == email) || (0 == email.Length) || (email.Length > 40)) {
+            if ((null == email) || (0 == email.Length) || (email.Length > 30)) {
                 System.Diagnostics.Debug.WriteLine("[ValidateUser] Input validation of userName failed.");
                 return;
             }
@@ -30,18 +33,17 @@ namespace AirtoursWebApplication {
                 return;
             }
 
-            var customerList = new CustomerList();
-
-            var where = customerList.WhereClause
+            // Build where clause matching an email and password as provided from the user
+            WhereClause where = customerList.WhereClause
                                     .Where("Email", email)
                                     .Where("Password", password);
 
-            var customer = customerList.FindOne(where);
+            Customer customer = customerList.FindOne(where); // Find matching customer with the where clause
 
-            if (customer is null == false) {
-                this.Session.Add("customer", customer);
+            if (customer is null == false) { // if the obj is not null (found)
+                this.Session.Add("customer", customer); // Add the customer obj to the session
 
-                FormsAuthentication.RedirectFromLoginPage(customer.Email, false);
+                FormsAuthentication.RedirectFromLoginPage(customer.Email, false); // Redirect to default page or previous one
             }
         }
     }
