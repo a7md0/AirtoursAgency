@@ -142,11 +142,11 @@ namespace AirtoursWebApplication.Flights {
 
         protected void ReserveFlightsButton_Click(object sender, EventArgs e) {
             if (this.Session["Outward_ScheduledFlight"] == null) {
-                Response.Write("Please select a flight");
+                this.Response.Write("Please select a flight");
                 return;
             }
 
-            Response.Redirect("/Reservations/Create");
+            this.Response.Redirect("/Reservations/Create");
         }
 
         protected ScheduledFlight FindScheduledFlight(object flightID, DateTime flightDate) {
@@ -161,7 +161,7 @@ namespace AirtoursWebApplication.Flights {
                 int idx = (int) this.ViewState["Outward_FlightIdx"];
 
                 foreach (GridViewRow row in this.OutwardFlightsGridView.Rows) {
-                    this.OutwardFlightsGridView.Rows[row.RowIndex].BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
+                    row.BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
                 }
             }
 
@@ -169,7 +169,7 @@ namespace AirtoursWebApplication.Flights {
                 int idx = (int) this.ViewState["Return_FlightIdx"];
 
                 foreach (GridViewRow row in this.ReturnFlightsGridView.Rows) {
-                    this.ReturnFlightsGridView.Rows[row.RowIndex].BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
+                    row.BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
                 }
             }
         }
