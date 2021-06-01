@@ -72,13 +72,7 @@ namespace AirtoursWebApplication.Flights {
                 }
             }
 
-            var whereClause = flightList.WhereClause;
-            whereClause.Where("Origin", this.origin);
-            List<string> destinations = flightList.UniqueValues("Destination", whereClause);
-
-            this.DestinationsDropDownList.DataSource = destinations;
-            this.DestinationsDropDownList.DataBind();
-
+            this.OriginsDropDownList_SelectedIndexChanged(null, null);
             this.ControlsVisibility();
         }
 
@@ -86,6 +80,20 @@ namespace AirtoursWebApplication.Flights {
             bool showBookReturnFlight = this.BookReturnFlight.Checked;
 
             this.ReturnDateSection.Visible = showBookReturnFlight;
+        }
+
+
+        protected void OriginsDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
+            var whereClause = flightList.WhereClause;
+            whereClause.Where("Origin", this.origin);
+            List<string> destinations = flightList.UniqueValues("Destination", whereClause);
+
+            this.DestinationsDropDownList.DataSource = destinations;
+            this.DestinationsDropDownList.DataBind();
+        }
+
+        protected void DestinationsDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
+
         }
 
         protected void SearchButton_Click(object sender, EventArgs e) {

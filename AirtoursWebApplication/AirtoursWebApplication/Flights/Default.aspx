@@ -23,11 +23,11 @@
         <div class="row">
             <div class="col-md-6 form-group">
                 <label class="form-label" for="OriginsDropDownList">Origin:</label>
-                <asp:DropDownList ID="OriginsDropDownList" runat="server" class="form-control" AutoPostBack="True"></asp:DropDownList>
+                <asp:DropDownList ID="OriginsDropDownList" runat="server" class="form-control" AutoPostBack="True" OnSelectedIndexChanged="OriginsDropDownList_SelectedIndexChanged"></asp:DropDownList>
             </div>
             <div class="col-md-6 form-group">
                 <label class="form-label" for="DestinationsDropDownList">Destination:</label>
-                <asp:DropDownList ID="DestinationsDropDownList" runat="server" class="form-control" AutoPostBack="True"></asp:DropDownList>
+                <asp:DropDownList ID="DestinationsDropDownList" runat="server" class="form-control" AutoPostBack="False" OnSelectedIndexChanged="DestinationsDropDownList_SelectedIndexChanged"></asp:DropDownList>
             </div>
 
 
