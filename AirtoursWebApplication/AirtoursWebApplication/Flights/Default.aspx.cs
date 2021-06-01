@@ -12,19 +12,54 @@ using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication.Flights {
     public partial class Default : System.Web.UI.Page {
-        protected string origin;
-        protected string destination;
-
         protected static FlightList flightList = new FlightList();
         protected static ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
 
+        protected string origin {
+            get => this.OriginsDropDownList.SelectedValue;
+            set => this.OriginsDropDownList.SelectedValue = value;
+        }
+        protected string destination {
+            get => this.DestinationsDropDownList.SelectedValue;
+            set => this.DestinationsDropDownList.SelectedValue = value;
+        }
+
+        protected DateTime departureDate {
+            get => (DateTime) this.ViewState["departureDate"];
+            set => this.ViewState["departureDate"] = value;
+        }
+        protected DateTime returnDate {
+            get => (DateTime) this.ViewState["returnDate"];
+            set => this.ViewState["returnDate"] = value;
+        }
+
+        protected int? outwardFlightIdx {
+            get => this.ViewState["outwardFlightIdx"] as int?;
+            set => this.ViewState["outwardFlightIdx"] = value;
+        }
+
+        protected int? returnFlightIdx {
+            get => this.ViewState["returnFlightIdx"] as int?;
+            set => this.ViewState["returnFlightIdx"] = value;
+        }
+
+        protected ScheduledFlight outwardScheduledFlight {
+            get => this.Session["outwardScheduledFlight"] as ScheduledFlight;
+            set => this.Session["outwardScheduledFlight"] = value;
+        }
+
+        protected ScheduledFlight returnScheduledFlight {
+            get => this.Session["returnScheduledFlight"] as ScheduledFlight;
+            set => this.Session["returnScheduledFlight"] = value;
+        }
+
         protected void Page_Load(object sender, EventArgs e) {
             if (!Page.IsPostBack) {
-                this.ViewState["Outward_FlightIdx"] = null;
-                this.ViewState["Return_FlightIdx"] = null;
+                this.outwardFlightIdx = null;
+                this.returnFlightIdx = null;
 
-                this.Session["Outward_ScheduledFlight"] = null;
-                this.Session["Return_ScheduledFlight"] = null;
+                this.outwardScheduledFlight = null;
+                this.returnScheduledFlight = null;
 
                 List<string> origins = flightList.UniqueValues("Origin");
 
@@ -38,19 +73,16 @@ namespace AirtoursWebApplication.Flights {
             }
 
             var whereClause = flightList.WhereClause;
-            whereClause.Where("Origin", this.OriginsDropDownList.SelectedValue);
+            whereClause.Where("Origin", this.origin);
             List<string> destinations = flightList.UniqueValues("Destination", whereClause);
 
             this.DestinationsDropDownList.DataSource = destinations;
             this.DestinationsDropDownList.DataBind();
 
-            this.ControlsVisiblity();
-
-            this.origin = this.OriginsDropDownList.SelectedValue;
-            this.destination = this.DestinationsDropDownList.SelectedValue;
+            this.ControlsVisibility();
         }
 
-        protected void ControlsVisiblity() {
+        protected void ControlsVisibility() {
             bool showBookReturnFlight = this.BookReturnFlight.Checked;
 
             this.ReturnDateSection.Visible = showBookReturnFlight;
@@ -88,21 +120,31 @@ namespace AirtoursWebApplication.Flights {
                 }
             }
 
+            this.departureDate = departureDate;
+            this.returnDate = returnDate;
+
+            this.outwardFlightIdx = null;
+            this.returnFlightIdx = null;
+
+            this.outwardScheduledFlight = null;
+            this.returnScheduledFlight = null;
+
             this.ChooseFlightSection.Visible = true;
-            this.PopulateControl(departureDate, returnDate);
+            this.PopulateResultsControl();
         }
 
         /***************************************************/
 
-        protected void PopulateControl(DateTime departureDate, DateTime returnDate) {
-            flightList.FlightsFilter(origin, destination, departureDate);
+        protected void PopulateResultsControl() {
+            FlightList flightList = new FlightList();
+            flightList.FlightsFilter(this.origin, this.destination, this.departureDate);
 
             this.OutwardFlightsGridView.DataSource = flightList.DataTable.Copy();
             this.OutwardFlightsGridView.DataBind();
             this.OutwardFlightsGridView.Caption = $"Outward flights ({this.DepartureDateTextBox.Text})";
 
             if (this.BookReturnFlight.Checked) {
-                flightList.FlightsFilter(destination, origin, returnDate);
+                flightList.FlightsFilter(this.destination, this.origin, this.returnDate);
 
                 this.ReturnFlightsGridView.DataSource = flightList.DataTable.Copy();
                 this.ReturnFlightsGridView.DataBind();
@@ -115,13 +157,12 @@ namespace AirtoursWebApplication.Flights {
             GridViewRow selectedRow = gridView.SelectedRow;
 
             object flightID = gridView.DataKeys[selectedRow.RowIndex]["FlightID"];
-            DateTime flightDate = DateTime.ParseExact(this.DepartureDateTextBox.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
+            ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, this.departureDate);
 
             if (scheduledFlight is null == false) {
-                this.ViewState["Outward_FlightIdx"] = selectedRow.RowIndex;
-                this.Session["Outward_ScheduledFlight"] = scheduledFlight;
+                this.outwardFlightIdx = selectedRow.RowIndex;
+                this.outwardScheduledFlight = scheduledFlight;
             }
         }
 
@@ -130,18 +171,17 @@ namespace AirtoursWebApplication.Flights {
             GridViewRow selectedRow = gridView.SelectedRow;
 
             object flightID = gridView.DataKeys[selectedRow.RowIndex]["FlightID"];
-            DateTime flightDate = DateTime.ParseExact(this.ReturnDateTextBox.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
+            ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, this.returnDate);
 
             if (scheduledFlight is null == false) {
-                this.ViewState["Return_FlightIdx"] = selectedRow.RowIndex;
-                this.Session["Return_ScheduledFlight"] = scheduledFlight;
+                this.returnFlightIdx = selectedRow.RowIndex;
+                this.returnScheduledFlight = scheduledFlight;
             }
         }
 
         protected void ReserveFlightsButton_Click(object sender, EventArgs e) {
-            if (this.Session["Outward_ScheduledFlight"] == null) {
+            if (this.outwardScheduledFlight == null) {
                 this.Response.Write("Please select a flight");
                 return;
             }
@@ -157,19 +197,19 @@ namespace AirtoursWebApplication.Flights {
         }
 
         protected void Page_LoadComplete(object sender, EventArgs e) {
-            if (this.ViewState["Outward_FlightIdx"] is null == false) {
-                int idx = (int) this.ViewState["Outward_FlightIdx"];
+            foreach (GridViewRow row in this.OutwardFlightsGridView.Rows) {
+                row.BackColor = Color.Transparent;
 
-                foreach (GridViewRow row in this.OutwardFlightsGridView.Rows) {
-                    row.BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
+                if (this.outwardFlightIdx.HasValue && row.RowIndex == this.outwardFlightIdx.Value) {
+                    row.BackColor = Color.Cyan;
                 }
             }
 
-            if (this.ViewState["Return_FlightIdx"] is null == false) {
-                int idx = (int) this.ViewState["Return_FlightIdx"];
+            foreach (GridViewRow row in this.ReturnFlightsGridView.Rows) {
+                row.BackColor = Color.Transparent;
 
-                foreach (GridViewRow row in this.ReturnFlightsGridView.Rows) {
-                    row.BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
+                if (this.returnFlightIdx.HasValue && row.RowIndex == this.returnFlightIdx.Value) {
+                    row.BackColor = Color.Cyan;
                 }
             }
         }

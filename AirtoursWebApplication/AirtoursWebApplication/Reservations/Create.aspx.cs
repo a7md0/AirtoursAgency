@@ -17,21 +17,21 @@ namespace AirtoursWebApplication.Reservations {
         protected Customer customer => this.Session["customer"] as Customer;
 
         protected Flight outwardFlight {
-            get => this.Session["Outward_Flight"] as Flight;
-            set => this.Session["Outward_Flight"] = value;
+            get => this.Session["outwardFlight"] as Flight;
+            set => this.Session["outwardFlight"] = value;
         }
         protected ScheduledFlight outwardScheduledFlight {
-            get => this.Session["Outward_ScheduledFlight"] as ScheduledFlight;
-            set => this.Session["Outward_ScheduledFlight"] = value;
+            get => this.Session["outwardScheduledFlight"] as ScheduledFlight;
+            set => this.Session["outwardScheduledFlight"] = value;
         }
 
         protected Flight returnFlight {
-            get => this.Session["Return_Flight"] as Flight;
-            set => this.Session["Return_Flight"] = value;
+            get => this.Session["returnFlight"] as Flight;
+            set => this.Session["returnFlight"] = value;
         }
         protected ScheduledFlight returnScheduledFlight {
-            get => this.Session["Return_ScheduledFlight"] as ScheduledFlight;
-            set => this.Session["Return_ScheduledFlight"] = value;
+            get => this.Session["returnScheduledFlight"] as ScheduledFlight;
+            set => this.Session["returnScheduledFlight"] = value;
         }
 
         protected List<Passenger> passengers {
