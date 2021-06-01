@@ -655,7 +655,7 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Populate the current list based on provided filters (Design Document Requirement #4)
         /// </summary>
-        /// <param name="whereClause">Where clause filters (Optional)</param>
+        /// <param name="where">Where clause filters (Optional)</param>
         /// <returns>Whether there were any matching results</returns>
         public bool Populate(WhereClause where) {
             using (var command = this.connection.CreateCommand()) {
@@ -720,6 +720,7 @@ namespace AirtoursBusinessObjects {
         /// Set values of given model from the current reader.
         /// </summary>
         /// <param name="model">Model to set properties value from the current reader.</param>
+        /// <param name="reader">The reader object to read data from</param>
         protected void SetValues(T model, SqlDataReader reader) {
             foreach (var property in modelProperties) {
                 try {
@@ -980,7 +981,6 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Execute scalar query and convert to appropriate type.
         /// </summary>
-        /// <typeparam name="U">Result data type</typeparam>
         /// <param name="query">The query to execute</param>
         /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
         /// <returns>Scalar result</returns>
