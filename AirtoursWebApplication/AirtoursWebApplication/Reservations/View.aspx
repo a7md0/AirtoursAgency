@@ -13,7 +13,7 @@
             </div>
             <div class="col-2 align-self-end">
                 <asp:Button ID="EditReservationButton" runat="server" Visible="false" Text="Edit" class="btn btn-primary" OnClick="EditReservationButton_Click" />
-                <asp:Button ID="DeleteReservationButton" runat="server" Visible="false" Text="Delete" class="btn btn-danger" OnClientClick="return confirm('Confirm deleation\nAre you sure to delete this reservation?')" OnClick="DeleteReservationButton_Click" />
+                <asp:Button ID="DeleteReservationButton" runat="server" Visible="false" Text="Delete" class="btn btn-danger float-right" OnClientClick="return confirm('Confirm deleation\nAre you sure to delete this reservation?')" OnClick="DeleteReservationButton_Click" />
             </div>
         </div>
 
