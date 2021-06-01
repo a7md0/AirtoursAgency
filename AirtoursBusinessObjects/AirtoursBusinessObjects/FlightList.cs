@@ -22,7 +22,7 @@ namespace AirtoursBusinessObjects {
         }
 
         public static decimal CalclauteFlightCost(Flight flight, int numberOfPassengers = 1) {
-            if (!flight.Fare.HasValue) {
+            if (flight is null || !flight.Fare.HasValue) {
                 return 0;
             }
 
