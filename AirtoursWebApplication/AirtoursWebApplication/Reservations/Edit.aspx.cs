@@ -15,6 +15,8 @@ namespace AirtoursWebApplication.Reservations {
         protected static FlightList flightList = new FlightList();
         protected static ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
 
+        protected static ReservationList reservationList = new ReservationList();
+
         protected Customer customer => this.Session["customer"] as Customer;
 
         protected int reservationID => (int) this.Session["EditReservationID"];
@@ -178,6 +180,7 @@ namespace AirtoursWebApplication.Reservations {
             bool wasDeleted = passengerList.Delete(passenger);
             if (wasDeleted) {
                 this.passengers.RemoveAt(idx);
+                this.UpdatePrice();
             }
         }
 
@@ -222,7 +225,15 @@ namespace AirtoursWebApplication.Reservations {
                 }
 
                 this.passengers.Add(passenger);
+                this.UpdatePrice();
             }
+        }
+
+        protected void UpdatePrice() {
+            this.reservation.Price = this.CalculateTotalFlights();
+            reservationList.Update(this.reservation);
+
+            this.PopulateReservation(this.reservation);
         }
 
         protected decimal CalculateTotalFlight(Flight flight) {
