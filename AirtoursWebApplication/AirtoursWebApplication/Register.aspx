@@ -60,27 +60,27 @@
                 <label class="form-label" for="AddressTextBox">Address</label>
                 <asp:TextBox ID="AddressTextBox" runat="server" class="form-control" autocomplete="address-line1" MaxLength="20" placeholder="Address 1"></asp:TextBox>
 
-                <asp:RegularExpressionValidator ControlToValidate="AddressTextBox" runat="server" ValidationExpression="^\S{2,20}$" ErrorMessage="Address must be from 3 to 20 characters long" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator ControlToValidate="AddressTextBox" runat="server" ValidationExpression="^[A-Za-z0-9_\s-]{2,20}$" ErrorMessage="Address must be from 3 to 20 characters long" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
             </div>
             <div class="col-md-6 form-group">
                 <label class="form-label" for="PhoneTextBox">Phone</label>
-                <asp:TextBox ID="PhoneTextBox" runat="server" class="form-control" autocomplete="tel" MaxLength="25" placeholder="+973xxxxxxxx"></asp:TextBox>
+                <asp:TextBox ID="PhoneTextBox" runat="server" class="form-control" autocomplete="tel" MaxLength="25" placeholder="973xxxxxxxx"></asp:TextBox>
 
-                <asp:RegularExpressionValidator ControlToValidate="PhoneTextBox" runat="server" ValidationExpression="^\S{2,25}$" ErrorMessage="Phone must be from 3 to 25 characters long" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator ControlToValidate="PhoneTextBox" runat="server" ValidationExpression="^[0-9]{2,25}$" ErrorMessage="Phone must be from 3 to 25 digits long" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
             </div>
 
 
             <div class="col-md-6 form-group">
                 <label class="form-label" for="AddressTextBox">Credit card number</label>
-                <asp:TextBox ID="CreditCardNumberTextBox" runat="server" class="form-control" autocomplete="cc-number" minlength="16" MaxLength="16" placeholder="0000 0000 0000 0000" TextMode="Number"></asp:TextBox>
+                <asp:TextBox ID="CreditCardNumberTextBox" runat="server" class="form-control" autocomplete="cc-number" placeholder="0000 0000 0000 0000" TextMode="Number"></asp:TextBox>
 
-                <asp:RegularExpressionValidator ControlToValidate="AddressTextBox" runat="server" ValidationExpression="^\d{16,16}$" ErrorMessage="Credit card number should be 16 digits only" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator ControlToValidate="CreditCardNumberTextBox" runat="server" ValidationExpression="^\d{16,16}$" ErrorMessage="Credit card number should be 16 digits only" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
             </div>
             <div class="col-md-6 form-group">
                 <label class="form-label" for="PhoneTextBox">Security code (CSV)</label>
-                <asp:TextBox ID="SecurityCodeTextBox" runat="server" class="form-control" autocomplete="cc-csc" minlength="3" MaxLength="3" placeholder="xxx" TextMode="Number"></asp:TextBox>
+                <asp:TextBox ID="SecurityCodeTextBox" runat="server" class="form-control" autocomplete="cc-csc" placeholder="xxx" TextMode="Number"></asp:TextBox>
 
-                <asp:RegularExpressionValidator ControlToValidate="PhoneTextBox" runat="server" ValidationExpression="^\d{3,3}$" ErrorMessage="Secruity code should be 3 digits only" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
+                <asp:RegularExpressionValidator ControlToValidate="SecurityCodeTextBox" runat="server" ValidationExpression="^\d{3,3}$" ErrorMessage="Secruity code should be 3 digits only" CssClass="invalid-feedback" Display="Dynamic" ValidateRequestMode="Inherit"></asp:RegularExpressionValidator>
             </div>
         </div>
 
