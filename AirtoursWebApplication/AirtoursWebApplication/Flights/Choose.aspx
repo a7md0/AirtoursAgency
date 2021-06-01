@@ -4,11 +4,21 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
+
         <div class="row">
-            <div class="col-md-4">
-                <h3>Choose flight(s)</h3>
+            <div class="col-1 align-self-start">
+            </div>
+            <div class="col-10 align-self-center">
+                <h3 style="text-align: center;">Choose flight(s)</h3>
+            </div>
+            <div class="col-1 align-self-end">
             </div>
         </div>
+
+        <br />
+        <br />
+        <br />
+
         <asp:GridView ID="OutwardFlightsGridView" runat="server" ShowHeaderWhenEmpty="true" DataKeyNames="FlightID" CssClass="table table-bordered table-striped table-hover" Caption="Outward flights" CaptionAlign="Top" OnSelectedIndexChanged="OutwardFlightsGridView_SelectedIndexChanged" AutoGenerateColumns="False">
             <Columns>
                 <asp:CommandField ButtonType="Button" ShowSelectButton="True">

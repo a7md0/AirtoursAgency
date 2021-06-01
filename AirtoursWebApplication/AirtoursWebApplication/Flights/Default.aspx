@@ -7,6 +7,18 @@
 
     <div class="container">
         <div class="row">
+            <div class="col-1 align-self-start">
+            </div>
+            <div class="col-10 align-self-center">
+                <h3 style="text-align: center;">Lookup flights</h3>
+            </div>
+            <div class="col-1 align-self-end">
+            </div>
+        </div>
+
+        <br /><br /><br />
+
+        <div class="row">
             <div class="col-md-6 form-group">
                 <label class="form-label" for="OriginsDropDownList">Origin:</label>
                 <asp:DropDownList ID="OriginsDropDownList" runat="server" class="form-control" AutoPostBack="True"></asp:DropDownList>

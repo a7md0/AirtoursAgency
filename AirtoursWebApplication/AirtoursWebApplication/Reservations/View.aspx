@@ -3,10 +3,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="container"  style="padding-bottom: 4em;">
-
-
-
+    <div class="container">
         <div class="row">
             <div class="col-1 align-self-start">
                 <asp:Button ID="Button3" runat="server" Text="Back" class="btn btn-info" OnClientClick="JavaScript:window.history.back(1); return false;" />
