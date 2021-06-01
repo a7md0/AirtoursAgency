@@ -101,7 +101,7 @@ namespace AirtoursWebApplication.Flights {
                 return;
             }
 
-            Response.Redirect("/Reservations/New.aspx");
+            Response.Redirect("/Reservations/Create");
         }
 
         protected Flight FindFlight(object flightID) {

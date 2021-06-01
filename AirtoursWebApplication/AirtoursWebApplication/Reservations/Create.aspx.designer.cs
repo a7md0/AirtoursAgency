@@ -10,7 +10,7 @@
 namespace AirtoursWebApplication.Reservations {
     
     
-    public partial class New {
+    public partial class Create {
         
         /// <summary>
         /// OutwardFlightDescriptionLabel control.

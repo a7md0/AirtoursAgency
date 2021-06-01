@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication.Reservations {
-    public partial class New : System.Web.UI.Page {
+    public partial class Create : System.Web.UI.Page {
         protected static ReservationList reservationList = new ReservationList();
         protected static PassengerList passengerList = new PassengerList();
         protected static ReservedSeatList reservedSeatList = new ReservedSeatList();

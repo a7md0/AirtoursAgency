@@ -123,7 +123,7 @@
     <Content Include="Reservations\All.aspx" />
     <Content Include="Reservations\Default.aspx" />
     <Content Include="Reservations\Edit.aspx" />
-    <Content Include="Reservations\New.aspx" />
+    <Content Include="Reservations\Create.aspx" />
     <Content Include="Reservations\View.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -319,12 +319,12 @@
     <Compile Include="Reservations\Edit.aspx.designer.cs">
       <DependentUpon>Edit.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reservations\New.aspx.cs">
-      <DependentUpon>New.aspx</DependentUpon>
+    <Compile Include="Reservations\Create.aspx.cs">
+      <DependentUpon>Create.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Reservations\New.aspx.designer.cs">
-      <DependentUpon>New.aspx</DependentUpon>
+    <Compile Include="Reservations\Create.aspx.designer.cs">
+      <DependentUpon>Create.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reservations\View.aspx.cs">
       <DependentUpon>View.aspx</DependentUpon>
