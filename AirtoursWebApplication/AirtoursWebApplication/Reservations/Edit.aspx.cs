@@ -9,7 +9,7 @@ using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication.Reservations {
     public partial class Edit : System.Web.UI.Page {
-        protected Customer customer;
+        protected Customer customer => this.Session["customer"] as Customer;
 
         protected int reservationID;
         protected Reservation reservation;
@@ -29,7 +29,6 @@ namespace AirtoursWebApplication.Reservations {
         protected static ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
 
         protected void Page_Load(object sender, EventArgs e) {
-            this.customer = (Customer) this.Session["customer"];
             this.reservationID = (int) this.Session["EditReservationID"];
 
             if (this.ViewState["reservation"] is null == false) {

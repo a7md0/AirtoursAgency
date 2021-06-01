@@ -9,11 +9,9 @@ using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication.Reservations {
     public partial class All : System.Web.UI.Page {
-        protected Customer customer;
+        protected Customer customer => this.Session["customer"] as Customer;
 
         protected void Page_Load(object sender, EventArgs e) {
-            this.customer = (Customer) this.Session["customer"];
-
             if (!Page.IsPostBack) {
                 ReservationList reservationList = new ReservationList();
 
