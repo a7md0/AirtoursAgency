@@ -12,6 +12,7 @@ namespace AirtoursWebApplication.Reservations {
         protected static ReservationList reservationList = new ReservationList();
         protected static PassengerList passengerList = new PassengerList();
         protected static ReservedSeatList reservedSeatList = new ReservedSeatList();
+        protected static FlightList flightList = new FlightList();
 
         protected Customer customer;
 
@@ -22,28 +23,42 @@ namespace AirtoursWebApplication.Reservations {
         protected ScheduledFlight returnScheduledFlight;
 
         protected void Page_Load(object sender, EventArgs e) {
-            this.customer = (Customer) this.Session["customer"];
-
-            if (Session["Outward_Flight"] != null && Session["Outward_ScheduledFlight"] != null) {
-                this.outwardFlight = (Flight) Session["Outward_Flight"];
-                this.outwardScheduledFlight = (ScheduledFlight) Session["Outward_ScheduledFlight"];
-            }
-
-            if (Session["Return_Flight"] != null && Session["Return_ScheduledFlight"] != null) {
-                this.returnFlight = (Flight) Session["Return_Flight"];
-                this.returnScheduledFlight = (ScheduledFlight) Session["Return_ScheduledFlight"];
-            }
+            this.customer = this.Session["customer"] as Customer;
 
             if (!Page.IsPostBack) {
-                this.Session["Passengers"] = new List<Passenger>();
+                this.ViewState["Passengers"] = new List<Passenger>();
                 this.AddPassenger(customer.Fname, customer.Lname);
+
+                if (this.Session["Outward_ScheduledFlight"] is null == false) {
+                    this.ViewState["Outward_ScheduledFlight"] = this.Session["Outward_ScheduledFlight"];
+
+                    this.outwardScheduledFlight = this.ViewState["Outward_ScheduledFlight"] as ScheduledFlight;
+                    this.ViewState["Outward_Flight"] = flightList.FindOne("FlightID", this.outwardScheduledFlight.FlightID);
+
+                    this.Session["Outward_ScheduledFlight"] = null;
+                } else {
+                    this.Response.Redirect("/");
+                }
+
+                if (this.Session["Return_ScheduledFlight"] is null == false) {
+                    this.ViewState["Return_ScheduledFlight"] = this.Session["Return_ScheduledFlight"];
+
+                    this.returnScheduledFlight = this.ViewState["Return_ScheduledFlight"] as ScheduledFlight;
+                    this.ViewState["Return_Flight"] = flightList.FindOne("FlightID", this.returnScheduledFlight.FlightID);
+
+                    this.Session["Return_ScheduledFlight"] = null;
+                }
             }
 
-            this.PopulateControls();
-        }
+            if (this.ViewState["Outward_Flight"] is null == false && this.ViewState["Outward_ScheduledFlight"] is null == false) {
+                this.outwardFlight = this.ViewState["Outward_Flight"] as Flight;
+                this.outwardScheduledFlight = this.ViewState["Outward_ScheduledFlight"] as ScheduledFlight;
+            }
 
-        private void PopulateControls() {
-
+            if (this.ViewState["Return_Flight"] is null == false && this.ViewState["Return_ScheduledFlight"] is null == false) {
+                this.returnFlight = this.ViewState["Return_Flight"] as Flight;
+                this.returnScheduledFlight = this.ViewState["Return_ScheduledFlight"] as ScheduledFlight;
+            }
         }
 
         protected void AddPassengerButton_Click(object sender, EventArgs e) {
@@ -58,7 +73,7 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void PlaceReservationButton_Click(object sender, EventArgs e) {
-            List<Passenger> passengers = this.Session["Passengers"] as List<Passenger>;
+            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
             decimal outwardFlightTotal = this.CalculateTotalFlight(this.outwardFlight);
             decimal returnFlightTotal = this.CalculateTotalFlight(this.returnFlight);
@@ -137,11 +152,11 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void AddPassenger(string firstName, string lastName) {
-            if (this.Session["Passengers"] == null) {
+            if (this.ViewState["Passengers"] == null) {
                 return;
             }
 
-            List<Passenger> passengers = this.Session["Passengers"] as List<Passenger>;
+            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
             Passenger passenger = new Passenger() {
                 FirstName = firstName,
@@ -153,7 +168,7 @@ namespace AirtoursWebApplication.Reservations {
 
         protected decimal CalculateTotalFlight(Flight flight) {
             decimal total = 0m;
-            List<Passenger> passengers = this.Session["Passengers"] as List<Passenger>;
+            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
             if (flight is null == false) {
                 total = flight.Fare ?? 0m;
@@ -168,7 +183,7 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void Page_LoadComplete(object sender, EventArgs e) {
-            List<Passenger> passengers = this.Session["Passengers"] as List<Passenger>;
+            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
             this.PassengersGridView.DataSource = passengers;
             this.PassengersGridView.DataBind();

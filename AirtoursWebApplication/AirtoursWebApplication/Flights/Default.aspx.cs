@@ -23,8 +23,8 @@ namespace AirtoursWebApplication.Flights {
                 this.ViewState["Outward_FlightIdx"] = null;
                 this.ViewState["Return_FlightIdx"] = null;
 
-                this.Session["Outward_ScheduledFlightID"] = null;
-                this.Session["Return_ScheduledFlightID"] = null;
+                this.Session["Outward_ScheduledFlight"] = null;
+                this.Session["Return_ScheduledFlight"] = null;
 
                 List<string> origins = flightList.UniqueValues("Origin");
 
@@ -117,14 +117,11 @@ namespace AirtoursWebApplication.Flights {
             object flightID = gridView.DataKeys[selectedRow.RowIndex]["FlightID"];
             DateTime flightDate = DateTime.ParseExact(this.DepartureDateTextBox.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            Flight flight = this.FindFlight(flightID);
             ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
 
             if (scheduledFlight is null == false) {
                 this.ViewState["Outward_FlightIdx"] = selectedRow.RowIndex;
-                Session["Outward_Flight"] = flight;
-                Session["Outward_ScheduledFlight"] = scheduledFlight;
-                Session["Outward_FlightDate"] = scheduledFlight.FlightDate;
+                this.Session["Outward_ScheduledFlight"] = scheduledFlight;
             }
         }
 
@@ -135,34 +132,21 @@ namespace AirtoursWebApplication.Flights {
             object flightID = gridView.DataKeys[selectedRow.RowIndex]["FlightID"];
             DateTime flightDate = DateTime.ParseExact(this.ReturnDateTextBox.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            Flight flight = this.FindFlight(flightID);
             ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
 
             if (scheduledFlight is null == false) {
                 this.ViewState["Return_FlightIdx"] = selectedRow.RowIndex;
-                Session["Return_Flight"] = flight;
-                Session["Return_ScheduledFlight"] = scheduledFlight;
-                Session["Return_FlightDate"] = scheduledFlight.FlightDate;
+                this.Session["Return_ScheduledFlight"] = scheduledFlight;
             }
         }
 
         protected void ReserveFlightsButton_Click(object sender, EventArgs e) {
-            object outwardFlight = Session["Outward_Flight"];
-            object returnFlight = Session["Return_Flight"];
-
-            if (outwardFlight == null) {
+            if (this.Session["Outward_ScheduledFlight"] == null) {
                 Response.Write("Please select a flight");
                 return;
             }
 
             Response.Redirect("/Reservations/Create");
-        }
-
-        protected Flight FindFlight(object flightID) {
-            Flight flight = new Flight((int) flightID);
-            flightList.Fill(flight);
-
-            return flight;
         }
 
         protected ScheduledFlight FindScheduledFlight(object flightID, DateTime flightDate) {
