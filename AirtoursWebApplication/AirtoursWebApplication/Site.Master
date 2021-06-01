@@ -59,7 +59,7 @@
                     <li class="nav-item dropdown<% if (Request.Url.LocalPath.StartsWith("/Reservations")) { %> active<% } %>">
                         <a class="nav-link dropdown-toggle" href="#" id="reservationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reservations</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item<% if (Request.Url.LocalPath.StartsWith("/Reservations/default.aspx")) { %> active<% } %>" href="/Reservations">Upcoming Reservations</a>
+                            <a class="dropdown-item<% if (Request.Url.LocalPath.StartsWith("/Reservations/default")) { %> active<% } %>" href="/Reservations">Upcoming Reservations</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item<% if (Request.Url.LocalPath.StartsWith("/Reservations/All")) { %> active<% } %>" href="/Reservations/All">All Reservations</a>
                         </div>
