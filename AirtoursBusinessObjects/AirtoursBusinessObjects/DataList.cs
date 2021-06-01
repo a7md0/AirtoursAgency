@@ -105,6 +105,197 @@ namespace AirtoursBusinessObjects {
 
     partial class DataList<T> {
         /// <summary>
+        /// Calculates the total of all values for a column parameter. (Design Document Requirement #1)
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
+        public double TotalValue(string field) {
+            return this.TotalValue<double>(field, null);
+        }
+
+        /// <summary>
+        /// Query the maximum primary key value. (Design Document Requirement #2)
+        /// </summary>
+        /// <returns>Maximum id value</returns>
+        public int GetMaxID() {
+            return this.MaxValue<int>(this.pkColumn, null);
+        }
+
+        /// <summary>
+        /// Calculates the total of values for a column parameter where another column parameter is equal to a value. (Design Document Requirement #3)
+        /// </summary>
+        /// <param name="totalColumn"></param>
+        /// <param name="whereColumn"></param>
+        /// <param name="whereValue"></param>
+        /// <returns></returns>
+        public double TotalValue(string totalColumn, string whereColumn, object whereValue) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn, whereValue);
+
+                return this.TotalValue<double>(totalColumn, whereClause);
+            }
+        }
+
+        /// <summary>
+        /// generates a list of Item objects where the value in a column parameter is equal to a value parameter, and the value in a second column parameter is equal to a second value parameter. (Design Document Requirement #4)
+        /// </summary>
+        /// <param name="whereColumn1"></param>
+        /// <param name="whereValue1"></param>
+        /// <param name="whereColumn2"></param>
+        /// <param name="whereValue2"></param>
+        public void Filter(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn1, whereValue1);
+                whereClause.Where(whereColumn2, whereValue2);
+
+                this.Populate(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Calculates the total of values for a column parameter where two column parameters are equal to two value parameters. (Design Document Requirement #5)
+        /// </summary>
+        /// <param name="totalColumn"></param>
+        /// <param name="whereColumn1"></param>
+        /// <param name="whereValue1"></param>
+        /// <param name="whereColumn2"></param>
+        /// <param name="whereValue2"></param>
+        /// <returns></returns>
+        public double TotalValue(string totalColumn, string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn1, whereValue1);
+                whereClause.Where(whereColumn2, whereValue2);
+
+                return this.TotalValue<double>(totalColumn, whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Calculates the number of values in a column parameter where two column parameters are equal to two value parameters. (Design Document Requirement #6)
+        /// </summary>
+        /// <param name="whereColumn1"></param>
+        /// <param name="whereValue1"></param>
+        /// <param name="whereColumn2"></param>
+        /// <param name="whereValue2"></param>
+        /// <returns></returns>
+        public int TotalCount(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn1, whereValue1);
+                whereClause.Where(whereColumn2, whereValue2);
+
+                return this.TotalCount(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Query sorted list of unique values for given column. (Design Document Requirement #7)
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <param name="ascending">Sort the list ascendingly</param>
+        /// <returns>Sorted list of unique values</returns>
+        public List<string> UniqueValues(string column, bool ascending) {
+            return this.UniqueValues<string>(column, null, ascending);
+        }
+
+        /// <summary>
+        /// Generates a list of Item objects where the value in a column parameter is equal to a value parameter, and the value in a second column parameter is greater than a second value parameter. (Design Document Requirement #8)
+        /// </summary>
+        /// <param name="whereColumn1"></param>
+        /// <param name="whereValue1"></param>
+        /// <param name="whereColumn2"></param>
+        /// <param name="whereValue2"></param>
+        public void FilterPlus(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn1, whereValue1);
+                whereClause.Where(whereColumn2, whereValue2);
+
+                this.Populate(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Checks if there are any records where a column parameter is equal to a value parameter. (Design Document Requirement #9)
+        /// </summary>
+        /// <param name="whereColumn"></param>
+        /// <param name="whereValue"></param>
+        /// <returns></returns>
+        public bool CheckChildRecords(string whereColumn, object whereValue) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn, whereValue);
+
+                return this.CheckChildRecords(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Deletes records where a column parameter is equal to a value parameter. (Design Document Requirement #10)
+        /// </summary>
+        /// <param name="whereColumn"></param>
+        /// <param name="whereValuse"></param>
+        public void Delete(string whereColumn, object whereValuse) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn, whereValuse);
+
+                this.Delete(whereClause);
+            }
+        }
+
+        /// <summary>
+        /// Deletes records from two joined tables where a column parameter is equal to a value parameter. (Design Document Requirement #11)
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="value"></param>
+        /// <param name="joinTable"></param>
+        /// <param name="joinColumn"></param>
+        public void Delete(string column, object value, string joinTable, string joinColumn) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(column, value);
+
+                this.Delete(whereClause, joinTable, joinColumn);
+            }
+        }
+
+        /// <summary>
+        /// Generates a list of Item objects by joining two related tables where a column value parameter in a related table is equal to a value parameter. (Design Document Requirement #12)
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="value"></param>
+        /// <param name="joinTable"></param>
+        /// <param name="joinColumn"></param>
+        public void FilterJoin(string column, string value, string joinTable, string joinColumn) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(column, value);
+
+                this.FilterJoin(whereClause, joinTable, joinColumn);
+            }
+        }
+
+        /// <summary>
+        /// Generates a list of Item objects by joining two related tables where the values in 3 column parameters are equal to three value parameters. (Design Document Requirement #13)
+        /// </summary>
+        /// <param name="whereColumn"></param>
+        /// <param name="whereValue"></param>
+        /// <param name="joinTable"></param>
+        /// <param name="joinColumn"></param>
+        /// <param name="onColumn"></param>
+        /// <param name="onValue"></param>
+        /// <param name="onColumn2"></param>
+        /// <param name="onValue2"></param>
+        public void Filter(string whereColumn, object whereValue, string joinTable, string joinColumn, string onColumn, object onValue, string onColumn2, object onValue2) {
+            using (var whereClause = this.WhereClause)
+            using (var onClause = new WhereClause()) {
+                whereClause.Where(whereColumn, whereValue);
+
+                onClause.Where(onColumn, onValue);
+                onClause.Where(onColumn2, onValue2);
+
+                this.FilterJoin(whereClause, joinTable, joinColumn, onClause);
+            }
+        }
+    }
+
+    partial class DataList<T> {
+        /// <summary>
         /// Construct the where clause for given model by the primary key
         /// </summary>
         /// <param name="model"></param>
@@ -615,14 +806,6 @@ namespace AirtoursBusinessObjects {
 
     partial class DataList<T> {
         /// <summary>
-        /// Query sorted list of unique values for given column (Design Document Requirement #7)
-        /// </summary>
-        /// <param name="column">Column name</param>
-        /// <param name="ascending">Sort the list ascendingly</param>
-        /// <returns>Sorted list of unique values</returns>
-        public List<string> UniqueValues(string column, bool ascending = true) => this.UniqueValues<string>(column, null, ascending);
-
-        /// <summary>
         /// Query sorted list of unique values for given column
         /// </summary>
         /// <typeparam name="U">Expected list items data-type</typeparam>
@@ -793,12 +976,6 @@ namespace AirtoursBusinessObjects {
 
             return value;
         }
-
-        /// <summary>
-        /// Query the maximum primary key value. (Design Document Requirement #2)
-        /// </summary>
-        /// <returns>Maximum id value</returns>
-        public virtual int GetMaxID() => this.AggregateValue<int>(AggregateFunctions.MAX, this.pkColumn);
 
         /// <summary>
         /// Execute scalar query and convert to appropriate type.
