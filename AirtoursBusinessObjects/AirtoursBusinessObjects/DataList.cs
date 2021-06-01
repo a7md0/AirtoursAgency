@@ -193,7 +193,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="column">Column name</param>
         /// <param name="ascending">Sort the list ascendingly</param>
         /// <returns>Sorted list of unique values</returns>
-        public List<string> UniqueValues(string column, bool ascending) {
+        public List<string> UniqueValues(string column, bool ascending = true) {
             return this.UniqueValues<string>(column, null, ascending);
         }
 
