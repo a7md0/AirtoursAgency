@@ -343,6 +343,14 @@ namespace AirtoursBusinessObjects {
             return found;
         }
 
+        public virtual T FindOne(string whereColumn, object whereValue) {
+            using (var whereClause = this.WhereClause) {
+                whereClause.Where(whereColumn, whereValue);
+
+                return this.FindOne(whereClause);
+            }
+        }
+
         public virtual T FindOne(WhereClause where) {
             T model = null;
 
