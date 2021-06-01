@@ -142,7 +142,7 @@ namespace AirtoursWebApplication.Reservations {
 
         protected void EditReservationButton_Click(object sender, EventArgs e) {
             Session["EditReservationID"] = int.Parse(this.reservationID);
-            Response.Redirect($"/Reservations/Edit?returnUrl={this.Request.Url.PathAndQuery}", true);
+            Response.Redirect($"/Reservations/Edit?returnUrl={Uri.EscapeDataString(this.Request.Url.PathAndQuery)}", true);
         }
 
         protected void DeleteReservationButton_Click(object sender, EventArgs e) {
@@ -176,6 +176,12 @@ namespace AirtoursWebApplication.Reservations {
                 }
             } else {
                 Response.Write("Failed to delete reserved seats.");
+            }
+        }
+
+        protected void Button3_Click(object sender, EventArgs e) {
+            if (this.Request.QueryString["returnList"] != null) {
+                this.Response.Redirect(this.Request.QueryString["returnList"]);
             }
         }
     }

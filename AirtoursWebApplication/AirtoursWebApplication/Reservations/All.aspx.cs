@@ -32,7 +32,7 @@ namespace AirtoursWebApplication.Reservations {
             GridViewRow selectedRow = gridView.SelectedRow;
 
             object reservationID = gridView.DataKeys[selectedRow.RowIndex]["ReservationID"];
-            Response.Redirect($"/Reservations/View.aspx?reservationID={reservationID}", true);
+            Response.Redirect($"/Reservations/View.aspx?reservationID={reservationID}&returnList={Uri.EscapeDataString(this.Request.Url.PathAndQuery)}", true);
         }
     }
 }
