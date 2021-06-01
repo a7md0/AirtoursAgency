@@ -36,7 +36,7 @@ namespace AirtoursWebApplication {
                 if (customerList.Add(customer)) {
                     this.Session.Add("customer", customer);
 
-                    FormsAuthentication.RedirectFromLoginPage(customer.Email, true);
+                    FormsAuthentication.RedirectFromLoginPage(customer.Email, false);
                 }
             } else {
                 ValidationSummary.Visible = true;
