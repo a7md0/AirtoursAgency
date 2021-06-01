@@ -13,7 +13,7 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Set the join id value of this model
         /// </summary>
-        /// <param name="id">New join id</param>
+        /// <param name="joinId">New join id</param>
         public abstract void SetJoinId(object joinId);
     }
 }
