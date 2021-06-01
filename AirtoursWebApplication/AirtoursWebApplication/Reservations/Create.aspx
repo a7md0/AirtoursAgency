@@ -67,12 +67,13 @@
                 <div class="row">
 
                     <div class="col-md-12 mb-3">
-                        <asp:GridView ID="PassengersGridView" runat="server" ShowHeaderWhenEmpty="true" DataKeyNames="PassengerID, ReservationID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False">
+                        <asp:GridView ID="PassengersGridView" runat="server" ShowHeaderWhenEmpty="True" DataKeyNames="PassengerID,ReservationID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False" OnRowDeleting="PassengersGridView_RowDeleting">
                             <Columns>
                                 <asp:BoundField HeaderText="PassengerID" DataField="PassengerID" ReadOnly="True" Visible="False" />
                                 <asp:BoundField DataField="FirstName" HeaderText="First name" ReadOnly="True" />
                                 <asp:BoundField DataField="LastName" HeaderText="Last name" ReadOnly="True" />
                                 <asp:BoundField HeaderText="ReservationID" DataField="ReservationID" ReadOnly="True" Visible="False" />
+                                <asp:CommandField ShowDeleteButton="True" />
                             </Columns>
                         </asp:GridView>
                     </div>

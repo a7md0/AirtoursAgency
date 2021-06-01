@@ -182,6 +182,23 @@ namespace AirtoursWebApplication.Reservations {
             return this.CalculateTotalFlight(this.outwardFlight) + this.CalculateTotalFlight(this.returnFlight);
         }
 
+        protected void PassengersGridView_RowDeleting(object sender, GridViewDeleteEventArgs e) {
+            GridView gridView = sender as GridView;
+
+            int idx = e.RowIndex;
+
+            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
+
+            if (passengers.Count == 1) {
+                e.Cancel = true; // Indicate that this event is canceled
+                Response.Write("You cannot delete all passengers");
+
+                return;
+            }
+
+            passengers.RemoveAt(idx);
+        }
+
         protected void Page_LoadComplete(object sender, EventArgs e) {
             List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
