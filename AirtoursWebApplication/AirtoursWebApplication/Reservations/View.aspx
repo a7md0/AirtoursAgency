@@ -20,7 +20,7 @@
         <br />
         <br />
 
-        <div class="row" style="display: flex; align-items: center; text-align: center;">
+        <div class="row" style="display: flex; text-align: center;">
             <div class="col-md-6 mb-2 border-right">
                 <h3 style="text-align: center;">Reservation detail</h3>
 
