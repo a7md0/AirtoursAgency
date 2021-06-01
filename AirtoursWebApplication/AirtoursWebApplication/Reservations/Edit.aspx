@@ -5,7 +5,9 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
         <div class="row">
-            <div class="col-1 align-self-start"></div>
+            <div class="col-1 align-self-start">
+                <asp:Button ID="BackButton" runat="server" Text="Back" class="btn btn-info" OnClick="BackButton_Click" />
+            </div>
             <div class="col-10 align-self-center">
                 <h3 style="text-align: center;">Edit Reservation</h3>
             </div>

@@ -11,7 +11,7 @@ namespace AirtoursWebApplication.Reservations {
     public partial class Edit : System.Web.UI.Page {
         protected Customer customer;
 
-        protected string reservationID;
+        protected int reservationID;
         protected Reservation reservation;
 
         /****************************************************/
@@ -30,7 +30,7 @@ namespace AirtoursWebApplication.Reservations {
 
         protected void Page_Load(object sender, EventArgs e) {
             this.customer = (Customer) this.Session["customer"];
-            this.reservationID = this.Request.QueryString["reservationID"];
+            this.reservationID = (int) this.Session["EditReservationID"];
 
             if (this.ViewState["reservation"] is null == false) {
                 this.reservation = this.ViewState["reservation"] as Reservation;
@@ -231,6 +231,16 @@ namespace AirtoursWebApplication.Reservations {
             }
         }
 
+        protected decimal CalculateTotalFlight(Flight flight) {
+            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
+
+            return FlightList.CalclauteFlightCost(flight, passengers.Count);
+        }
+
+        protected decimal CalculateTotalFlights() {
+            return this.CalculateTotalFlight(this.outwardFlight) + this.CalculateTotalFlight(this.returnFlight);
+        }
+
         protected void Page_LoadComplete(object sender, EventArgs e) {
             this.PassengersGridView.DataSource = this.ViewState["Passengers"];
             this.PassengersGridView.DataBind();
@@ -252,6 +262,12 @@ namespace AirtoursWebApplication.Reservations {
             where.WhereIn("PassengerID", passengersIDs);
 
             reservedSeatList.Update(set, where);
+        }
+
+        protected void BackButton_Click(object sender, EventArgs e) {
+            if (this.Request.QueryString["returnUrl"] != null) {
+                this.Response.Redirect(this.Request.QueryString["returnUrl"]);
+            }
         }
     }
 }

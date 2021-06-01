@@ -46,13 +46,13 @@ namespace AirtoursWebApplication.Reservations {
                         this.PopulateReturnFlight();
                     }
                 }
-            }
 
-            this.ControlVisiblity();
+                this.ControlVisiblity();
+            }
         }
 
         private void ControlVisiblity() {
-            if (this.outwardScheduledFlight.FlightDate >= DateTime.Now || this.returnScheduledFlight?.FlightDate >= DateTime.Now) {
+            if (this.outwardScheduledFlight?.FlightDate >= DateTime.Now || this.returnScheduledFlight?.FlightDate >= DateTime.Now) {
                 this.EditReservationButton.Visible = true;
                 this.DeleteReservationButton.Visible = true;
             }
@@ -141,7 +141,8 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void EditReservationButton_Click(object sender, EventArgs e) {
-            Response.Redirect($"/Reservations/Edit.aspx?reservationID={this.reservationID}", true);
+            Session["EditReservationID"] = int.Parse(this.reservationID);
+            Response.Redirect($"/Reservations/Edit?returnUrl={this.Request.Url.PathAndQuery}", true);
         }
 
         protected void DeleteReservationButton_Click(object sender, EventArgs e) {
