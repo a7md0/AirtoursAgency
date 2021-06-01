@@ -4,21 +4,36 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
-        <asp:GridView ID="ReservationsGridView" runat="server" ShowHeaderWhenEmpty="True" DataKeyNames="ReservationID,CustomerID,EmployeeID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False" OnSelectedIndexChanged="ReservationsGridView_SelectedIndexChanged">
-            <Columns>
-                <asp:CommandField ButtonType="Button" ShowSelectButton="True">
-                    <ControlStyle CssClass="btn btn-primary" />
-                </asp:CommandField>
+        <div class="row">
+            <div class="col-1 align-self-start"></div>
+            <div class="col-10 align-self-center">
+                <h3 style="text-align: center;">All Reservations</h3>
+            </div>
+            <div class="col-1 align-self-end"></div>
+        </div>
 
-                <asp:BoundField HeaderText="ReservationID" DataField="ReservationID" ReadOnly="True" />
-                <asp:BoundField HeaderText="CustomerID" DataField="CustomerID" ReadOnly="True" Visible="False" />
-                <asp:BoundField HeaderText="EmployeeID" DataField="EmployeeID" ReadOnly="True" Visible="False" />
+        <br />
+        <br />
 
-                <asp:BoundField HeaderText="Paid" DataField="Paid" />
-                <asp:BoundField HeaderText="Price" DataField="Price" DataFormatString="{0:C}" />
-                <asp:BoundField HeaderText="ReservationDate" DataField="ReservationDate" DataFormatString="{0:d}" />
-            </Columns>
+        <div class="row">
+            <div class="col-md-12">
+                <asp:GridView ID="ReservationsGridView" runat="server" ShowHeaderWhenEmpty="True" DataKeyNames="ReservationID,CustomerID,EmployeeID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False" OnSelectedIndexChanged="ReservationsGridView_SelectedIndexChanged">
+                    <Columns>
+                        <asp:CommandField ButtonType="Button" ShowSelectButton="True">
+                            <ControlStyle CssClass="btn btn-primary" />
+                        </asp:CommandField>
 
-        </asp:GridView>
+                        <asp:BoundField HeaderText="ReservationID" DataField="ReservationID" ReadOnly="True" />
+                        <asp:BoundField HeaderText="CustomerID" DataField="CustomerID" ReadOnly="True" Visible="False" />
+                        <asp:BoundField HeaderText="EmployeeID" DataField="EmployeeID" ReadOnly="True" Visible="False" />
+
+                        <asp:BoundField HeaderText="Paid" DataField="Paid" />
+                        <asp:BoundField HeaderText="Price" DataField="Price" DataFormatString="{0:C}" />
+                        <asp:BoundField HeaderText="ReservationDate" DataField="ReservationDate" DataFormatString="{0:d}" />
+                    </Columns>
+
+                </asp:GridView>
+            </div>
+        </div>
     </div>
 </asp:Content>
