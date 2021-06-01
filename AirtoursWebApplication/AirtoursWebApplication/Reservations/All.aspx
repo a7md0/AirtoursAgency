@@ -19,7 +19,7 @@
             <div class="col-md-12">
                 <asp:GridView ID="ReservationsGridView" runat="server" ShowHeaderWhenEmpty="True" DataKeyNames="ReservationID,CustomerID,EmployeeID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False" OnSelectedIndexChanged="ReservationsGridView_SelectedIndexChanged">
                     <Columns>
-                        <asp:CommandField ButtonType="Button" ShowSelectButton="True">
+                        <asp:CommandField ButtonType="Button" ShowSelectButton="True" SelectText="View">
                             <ControlStyle CssClass="btn btn-primary" />
                         </asp:CommandField>
 
