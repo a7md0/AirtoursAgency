@@ -14,50 +14,45 @@ namespace AirtoursWebApplication.Reservations {
         protected static ReservedSeatList reservedSeatList = new ReservedSeatList();
         protected static FlightList flightList = new FlightList();
 
-        protected Customer customer;
+        protected Customer customer => this.Session["customer"] as Customer;
 
-        protected Flight outwardFlight;
-        protected ScheduledFlight outwardScheduledFlight;
+        protected Flight outwardFlight {
+            get => this.Session["Outward_Flight"] as Flight;
+            set => this.Session["Outward_Flight"] = value;
+        }
+        protected ScheduledFlight outwardScheduledFlight {
+            get => this.Session["Outward_ScheduledFlight"] as ScheduledFlight;
+            set => this.Session["Outward_ScheduledFlight"] = value;
+        }
 
-        protected Flight returnFlight;
-        protected ScheduledFlight returnScheduledFlight;
+        protected Flight returnFlight {
+            get => this.Session["Return_Flight"] as Flight;
+            set => this.Session["Return_Flight"] = value;
+        }
+        protected ScheduledFlight returnScheduledFlight {
+            get => this.Session["Return_ScheduledFlight"] as ScheduledFlight;
+            set => this.Session["Return_ScheduledFlight"] = value;
+        }
+
+        protected List<Passenger> passengers {
+            get => this.ViewState["Passengers"] as List<Passenger>;
+            set => this.ViewState["Passengers"] = value;
+        }
 
         protected void Page_Load(object sender, EventArgs e) {
-            this.customer = this.Session["customer"] as Customer;
-
             if (!Page.IsPostBack) {
-                this.ViewState["Passengers"] = new List<Passenger>();
+                this.passengers = new List<Passenger>();
                 this.AddPassenger(customer.Fname, customer.Lname);
 
-                if (this.Session["Outward_ScheduledFlight"] is null == false) {
-                    this.ViewState["Outward_ScheduledFlight"] = this.Session["Outward_ScheduledFlight"];
-
-                    this.outwardScheduledFlight = this.ViewState["Outward_ScheduledFlight"] as ScheduledFlight;
-                    this.ViewState["Outward_Flight"] = flightList.FindOne("FlightID", this.outwardScheduledFlight.FlightID);
-
-                    this.Session["Outward_ScheduledFlight"] = null;
+                if (this.outwardScheduledFlight is null == false) {
+                    this.outwardFlight = flightList.FindOne("FlightID", this.outwardScheduledFlight.FlightID);
                 } else {
                     this.Response.Redirect("/");
                 }
 
-                if (this.Session["Return_ScheduledFlight"] is null == false) {
-                    this.ViewState["Return_ScheduledFlight"] = this.Session["Return_ScheduledFlight"];
-
-                    this.returnScheduledFlight = this.ViewState["Return_ScheduledFlight"] as ScheduledFlight;
-                    this.ViewState["Return_Flight"] = flightList.FindOne("FlightID", this.returnScheduledFlight.FlightID);
-
-                    this.Session["Return_ScheduledFlight"] = null;
+                if (this.returnScheduledFlight is null == false) {
+                    this.returnFlight = flightList.FindOne("FlightID", this.returnScheduledFlight.FlightID);
                 }
-            }
-
-            if (this.ViewState["Outward_Flight"] is null == false && this.ViewState["Outward_ScheduledFlight"] is null == false) {
-                this.outwardFlight = this.ViewState["Outward_Flight"] as Flight;
-                this.outwardScheduledFlight = this.ViewState["Outward_ScheduledFlight"] as ScheduledFlight;
-            }
-
-            if (this.ViewState["Return_Flight"] is null == false && this.ViewState["Return_ScheduledFlight"] is null == false) {
-                this.returnFlight = this.ViewState["Return_Flight"] as Flight;
-                this.returnScheduledFlight = this.ViewState["Return_ScheduledFlight"] as ScheduledFlight;
             }
         }
 
@@ -73,8 +68,6 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void PlaceReservationButton_Click(object sender, EventArgs e) {
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
             decimal outwardFlightTotal = this.CalculateTotalFlight(this.outwardFlight);
             decimal returnFlightTotal = this.CalculateTotalFlight(this.returnFlight);
 
@@ -95,7 +88,7 @@ namespace AirtoursWebApplication.Reservations {
             if (reservation.Valid) {
 
                 // Create passengers (foreach)
-                foreach (Passenger passenger in passengers) {
+                foreach (Passenger passenger in this.passengers) {
                     passenger.ReservationID = reservation.ReservationID;
                     passengerList.Add(passenger);
 
@@ -152,24 +145,20 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void AddPassenger(string firstName, string lastName) {
-            if (this.ViewState["Passengers"] == null) {
+            if (this.passengers == null) {
                 return;
             }
-
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
 
             Passenger passenger = new Passenger() {
                 FirstName = firstName,
                 LastName = lastName,
             };
 
-            passengers.Add(passenger);
+            this.passengers.Add(passenger);
         }
 
         protected decimal CalculateTotalFlight(Flight flight) {
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
-            return FlightList.CalclauteFlightCost(flight, passengers.Count);
+            return FlightList.CalclauteFlightCost(flight, this.passengers.Count);
         }
 
         protected decimal CalculateTotalFlights() {
@@ -181,22 +170,18 @@ namespace AirtoursWebApplication.Reservations {
 
             int idx = e.RowIndex;
 
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
-            if (passengers.Count == 1) {
+            if (this.passengers.Count == 1) {
                 e.Cancel = true; // Indicate that this event is canceled
                 Response.Write("You cannot delete all passengers");
 
                 return;
             }
 
-            passengers.RemoveAt(idx);
+            this.passengers.RemoveAt(idx);
         }
 
         protected void Page_LoadComplete(object sender, EventArgs e) {
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
-            this.PassengersGridView.DataSource = passengers;
+            this.PassengersGridView.DataSource = this.passengers;
             this.PassengersGridView.DataBind();
 
             this.OutwardFlightTotalLabel.Text = "$" + this.CalculateTotalFlight(this.outwardFlight).ToString("0.##");
