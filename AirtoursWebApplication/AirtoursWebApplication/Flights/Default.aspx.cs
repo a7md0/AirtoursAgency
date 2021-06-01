@@ -86,6 +86,7 @@ namespace AirtoursWebApplication.Flights {
         protected void OriginsDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
             var whereClause = flightList.WhereClause;
             whereClause.Where("Origin", this.origin);
+
             List<string> destinations = flightList.UniqueValues("Destination", whereClause);
 
             this.DestinationsDropDownList.DataSource = destinations;
