@@ -52,7 +52,7 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <asp:GridView ID="PassengersGridView" runat="server" ShowHeaderWhenEmpty="True" DataKeyNames="PassengerID,ReservationID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False" OnRowDeleting="PassengersGridView_RowDeleting">
+                        <asp:GridView ID="PassengersGridView" runat="server" ShowHeaderWhenEmpty="True" DataKeyNames="PassengerID,ReservationID" CssClass="table table-bordered table-striped table-hover" AutoGenerateColumns="False" OnRowDeleting="PassengersGridView_RowDeleting" RowStyle-HorizontalAlign="Center">
                             <Columns>
                                 <asp:BoundField HeaderText="PassengerID" DataField="PassengerID" ReadOnly="True" Visible="False" />
                                 <asp:BoundField DataField="FirstName" HeaderText="First name" ReadOnly="True" />
