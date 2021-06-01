@@ -52,7 +52,7 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         private void ControlVisiblity() {
-            if (this.outwardScheduledFlight?.FlightDate >= DateTime.Now || this.returnScheduledFlight?.FlightDate >= DateTime.Now) {
+            if (this.outwardScheduledFlight?.FlightDate >= DateTime.Now && this.returnScheduledFlight?.FlightDate >= DateTime.Now) {
                 this.EditReservationButton.Visible = true;
                 this.DeleteReservationButton.Visible = true;
             }
