@@ -47,6 +47,10 @@ namespace AirtoursWebApplication.Reservations {
         }
 
         protected void AddPassengerButton_Click(object sender, EventArgs e) {
+            if (this.FirstNameTextBox.Text == string.Empty || this.LastNameTextBox.Text == string.Empty) {
+                return;
+            }
+
             this.AddPassenger(this.FirstNameTextBox.Text, this.LastNameTextBox.Text);
 
             this.FirstNameTextBox.Text = string.Empty;
