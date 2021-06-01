@@ -49,30 +49,30 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a runat="server" href="~/" class="nav-link">Home <span class="sr-only">(current)</span></a>
+                    <li class="nav-item<% if (Request.Url.LocalPath == "/default.aspx") { %> active<% } %>">
+                        <a runat="server" href="~/" class="nav-link">Home</a>
                     </li>
                     <% if (Request.IsAuthenticated) { %>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item<% if (Request.Url.LocalPath.StartsWith("/Flights")) { %> active<% } %>">
                         <a runat="server" href="~/Flights" class="nav-link">Flights</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown<% if (Request.Url.LocalPath.StartsWith("/Reservations")) { %> active<% } %>">
                         <a class="nav-link dropdown-toggle" href="#" id="reservationsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reservations</a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/Reservations">Upcoming Reservations</a>
+                            <a class="dropdown-item<% if (Request.Url.LocalPath.StartsWith("/Reservations/default.aspx")) { %> active<% } %>" href="/Reservations">Upcoming Reservations</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/Reservations/All">All Reservations</a>
+                            <a class="dropdown-item<% if (Request.Url.LocalPath.StartsWith("/Reservations/All")) { %> active<% } %>" href="/Reservations/All">All Reservations</a>
                         </div>
                     </li>
                     <% } %>
                 </ul>
                 <ul class="navbar-nav">
                     <% if (!Request.IsAuthenticated) { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
+                    <li class="nav-item<% if (Request.Url.LocalPath.Contains("Login")) { %> active<% } %>">
+                        <a class="nav-link" href="/Login">Login</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Register</a>
+                    <li class="nav-item<% if (Request.Url.LocalPath == "/Register") { %> active<% } %>">
+                        <a class="nav-link" href="/Register">Register</a>
                     </li>
                     <% } else { %>
                     <li class="nav-item dropdown">
