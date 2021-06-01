@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Edit Reservation" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Edit.aspx.cs" Inherits="AirtoursWebApplication.Reservations.Edit" %>
+﻿<%@ Page Title="Edit reservation" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Edit.aspx.cs" Inherits="AirtoursWebApplication.Reservations.Edit" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
