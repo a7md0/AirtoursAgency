@@ -10,17 +10,19 @@ using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication {
     public partial class Register : System.Web.UI.Page {
+        protected static CustomerList customerList = new CustomerList();
+
         protected void Page_Load(object sender, EventArgs e) {
-            if (!this.IsPostBack) {
-                CountryDropDownList.DataSource = Application.Get("countries");
-                CountryDropDownList.DataBind();
+            if (!this.IsPostBack) { // If 1st visit (not post-back)
+                CountryDropDownList.DataSource = Application.Get("countries"); // Get the all countries from the application
+                CountryDropDownList.DataBind(); // Bind data to make them available
             }
         }
 
-        protected void RegisterButton_Click(object sender, EventArgs e) {
-            if (Page.IsValid) {
-                var customerList = new CustomerList();
-                var customer = new Customer {
+        protected void RegisterButton_Click(object sender, EventArgs e) { // On the user clicking "Register"
+            if (Page.IsValid) { // Call the validation from the page, if valid
+                // Create new customer and assign the fields from the form
+                Customer customer = new Customer {
                     Fname = this.FirstNameTextBox.Text.NullIfWhiteSpace(),
                     Lname = this.LastNameTextBox.Text.NullIfWhiteSpace(),
                     Phone = this.PhoneTextBox.Text.NullIfWhiteSpace(),
@@ -33,13 +35,13 @@ namespace AirtoursWebApplication {
                     SecurityCode = int.Parse(this.SecurityCodeTextBox.Text.DefaultIfWhiteSpace("000")),
                 };
 
-                if (customerList.Add(customer)) {
-                    this.Session.Add("customer", customer);
+                if (customerList.Add(customer)) { // If the customer was added successfully
+                    this.Session.Add("customer", customer); // Add the customer obj to the session
 
-                    FormsAuthentication.RedirectFromLoginPage(customer.Email, false);
+                    FormsAuthentication.RedirectFromLoginPage(customer.Email, false); // Redirect to default page or previous one
                 }
-            } else {
-                ValidationSummary.Visible = true;
+            } else { // If not valid
+                ValidationSummary.Visible = true; // Show the validation summary
             }
         }
     }
