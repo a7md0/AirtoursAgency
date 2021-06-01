@@ -20,8 +20,11 @@ namespace AirtoursWebApplication.Flights {
 
         protected void Page_Load(object sender, EventArgs e) {
             if (!Page.IsPostBack) {
-                this.Session["Outward_FlightIdx"] = null;
-                this.Session["Return_FlightIdx"] = null;
+                this.ViewState["Outward_FlightIdx"] = null;
+                this.ViewState["Return_FlightIdx"] = null;
+
+                this.Session["Outward_ScheduledFlightID"] = null;
+                this.Session["Return_ScheduledFlightID"] = null;
 
                 List<string> origins = flightList.UniqueValues("Origin");
 
@@ -118,7 +121,7 @@ namespace AirtoursWebApplication.Flights {
             ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
 
             if (scheduledFlight is null == false) {
-                Session["Outward_FlightIdx"] = selectedRow.RowIndex;
+                this.ViewState["Outward_FlightIdx"] = selectedRow.RowIndex;
                 Session["Outward_Flight"] = flight;
                 Session["Outward_ScheduledFlight"] = scheduledFlight;
                 Session["Outward_FlightDate"] = scheduledFlight.FlightDate;
@@ -136,7 +139,7 @@ namespace AirtoursWebApplication.Flights {
             ScheduledFlight scheduledFlight = this.FindScheduledFlight(flightID, flightDate);
 
             if (scheduledFlight is null == false) {
-                Session["Return_FlightIdx"] = selectedRow.RowIndex;
+                this.ViewState["Return_FlightIdx"] = selectedRow.RowIndex;
                 Session["Return_Flight"] = flight;
                 Session["Return_ScheduledFlight"] = scheduledFlight;
                 Session["Return_FlightDate"] = scheduledFlight.FlightDate;
@@ -170,15 +173,20 @@ namespace AirtoursWebApplication.Flights {
         }
 
         protected void Page_LoadComplete(object sender, EventArgs e) {
+            if (this.ViewState["Outward_FlightIdx"] is null == false) {
+                int idx = (int) this.ViewState["Outward_FlightIdx"];
 
-            if (Session["Outward_FlightIdx"] != null) {
-                int idx = (int) Session["Outward_FlightIdx"];
-                this.OutwardFlightsGridView.Rows[idx].BackColor = Color.Cyan;
+                foreach (GridViewRow row in this.OutwardFlightsGridView.Rows) {
+                    this.OutwardFlightsGridView.Rows[row.RowIndex].BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
+                }
             }
 
-            if (Session["Return_FlightIdx"] != null) {
-                int idx = (int) Session["Return_FlightIdx"];
-                this.ReturnFlightsGridView.Rows[idx].BackColor = Color.Cyan;
+            if (this.ViewState["Return_FlightIdx"] is null == false) {
+                int idx = (int) this.ViewState["Return_FlightIdx"];
+
+                foreach (GridViewRow row in this.ReturnFlightsGridView.Rows) {
+                    this.ReturnFlightsGridView.Rows[row.RowIndex].BackColor = row.RowIndex == idx ? Color.Cyan : Color.Transparent;
+                }
             }
         }
     }
