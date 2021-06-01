@@ -94,14 +94,6 @@
         <footer class="container">
             <p class="mt-5 mb-3 text-muted text-center">&copy; Airtours - <%: DateTime.Now.Year %></p>
         </footer>
-        <%--<div class="container body-content">
-            <asp:ContentPlaceHolder ID="MainContent" runat="server">
-            </asp:ContentPlaceHolder>
-            <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Airtours</p>
-            </footer>
-        </div>--%>
     </form>
 </body>
 </html>
