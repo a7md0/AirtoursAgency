@@ -9,42 +9,46 @@ using AirtoursBusinessObjects;
 
 namespace AirtoursWebApplication.Reservations {
     public partial class Edit : System.Web.UI.Page {
-        protected Customer customer => this.Session["customer"] as Customer;
-
-        protected int reservationID;
-        protected Reservation reservation;
-
-        /****************************************************/
-        protected Flight outwardFlight;
-        protected ScheduledFlight outwardScheduledFlight;
-
-        protected Flight returnFlight;
-        protected ScheduledFlight returnScheduledFlight;
-        /****************************************************/
-
         protected static PassengerList passengerList = new PassengerList();
         protected static ReservedSeatList reservedSeatList = new ReservedSeatList();
 
         protected static FlightList flightList = new FlightList();
         protected static ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
 
+        protected Customer customer => this.Session["customer"] as Customer;
+
+        protected int reservationID => (int) this.Session["EditReservationID"];
+        protected Reservation reservation {
+            get => this.ViewState["reservation"] as Reservation;
+            set => this.ViewState["reservation"] = value;
+        }
+
+        protected List<Passenger> passengers {
+            get => this.ViewState["Passengers"] as List<Passenger>;
+            set => this.ViewState["Passengers"] = value;
+        }
+
+        /****************************************************/
+        protected Flight outwardFlight {
+            get => this.ViewState["outwardFlight"] as Flight;
+            set => this.ViewState["outwardFlight"] = value;
+        }
+        protected ScheduledFlight outwardScheduledFlight {
+            get => this.ViewState["outwardScheduledFlight"] as ScheduledFlight;
+            set => this.ViewState["outwardScheduledFlight"] = value;
+        }
+
+        protected Flight returnFlight {
+            get => this.ViewState["returnFlight"] as Flight;
+            set => this.ViewState["returnFlight"] = value;
+        }
+        protected ScheduledFlight returnScheduledFlight {
+            get => this.ViewState["returnScheduledFlight"] as ScheduledFlight;
+            set => this.ViewState["returnScheduledFlight"] = value;
+        }
+        /****************************************************/
+
         protected void Page_Load(object sender, EventArgs e) {
-            this.reservationID = (int) this.Session["EditReservationID"];
-
-            if (this.ViewState["reservation"] is null == false) {
-                this.reservation = this.ViewState["reservation"] as Reservation;
-            }
-
-            if (this.ViewState["outwardFlight"] is null == false && this.ViewState["outwardScheduledFlight"] is null == false) {
-                this.outwardFlight = this.ViewState["outwardFlight"] as Flight;
-                this.outwardScheduledFlight = this.ViewState["outwardScheduledFlight"] as ScheduledFlight;
-            }
-
-            if (this.ViewState["returnFlight"] is null == false && this.ViewState["returnScheduledFlight"] is null == false) {
-                this.returnFlight = this.ViewState["returnFlight"] as Flight;
-                this.returnScheduledFlight = this.ViewState["returnScheduledFlight"] as ScheduledFlight;
-            }
-
             if (!Page.IsPostBack) {
                 ReservationList reservationList = new ReservationList();
 
@@ -53,7 +57,6 @@ namespace AirtoursWebApplication.Reservations {
                 whereClause.Where("ReservationID", this.reservationID);
 
                 this.reservation = reservationList.FindOne(whereClause);
-                this.ViewState["reservation"] = this.reservation;
 
                 if (this.reservation is null == false) {
                     this.PopulateReservation(reservation);
@@ -79,10 +82,10 @@ namespace AirtoursWebApplication.Reservations {
             PassengerList passengerList = new PassengerList();
             passengerList.Populate("ReservationID", reservation.ReservationID);
 
-            this.ViewState["Passengers"] = passengerList.List.GetRange(0, passengerList.List.Count);
+            this.passengers = passengerList.List.GetRange(0, passengerList.List.Count);
 
-            if (passengerList.List.Count > 0) {
-                return passengerList.List[0].PassengerID;
+            if (this.passengers.Count > 0) {
+                return this.passengers[0].PassengerID;
             }
 
             return 0;
@@ -155,12 +158,6 @@ namespace AirtoursWebApplication.Reservations {
                     }
                 }
             }
-
-            this.ViewState["outwardFlight"] = this.outwardFlight;
-            this.ViewState["outwardScheduledFlight"] = this.outwardScheduledFlight;
-
-            this.ViewState["returnFlight"] = this.returnFlight;
-            this.ViewState["returnScheduledFlight"] = this.returnScheduledFlight;
         }
 
         protected void PassengersGridView_RowDeleting(object sender, GridViewDeleteEventArgs e) {
@@ -170,9 +167,7 @@ namespace AirtoursWebApplication.Reservations {
             int passengerID = (int) gridView.DataKeys[idx]["PassengerID"];
             Passenger passenger = new Passenger(passengerID);
 
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
-            if (passengers.Count == 1) {
+            if (this.passengers.Count == 1) {
                 e.Cancel = true; // Indicate that this event is canceled
                 Response.Write("You cannot delete all passengers from this reservation");
 
@@ -182,7 +177,7 @@ namespace AirtoursWebApplication.Reservations {
             reservedSeatList.Delete("PassengerID", passengerID);
             bool wasDeleted = passengerList.Delete(passenger);
             if (wasDeleted) {
-                passengers.RemoveAt(idx);
+                this.passengers.RemoveAt(idx);
             }
         }
 
@@ -209,7 +204,7 @@ namespace AirtoursWebApplication.Reservations {
                 ReservedSeat outwardReservedSeat = new ReservedSeat() {
                     PassengerID = passenger.PassengerID,
                     ScheduledFlightID = this.outwardScheduledFlight.ScheduledFlightID,
-                    // Class = ?, // TODO
+                    Class = this.ReservationClassDropDownList.SelectedValue,
                     Status = "Waitlisted",
                     Sector = "Outward"
                 };
@@ -219,39 +214,30 @@ namespace AirtoursWebApplication.Reservations {
                     ReservedSeat returnReservedSeat = new ReservedSeat() {
                         PassengerID = passenger.PassengerID,
                         ScheduledFlightID = this.returnScheduledFlight.ScheduledFlightID,
-                        // Class = ?, // TODO
+                        Class = this.ReservationClassDropDownList.SelectedValue,
                         Status = "Waitlisted",
                         Sector = "Return"
                     };
                     reservedSeatList.Add(returnReservedSeat);
                 }
 
-                (this.ViewState["Passengers"] as List<Passenger>).Add(passenger);
+                this.passengers.Add(passenger);
             }
         }
 
         protected decimal CalculateTotalFlight(Flight flight) {
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
-            return FlightList.CalclauteFlightCost(flight, passengers.Count);
+            return FlightList.CalclauteFlightCost(flight, this.passengers.Count);
         }
 
         protected decimal CalculateTotalFlights() {
             return this.CalculateTotalFlight(this.outwardFlight) + this.CalculateTotalFlight(this.returnFlight);
         }
 
-        protected void Page_LoadComplete(object sender, EventArgs e) {
-            this.PassengersGridView.DataSource = this.ViewState["Passengers"];
-            this.PassengersGridView.DataBind();
-        }
-
         protected void ReservationClassDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
-            List<Passenger> passengers = this.ViewState["Passengers"] as List<Passenger>;
-
-            int count = passengers.Count;
+            int count = this.passengers.Count;
             object[] passengersIDs = new object[count];
             for (int i = 0; i < count; i++) {
-                passengersIDs[i] = passengers[i].PassengerID;
+                passengersIDs[i] = this.passengers[i].PassengerID;
             }
 
             var set = new AirtoursBusinessObjects.Builder.SetClause(reservedSeatList.TableSchema);
@@ -265,8 +251,13 @@ namespace AirtoursWebApplication.Reservations {
 
         protected void BackButton_Click(object sender, EventArgs e) {
             if (this.Request.QueryString["returnUrl"] != null) {
-                this.Response.Redirect(this.Request.QueryString["returnUrl"]);
+                this.Response.Redirect(this.Request.QueryString["returnUrl"], true);
             }
+        }
+
+        protected void Page_LoadComplete(object sender, EventArgs e) {
+            this.PassengersGridView.DataSource = this.passengers;
+            this.PassengersGridView.DataBind();
         }
     }
 }
