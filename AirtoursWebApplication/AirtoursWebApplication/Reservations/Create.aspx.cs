@@ -134,6 +134,11 @@ namespace AirtoursWebApplication.Reservations {
             return reservedSeatList.Add(returnReservedSeat);
         }
 
+        /// <summary>
+        /// Temporarily add passenger obj to the session
+        /// </summary>
+        /// <param name="firstName">Passenger first name</param>
+        /// <param name="lastName">Passenger last name</param>
         protected void AddTempPassenger(string firstName, string lastName) {
             if (this.passengers == null) {
                 return;
