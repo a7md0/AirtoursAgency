@@ -101,16 +101,14 @@ namespace AirtoursBusinessObjects {
                 this.connection.Close();
             }
         }
-    }
 
-    partial class DataList<T> {
         /// <summary>
         /// Calculates the total of all values for a column parameter. (Design Document Requirement #1)
         /// </summary>
-        /// <param name="field"></param>
+        /// <param name="column"></param>
         /// <returns></returns>
-        public double TotalValue(string field) {
-            return this.TotalValue<double>(field, null);
+        public double TotalValue(string column) {
+            return this.TotalValue<double>(column, null);
         }
 
         /// <summary>
