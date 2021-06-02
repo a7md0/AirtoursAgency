@@ -56,6 +56,10 @@ namespace AirtoursWebApplication.Reservations {
                 this.EditReservationButton.Visible = true;
                 this.DeleteReservationButton.Visible = true;
             }
+
+            if (this.Request.QueryString["returnList"] == null) {
+                this.BackButton.Visible = false;
+            }
         }
 
         protected void PopulateReservation(Reservation reservation) {
@@ -179,7 +183,7 @@ namespace AirtoursWebApplication.Reservations {
             }
         }
 
-        protected void Button3_Click(object sender, EventArgs e) {
+        protected void BackButton_Click(object sender, EventArgs e) {
             if (this.Request.QueryString["returnList"] != null) {
                 this.Response.Redirect(this.Request.QueryString["returnList"]);
             }

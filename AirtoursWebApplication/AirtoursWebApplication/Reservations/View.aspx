@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row">
             <div class="col-1 align-self-start">
-                <asp:Button ID="Button3" runat="server" Text="Back" class="btn btn-info" OnClick="Button3_Click" />
+                <asp:Button ID="BackButton" runat="server" Text="Back" class="btn btn-info" OnClick="BackButton_Click" />
             </div>
             <div class="col-9 align-self-center">
                 <h3 style="text-align: center;">View Reservation</h3>
