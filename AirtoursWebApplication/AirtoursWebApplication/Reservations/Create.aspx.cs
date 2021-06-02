@@ -42,7 +42,7 @@ namespace AirtoursWebApplication.Reservations {
         protected void Page_Load(object sender, EventArgs e) {
             if (!Page.IsPostBack) {
                 this.passengers = new List<Passenger>();
-                this.AddPassenger(customer.Fname, customer.Lname);
+                this.AddTempPassenger(customer.Fname, customer.Lname);
 
                 if (this.outwardScheduledFlight is null == false) {
                     this.outwardFlight = flightList.FindOne("FlightID", this.outwardScheduledFlight.FlightID);
@@ -61,7 +61,7 @@ namespace AirtoursWebApplication.Reservations {
                 return;
             }
 
-            this.AddPassenger(this.FirstNameTextBox.Text, this.LastNameTextBox.Text);
+            this.AddTempPassenger(this.FirstNameTextBox.Text, this.LastNameTextBox.Text);
 
             this.FirstNameTextBox.Text = string.Empty;
             this.LastNameTextBox.Text = string.Empty;
@@ -97,54 +97,44 @@ namespace AirtoursWebApplication.Reservations {
                         break;
                     }
 
-                    passengerIDs.Add(passenger.PassengerID);
-                }
+                    bool sucess = this.ReserveNewSeat(this.outwardScheduledFlight, passenger, "Outward");
 
-                // Create ReservedSeat (foreach)
-                foreach (int passengerID in passengerIDs) {
-                    ReservedSeat outwardReservedSeat = new ReservedSeat() {
-                        PassengerID = passengerID,
-                        ScheduledFlightID = this.outwardScheduledFlight.ScheduledFlightID,
-                        Class = this.ClassDropDownList.SelectedValue,
-                        Status = "Waitlisted",
-                        Sector = "Outward"
-                    };
-
-                    reservedSeatList.Add(outwardReservedSeat);
-
-                    if (!outwardReservedSeat.Valid) {
+                    if (!sucess) {
                         failed = true;
                         break;
                     }
 
                     if (this.returnFlight is null == false) {
-                        ReservedSeat returnReservedSeat = new ReservedSeat() {
-                            PassengerID = passengerID,
-                            ScheduledFlightID = this.returnScheduledFlight.ScheduledFlightID,
-                            Class = this.ClassDropDownList.SelectedValue,
-                            Status = "Waitlisted",
-                            Sector = "Return"
-                        };
+                        sucess = this.ReserveNewSeat(this.returnScheduledFlight, passenger, "Return");
 
-                        reservedSeatList.Add(returnReservedSeat);
-
-                        if (!returnReservedSeat.Valid) {
+                        if (!sucess) {
                             failed = true;
                             break;
                         }
                     }
-
                 }
             }
 
             if (!failed) {
-                Response.Redirect($"/Reservations/View.aspx?reservationID={reservation.ReservationID}", true);
+                Response.Redirect($"/Reservations/View?reservationID={reservation.ReservationID}", true);
             } else {
                 Response.Write("Failed to place the reservation, please try again later.");
             }
         }
 
-        protected void AddPassenger(string firstName, string lastName) {
+        protected bool ReserveNewSeat(ScheduledFlight scheduledFlight, Passenger passenger, string sector = "Outward") {
+            ReservedSeat returnReservedSeat = new ReservedSeat() {
+                PassengerID = passenger.PassengerID,
+                ScheduledFlightID = scheduledFlight.ScheduledFlightID,
+                Class = this.ClassDropDownList.SelectedValue,
+                Status = "Waitlisted",
+                Sector = sector
+            };
+
+            return reservedSeatList.Add(returnReservedSeat);
+        }
+
+        protected void AddTempPassenger(string firstName, string lastName) {
             if (this.passengers == null) {
                 return;
             }
