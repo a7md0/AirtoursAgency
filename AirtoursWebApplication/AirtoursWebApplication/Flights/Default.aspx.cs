@@ -110,7 +110,7 @@ namespace AirtoursWebApplication.Flights {
             );
 
             if (!validDepartureDate) {
-                Response.Write("Invalid departure date was entered");
+                Response.Write("<script defer>alert(\"Invalid departure date was entered\");</script>");
                 return;
             }
 
@@ -124,7 +124,7 @@ namespace AirtoursWebApplication.Flights {
                 );
 
                 if (!validReturnDate) {
-                    Response.Write("Invalid departure date was entered");
+                    Response.Write("<script defer>alert(\"Invalid departure date was entered\");</script>");
                     return;
                 }
             }
@@ -191,7 +191,7 @@ namespace AirtoursWebApplication.Flights {
 
         protected void ReserveFlightsButton_Click(object sender, EventArgs e) {
             if (this.outwardScheduledFlight == null) {
-                this.Response.Write("Please select a flight");
+                Response.Write("<script defer>alert(\"Please select a flight\");</script>");
                 return;
             }
 

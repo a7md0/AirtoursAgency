@@ -44,6 +44,8 @@ namespace AirtoursWebApplication {
                 this.Session.Add("customer", customer); // Add the customer obj to the session
 
                 FormsAuthentication.RedirectFromLoginPage(customer.Email, false); // Redirect to default page or previous one
+            } else {
+                Response.Write("<script defer>alert(\"Invalid email or password are entered, please try again.\");</script>");
             }
         }
     }

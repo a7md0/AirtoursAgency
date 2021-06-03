@@ -118,7 +118,7 @@ namespace AirtoursWebApplication.Reservations {
             if (!failed) {
                 Response.Redirect($"/Reservations/View?reservationID={reservation.ReservationID}", true);
             } else {
-                Response.Write("Failed to place the reservation, please try again later.");
+                Response.Write("<script defer>alert(\"Failed to place the reservation, please try again later.\");</script>");
             }
         }
 
@@ -167,7 +167,7 @@ namespace AirtoursWebApplication.Reservations {
 
             if (this.passengers.Count == 1) {
                 e.Cancel = true; // Indicate that this event is canceled
-                Response.Write("You cannot delete all passengers");
+                Response.Write("<script defer>alert(\"You cannot delete all passengers\");</script>");
 
                 return;
             }

@@ -171,7 +171,7 @@ namespace AirtoursWebApplication.Reservations {
 
             if (this.passengers.Count == 1) {
                 e.Cancel = true; // Indicate that this event is canceled
-                Response.Write("You cannot delete all passengers from this reservation");
+                Response.Write("<script defer>alert(\"You cannot delete all passengers from this reservation\");</script>");
 
                 return;
             }

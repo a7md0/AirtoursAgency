@@ -179,7 +179,7 @@ namespace AirtoursWebApplication.Reservations {
             if (affectedRows > 0) { // If affected row by the deletion > 0
                 Response.Redirect("/Reservations", true); // Redirect the user from the current page, since it does not exist anymore
             } else { // If delete failed
-                Response.Write("Failed to delete the reservation."); // Show an error for the user
+                Response.Write("<script defer>alert(\"Failed to delete the reservation.\");</script>"); // Show an error for the user
             }
 
             /// The following code is useless, the [Reservation], [Passenger], [ReservedSeat] tables already have DELETE CASCADE on all foreign keys
