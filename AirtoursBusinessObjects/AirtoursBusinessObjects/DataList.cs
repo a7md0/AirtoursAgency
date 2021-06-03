@@ -308,7 +308,7 @@ namespace AirtoursBusinessObjects {
         public virtual bool Fill(T model) {
             bool found = false;
 
-            using (var command = this.connection.CreateCommand())
+            using (SqlCommand command = this.connection.CreateCommand())
             using (var where = this.ModelWhereClause(model)) {
                 string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
 
@@ -320,7 +320,7 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (var reader = command.ExecuteReader()) {
+                    using (SqlDataReader reader = command.ExecuteReader()) {
                         this.SetColumnsOrdinals(reader);
                         found = reader.HasRows;
 
@@ -356,7 +356,7 @@ namespace AirtoursBusinessObjects {
                 throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
             }
 
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
                 string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
 
@@ -368,7 +368,7 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (var reader = command.ExecuteReader()) {
+                    using (SqlDataReader reader = command.ExecuteReader()) {
                         this.SetColumnsOrdinals(reader);
 
                         if (reader.Read()) {
@@ -397,7 +397,7 @@ namespace AirtoursBusinessObjects {
         public virtual bool Add(T model) {
             bool added = false;
 
-            using (var command = this.connection.CreateCommand())
+            using (SqlCommand command = this.connection.CreateCommand())
             using (var insert = new InsertClause(this.schema)) {
                 insert.Add(model, modelProperties);
 
@@ -439,7 +439,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="model">Model instance, with valid primary key. Data will be pulled from this model and updated into the database, where the primary key is equal to the saved one</param>
         /// <returns>Whether the row was updated or not</returns>
         public virtual bool Update(T model) {
-            using (var command = this.connection.CreateCommand())
+            using (SqlCommand command = this.connection.CreateCommand())
             using (var set = new SetClause(this.schema))
             using (var where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
@@ -484,7 +484,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="model">Model instance, with valid primary key. The equivalent row will be deleted permanently from the database.</param>
         /// <returns>Whether the row was deleted or not</returns>
         public virtual bool Delete(T model) {
-            using (var command = this.connection.CreateCommand())
+            using (SqlCommand command = this.connection.CreateCommand())
             using (var where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
 
@@ -581,7 +581,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="joinColumn">Join column between two tables</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterJoin(WhereClause where, string joinTable, string joinColumn, WhereClause on) {
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 string whereClause = string.Empty;
                 string onClause = string.Empty;
 
@@ -623,7 +623,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="on3">On clause filters for third join</param>
         /// <returns></returns>
         public bool FilterJoin(WhereClause where, string joinTable, string joinColumn, string joinTable2, string joinColumn2, string joinTable3, string joinColumn3, WhereClause on3) {
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 string whereClause = string.Empty;
                 string onClause = string.Empty;
 
@@ -664,7 +664,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Where clause filters (Optional)</param>
         /// <returns>Whether there were any matching results</returns>
         public bool Populate(WhereClause where) {
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
                 string whereClause = string.Empty;
 
@@ -689,7 +689,7 @@ namespace AirtoursBusinessObjects {
             try {
                 this.OpenConnection(); // Open the connection
 
-                using (var reader = command.ExecuteReader()) {
+                using (SqlDataReader reader = command.ExecuteReader()) {
                     hasRows = reader.HasRows;
 
                     this.SetColumnsOrdinals(reader);
@@ -751,7 +751,7 @@ namespace AirtoursBusinessObjects {
         protected void SetColumnsOrdinals(SqlDataReader reader) {
             this.columnsOrdinals.Clear();
 
-            foreach (var property in this.modelProperties) {
+            foreach (PropertyInfo property in this.modelProperties) {
                 try {
                     string propertyName = property.Name;
                     int columnOrdinal = reader.GetOrdinal(propertyName); // throws IndexOutOfRangeException
@@ -767,14 +767,14 @@ namespace AirtoursBusinessObjects {
         /// Fetch the current table schema and save.
         /// </summary>
         protected void FetchTableSchema() {
-            using (var command = this.connection.CreateCommand()) { // Create new command
+            using (SqlCommand command = this.connection.CreateCommand()) { // Create new command
                 command.CommandText = $"SELECT * FROM [{this.table}] WHERE 1 = 0;"; // Query the table with zero matches
 
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (var reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) { // Execute reader
-                        var schemaTable = reader.GetSchemaTable(); // Get the schema table from the reader
+                    using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) { // Execute reader
+                        DataTable schemaTable = reader.GetSchemaTable(); // Get the schema table from the reader
 
                         this.schema = new TableSchema(schemaTable); // Construct table schema object from the schema data-table
                     }
@@ -844,7 +844,7 @@ namespace AirtoursBusinessObjects {
         public List<U> UniqueValues<U>(string column, WhereClause where, bool ascending = true) {
             List<U> values = new List<U>();
 
-            using (var command = this.connection.CreateCommand())
+            using (SqlCommand command = this.connection.CreateCommand())
             using (var whereClause = where?.Clone() ?? this.WhereClause) {
                 whereClause.WhereIs(column, null, false);
 
@@ -857,7 +857,7 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (var reader = command.ExecuteReader()) {
+                    using (SqlDataReader reader = command.ExecuteReader()) {
                         while (reader.Read()) {
                             var value = reader.GetValue(0);
 
@@ -997,7 +997,7 @@ namespace AirtoursBusinessObjects {
             object result = null;
 
             try {
-                using (var command = this.connection.CreateCommand()) {
+                using (SqlCommand command = this.connection.CreateCommand()) {
                     command.CommandText = query;
 
                     if (parameters != null) {
@@ -1033,7 +1033,7 @@ namespace AirtoursBusinessObjects {
                 throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
             }
 
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
                 if (set.HasAny) {
@@ -1070,7 +1070,7 @@ namespace AirtoursBusinessObjects {
                 throw new ArgumentNullException("WhereClause cannot be null or empty. Dangerous operation.");
             }
 
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
                 string whereClause = $" WHERE {where.ToString()}";
@@ -1109,7 +1109,7 @@ namespace AirtoursBusinessObjects {
                 throw new ArgumentNullException("Join table and column cannot be null.");
             }
 
-            using (var command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
                 int affectedRows = 0;
 
                 string whereClause = $" WHERE {where.ToString("T")}";
