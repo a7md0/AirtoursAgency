@@ -8,7 +8,7 @@ namespace AirtoursBusinessObjects {
         protected readonly string pkJoinColumn;
 
         public DataListJoin() : base() {
-            var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
+            TableAttribute tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>();
 
             this.pkJoinColumn = tableAttribute.PkJoinColumn;
             base.nonUpdateableColumns = new[] { base.pkColumn, this.pkJoinColumn };

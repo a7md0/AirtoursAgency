@@ -7,16 +7,16 @@ namespace AirtoursBusinessObjects {
         public FlightList() : base() { }
 
         public bool FlightsFilter(string origin, string destination) {
-            var where = base.WhereClause.Where("Origin", origin)
+            WhereClause where = base.WhereClause.Where("Origin", origin)
                                         .Where("Destination", destination);
 
             return base.Populate(where);
         }
 
         public bool FlightsFilter(string origin, string destination, DateTime date) {
-            var where = base.WhereClause.Where("Origin", origin)
+            WhereClause where = base.WhereClause.Where("Origin", origin)
                                         .Where("Destination", destination);
-            var on = new WhereClause().WhereDate("FlightDate", date);
+            WhereClause on = new WhereClause().WhereDate("FlightDate", date);
 
             return base.FilterJoin(where, "ScheduledFlight", "FlightID", on);
         }
