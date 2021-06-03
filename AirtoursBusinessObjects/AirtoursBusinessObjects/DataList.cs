@@ -27,7 +27,7 @@ namespace AirtoursBusinessObjects {
         protected string[] nonUpdateableColumns;
 
         public DataList() {
-            var tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>(); // Get the table attribute linked to the model type
+            TableAttribute tableAttribute = typeof(T).GetCustomAttribute<TableAttribute>(); // Get the table attribute linked to the model type
 
             this.table = tableAttribute.Name; // Extract the table name from the table attribute
             this.pkColumn = tableAttribute.PkColumn; // Extract the table pk from the table attribute
@@ -127,7 +127,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereValue"></param>
         /// <returns></returns>
         public double TotalValue(string totalColumn, string whereColumn, object whereValue) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn, whereValue);
 
                 return this.TotalValue<double>(totalColumn, whereClause);
@@ -142,7 +142,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereColumn2"></param>
         /// <param name="whereValue2"></param>
         public void Filter(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
                 whereClause.Where(whereColumn2, whereValue2);
 
@@ -160,7 +160,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereValue2"></param>
         /// <returns></returns>
         public double TotalValue(string totalColumn, string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
                 whereClause.Where(whereColumn2, whereValue2);
 
@@ -177,7 +177,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereValue2"></param>
         /// <returns></returns>
         public int TotalCount(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
                 whereClause.Where(whereColumn2, whereValue2);
 
@@ -203,7 +203,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereColumn2"></param>
         /// <param name="whereValue2"></param>
         public void FilterPlus(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
                 whereClause.Where(whereColumn2, whereValue2);
 
@@ -218,7 +218,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereValue"></param>
         /// <returns></returns>
         public bool CheckChildRecords(string whereColumn, object whereValue) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn, whereValue);
 
                 return this.CheckChildRecords(whereClause);
@@ -231,7 +231,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="whereColumn"></param>
         /// <param name="whereValuse"></param>
         public void Delete(string whereColumn, object whereValuse) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn, whereValuse);
 
                 this.Delete(whereClause);
@@ -246,7 +246,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="joinTable"></param>
         /// <param name="joinColumn"></param>
         public void Delete(string column, object value, string joinTable, string joinColumn) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(column, value);
 
                 this.Delete(whereClause, joinTable, joinColumn);
@@ -261,7 +261,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="joinTable"></param>
         /// <param name="joinColumn"></param>
         public void FilterJoin(string column, string value, string joinTable, string joinColumn) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(column, value);
 
                 this.FilterJoin(whereClause, joinTable, joinColumn);
@@ -280,8 +280,8 @@ namespace AirtoursBusinessObjects {
         /// <param name="onColumn2"></param>
         /// <param name="onValue2"></param>
         public void Filter(string whereColumn, object whereValue, string joinTable, string joinColumn, string onColumn, object onValue, string onColumn2, object onValue2) {
-            using (var whereClause = this.WhereClause)
-            using (var onClause = new WhereClause()) {
+            using (WhereClause whereClause = this.WhereClause)
+            using (WhereClause onClause = new WhereClause()) {
                 whereClause.Where(whereColumn, whereValue);
 
                 onClause.Where(onColumn, onValue);
@@ -309,7 +309,7 @@ namespace AirtoursBusinessObjects {
             bool found = false;
 
             using (SqlCommand command = this.connection.CreateCommand())
-            using (var where = this.ModelWhereClause(model)) {
+            using (WhereClause where = this.ModelWhereClause(model)) {
                 string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
 
                 command.CommandText = $"SELECT * FROM [{this.table}]{whereClause};";
@@ -342,7 +342,7 @@ namespace AirtoursBusinessObjects {
         }
 
         public virtual T FindOne(string whereColumn, object whereValue) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn, whereValue);
 
                 return this.FindOne(whereClause);
@@ -398,7 +398,7 @@ namespace AirtoursBusinessObjects {
             bool added = false;
 
             using (SqlCommand command = this.connection.CreateCommand())
-            using (var insert = new InsertClause(this.schema)) {
+            using (InsertClause insert = new InsertClause(this.schema)) {
                 insert.Add(model, modelProperties);
 
                 if (insert.HasAny) {
@@ -440,8 +440,8 @@ namespace AirtoursBusinessObjects {
         /// <returns>Whether the row was updated or not</returns>
         public virtual bool Update(T model) {
             using (SqlCommand command = this.connection.CreateCommand())
-            using (var set = new SetClause(this.schema))
-            using (var where = this.ModelWhereClause(model)) {
+            using (SetClause set = new SetClause(this.schema))
+            using (WhereClause where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
 
                 set.Add(model, modelProperties, this.nonUpdateableColumns);
@@ -485,7 +485,7 @@ namespace AirtoursBusinessObjects {
         /// <returns>Whether the row was deleted or not</returns>
         public virtual bool Delete(T model) {
             using (SqlCommand command = this.connection.CreateCommand())
-            using (var where = this.ModelWhereClause(model)) {
+            using (WhereClause where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
 
                 string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
@@ -522,7 +522,7 @@ namespace AirtoursBusinessObjects {
         }
 
         public bool Populate(string field, object value) {
-            using (var whereClause = this.WhereClause) {
+            using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(field, value);
 
                 return this.Populate(whereClause);
@@ -536,8 +536,8 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(Model model, WhereClause where = null) {
-            using (var whereClause = where?.Clone() ?? this.WhereClause) {
-                var tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
+            using (WhereClause whereClause = where?.Clone() ?? this.WhereClause) {
+                TableAttribute tableAttribute = model.GetType().GetCustomAttribute<TableAttribute>();
 
                 string fkColumn = tableAttribute.PkColumn;
                 object fkValue = model.GetId();
@@ -556,7 +556,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="where">Optional where clause for additional filters</param>
         /// <returns>Whether there were any matching results</returns>
         public bool FilterPlus(string fkColumn, object fkValue, WhereClause where = null) {
-            using (var whereClause = where?.Clone() ?? this.WhereClause) {
+            using (WhereClause whereClause = where?.Clone() ?? this.WhereClause) {
                 whereClause.Where(fkColumn, fkValue);
 
                 return this.Populate(whereClause);
@@ -728,7 +728,7 @@ namespace AirtoursBusinessObjects {
         /// <param name="model">Model to set properties value from the current reader.</param>
         /// <param name="reader">The reader object to read data from</param>
         protected void SetValues(T model, SqlDataReader reader) {
-            foreach (var property in modelProperties) {
+            foreach (PropertyInfo property in modelProperties) {
                 try {
                     int ordinal = columnsOrdinals[property.Name]; // Find value by matching property name
                     object value = reader.GetValue(ordinal);
@@ -793,7 +793,7 @@ namespace AirtoursBusinessObjects {
 
             DataColumn column;
 
-            foreach (var property in this.modelProperties) {
+            foreach (PropertyInfo property in this.modelProperties) {
                 column = new DataColumn();
 
                 column.DataType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
@@ -806,7 +806,7 @@ namespace AirtoursBusinessObjects {
         protected void AddDataTableRow(T model) {
             DataRow row = this.dataTable.NewRow();
 
-            foreach (var property in this.modelProperties) {
+            foreach (PropertyInfo property in this.modelProperties) {
                 row[property.Name] = property.GetValue(model) ?? DBNull.Value; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
             }
 
@@ -845,7 +845,7 @@ namespace AirtoursBusinessObjects {
             List<U> values = new List<U>();
 
             using (SqlCommand command = this.connection.CreateCommand())
-            using (var whereClause = where?.Clone() ?? this.WhereClause) {
+            using (WhereClause whereClause = where?.Clone() ?? this.WhereClause) {
                 whereClause.WhereIs(column, null, false);
 
                 string whereString = whereClause.HasAny ? $" WHERE {whereClause?.ToString()}" : string.Empty;
@@ -859,7 +859,7 @@ namespace AirtoursBusinessObjects {
 
                     using (SqlDataReader reader = command.ExecuteReader()) {
                         while (reader.Read()) {
-                            var value = reader.GetValue(0);
+                            object value = reader.GetValue(0);
 
                             if (value is DBNull) {
                                 continue;
