@@ -55,35 +55,40 @@ namespace AirtoursWebApplication.Flights {
 
         protected void Page_Load(object sender, EventArgs e) {
             if (!Page.IsPostBack) {
+                /// Reset selected flights ///
                 this.outwardFlightIdx = null;
                 this.returnFlightIdx = null;
 
                 this.outwardScheduledFlight = null;
                 this.returnScheduledFlight = null;
+                /////////////////////////////
 
-                List<string> origins = flightList.UniqueValues("Origin");
+                List<string> origins = flightList.UniqueValues("Origin"); // Query unique origins list as string
 
-                this.OriginsDropDownList.DataSource = origins;
-                this.OriginsDropDownList.DataBind();
+                this.OriginsDropDownList.DataSource = origins; // Set the origins drop down to the list
+                this.OriginsDropDownList.DataBind(); // Bind the data
 
-                if (this.DepartureDateTextBox.Text == "") {
-                    this.DepartureDateTextBox.Text = DateTime.Now.ToString("yyyy-MM-dd");
-                    this.ReturnDateTextBox.Text = DateTime.Now.AddDays(14).ToString("yyyy-MM-dd");
+                if (this.DepartureDateTextBox.Text == "") { // If the dep date is empty
+                    this.DepartureDateTextBox.Text = DateTime.Now.ToString("yyyy-MM-dd"); // Dep date default to today date
+                    this.ReturnDateTextBox.Text = DateTime.Now.AddDays(14).ToString("yyyy-MM-dd"); // Return date to today + 2 weeks
                 }
             }
 
-            this.OriginsDropDownList_SelectedIndexChanged(null, null);
+            this.OnOriginChanged(); // Call the origin changed to update the available destination list
             this.ControlsVisibility();
         }
 
+        // Hide and show controls conditionally
         protected void ControlsVisibility() {
             bool showBookReturnFlight = this.BookReturnFlight.Checked;
 
             this.ReturnDateSection.Visible = showBookReturnFlight;
         }
 
-
-        protected void OriginsDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
+        /// <summary>
+        /// Populate the destination list based on gived origin
+        /// </summary>
+        protected void OnOriginChanged() {
             var whereClause = flightList.WhereClause;
             whereClause.Where("Origin", this.origin);
 
@@ -93,21 +98,51 @@ namespace AirtoursWebApplication.Flights {
             this.DestinationsDropDownList.DataBind();
         }
 
+        /// <summary>
+        /// Event on origins drop down list has changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void OriginsDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
+            this.OnOriginChanged();
+        }
+
+        /// <summary>
+        /// Event on destinations drop down list has changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void DestinationsDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
 
         }
 
+        /// <summary>
+        /// Parse input date with given format
+        /// </summary>
+        /// <param name="dateStr"></param>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        protected bool TryParseInputDate(string dateStr, out DateTime dateTime) {
+            return DateTime.TryParseExact(
+                s: dateStr,
+                format: "yyyy-MM-dd",
+                provider: CultureInfo.InvariantCulture,
+                style: DateTimeStyles.AssumeUniversal,
+                result: out dateTime
+            );
+        }
+
+        /// <summary>
+        /// Event on search button is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void SearchButton_Click(object sender, EventArgs e) {
             DateTime departureDate;
             DateTime returnDate = DateTime.MinValue;
 
-            bool validDepartureDate = DateTime.TryParseExact(
-                s: this.DepartureDateTextBox.Text,
-                format: "yyyy-MM-dd",
-                provider: CultureInfo.InvariantCulture,
-                style: DateTimeStyles.AssumeUniversal,
-                result: out departureDate
-            );
+            // Try parse the DateTime with given format
+            bool validDepartureDate = this.TryParseInputDate(this.DepartureDateTextBox.Text, out departureDate);
 
             if (!validDepartureDate) {
                 Response.Write("<script defer>alert(\"Invalid departure date was entered\");</script>");
@@ -115,13 +150,7 @@ namespace AirtoursWebApplication.Flights {
             }
 
             if (this.BookReturnFlight.Checked == true) {
-                bool validReturnDate = DateTime.TryParseExact(
-                    s: this.ReturnDateTextBox.Text,
-                    format: "yyyy-MM-dd",
-                    provider: CultureInfo.InvariantCulture,
-                    style: DateTimeStyles.AssumeUniversal,
-                    result: out returnDate
-                );
+                bool validReturnDate = this.TryParseInputDate(this.ReturnDateTextBox.Text, out returnDate);
 
                 if (!validReturnDate) {
                     Response.Write("<script defer>alert(\"Invalid departure date was entered\");</script>");
@@ -129,21 +158,26 @@ namespace AirtoursWebApplication.Flights {
                 }
             }
 
-            this.departureDate = departureDate;
-            this.returnDate = returnDate;
+            this.departureDate = departureDate; // Set the dep date for later usage
+            this.returnDate = returnDate; // Set the return date for later usage
 
+            /// Reset the selected flights ///
             this.outwardFlightIdx = null;
             this.returnFlightIdx = null;
 
             this.outwardScheduledFlight = null;
             this.returnScheduledFlight = null;
+            //////////////////////////////////
 
-            this.ChooseFlightSection.Visible = true;
-            this.PopulateResultsControl();
+            this.ChooseFlightSection.Visible = true; // Show the flights section
+            this.PopulateResultsControl(); // Populate the grids view with flights
         }
 
         /***************************************************/
 
+        /// <summary>
+        /// Populate results of the query (origin/dest/dep date/return date)
+        /// </summary>
         protected void PopulateResultsControl() {
             FlightList flightList = new FlightList();
             flightList.FlightsFilter(this.origin, this.destination, this.departureDate);
