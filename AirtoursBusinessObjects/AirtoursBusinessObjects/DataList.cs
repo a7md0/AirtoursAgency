@@ -310,7 +310,11 @@ namespace AirtoursBusinessObjects {
 
             using (SqlCommand command = this.connection.CreateCommand())
             using (WhereClause where = this.ModelWhereClause(model)) {
-                string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
+                string whereClause = string.Empty;
+
+                if (where.HasAny) {
+                    whereClause = $" WHERE {where.ToString()}";
+                }
 
                 command.CommandText = $"SELECT * FROM [{this.table}]{whereClause};";
                 if (where?.Parameters is null == false) {
@@ -325,8 +329,8 @@ namespace AirtoursBusinessObjects {
                         found = reader.HasRows;
 
                         if (reader.Read()) {
-                            this.SetValues(model, reader);
-                            model.SetError(null);
+                            this.SetValues(model, reader); // Set the values of the created model from the reader
+                            model.SetError(null); // Reset the error
                         }
                     }
                 } catch (Exception ex) {
@@ -349,6 +353,11 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Query one model with a given condition.
+        /// </summary>
+        /// <param name="where">Where condition</param>
+        /// <returns></returns>
         public virtual T FindOne(WhereClause where) {
             T model = null;
 
@@ -358,7 +367,11 @@ namespace AirtoursBusinessObjects {
 
             using (SqlCommand command = this.connection.CreateCommand()) {
                 SqlParameter[] sqlParameters = where?.Parameters;
-                string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
+                string whereClause = string.Empty;
+
+                if (where.HasAny) {
+                    whereClause = $" WHERE {where.ToString()}";
+                }
 
                 command.CommandText = $"SELECT TOP 1 * FROM [{this.table}]{whereClause};";
                 if (sqlParameters is null == false) {
@@ -368,20 +381,21 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (SqlDataReader reader = command.ExecuteReader()) {
-                        this.SetColumnsOrdinals(reader);
+                    using (SqlDataReader reader = command.ExecuteReader()) { // Execute reader on the command and dispose on the end
+                        this.SetColumnsOrdinals(reader); // Set columns ordinals once
 
-                        if (reader.Read()) {
+                        if (reader.Read()) { // If the reader could read 1st row
+                            // Create new model of type T (the generic type passed to the DataList) // And set inserted attribute to true.
                             model = new T {
                                 Inserted = true
                             };
 
-                            this.SetValues(model, reader);
+                            this.SetValues(model, reader); // Set the values of the created model from the reader
                         }
                     }
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.FindOne");
-                } finally {
+                } finally { // Either the try block is executed or catches0 an exception
                     this.CloseConnection(); // Finally close the connection
                 }
             }
