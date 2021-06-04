@@ -27,7 +27,14 @@
                         <asp:BoundField HeaderText="CustomerID" DataField="CustomerID" ReadOnly="True" Visible="False" />
                         <asp:BoundField HeaderText="EmployeeID" DataField="EmployeeID" ReadOnly="True" Visible="False" />
 
-                        <asp:BoundField HeaderText="Paid" DataField="Paid" />
+                        <asp:TemplateField HeaderText="Paid">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="PaidTextBox" runat="server" Text='<%# Bind("Paid") %>'></asp:TextBox>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="PaidLabel" runat="server" Text='<%# ((bool)Eval("Paid")) ? "Yes" : "No" %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:BoundField HeaderText="Price" DataField="Price" DataFormatString="{0:C}" />
                         <asp:BoundField HeaderText="ReservationDate" DataField="ReservationDate" DataFormatString="{0:d}" />
                     </Columns>
