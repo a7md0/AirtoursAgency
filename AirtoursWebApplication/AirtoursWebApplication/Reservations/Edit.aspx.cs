@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using AirtoursBusinessObjects;
+using AirtoursBusinessObjects.Builder;
 
 namespace AirtoursWebApplication.Reservations {
     public partial class Edit : System.Web.UI.Page {
@@ -128,107 +129,121 @@ namespace AirtoursWebApplication.Reservations {
             }
         }
 
+        /// <summary>
+        /// Find the linked flights with the provided passenger id
+        /// </summary>
+        /// <param name="passengerID"></param>
         protected void FindFlights(int passengerID) {
             ReservedSeatList reservedSeatList = new ReservedSeatList();
             reservedSeatList.Populate("PassengerID", passengerID);
 
-            foreach (ReservedSeat reservedSeat in reservedSeatList.List) {
+            foreach (ReservedSeat reservedSeat in reservedSeatList.List) { // For each reserved seat (there could be one or two)
                 if (!string.IsNullOrEmpty(reservedSeat.Class)) {
-                    this.ReservationClassDropDownList.SelectedValue = reservedSeat.Class;
+                    this.ReservationClassDropDownList.SelectedValue = reservedSeat.Class; // Set the class label from the reserved seat
                 }
-
-                var scheduledFlightWhere = scheduledFlightList.WhereClause;
-                scheduledFlightWhere.Where("ScheduledFlightID", reservedSeat.ScheduledFlightID);
 
                 if (reservedSeat.Sector == "Outward") {
-                    this.outwardScheduledFlight = scheduledFlightList.FindOne(scheduledFlightWhere);
-
-                    if (this.outwardScheduledFlight is null == false) {
-                        var flightWhere = flightList.WhereClause;
-                        flightWhere.Where("FlightID", this.outwardScheduledFlight.FlightID);
-
-                        this.outwardFlight = flightList.FindOne(flightWhere);
-                    }
+                    this.outwardScheduledFlight = scheduledFlightList.FindOne("ScheduledFlightID", reservedSeat.ScheduledFlightID);
+                    this.outwardFlight = flightList.FindOne("FlightID", this.outwardScheduledFlight.FlightID);
                 } else if (reservedSeat.Sector == "Return") {
-                    this.returnScheduledFlight = scheduledFlightList.FindOne(scheduledFlightWhere);
-
-                    if (this.returnScheduledFlight is null == false) {
-                        var flightWhere = flightList.WhereClause;
-                        flightWhere.Where("FlightID", this.returnScheduledFlight.FlightID);
-
-                        returnFlight = flightList.FindOne(flightWhere);
-                    }
+                    this.returnScheduledFlight = scheduledFlightList.FindOne("ScheduledFlightID", reservedSeat.ScheduledFlightID);
+                    this.returnFlight = flightList.FindOne("FlightID", returnScheduledFlight.FlightID);
                 }
             }
         }
 
+        /// <summary>
+        /// Event called on click of the delete button on given passenger row in the grid view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void PassengersGridView_RowDeleting(object sender, GridViewDeleteEventArgs e) {
-            GridView gridView = sender as GridView;
+            GridView gridView = sender as GridView; // Cast the sender
 
-            int idx = e.RowIndex;
-            int passengerID = (int) gridView.DataKeys[idx]["PassengerID"];
-            Passenger passenger = new Passenger(passengerID);
+            int idx = e.RowIndex; // get the row index from the event
+            int passengerID = (int) gridView.DataKeys[idx]["PassengerID"]; // Get the passenger id for given row from data-keys
+            Passenger passenger = new Passenger(passengerID); // Construct the passenger with the id
 
-            if (this.passengers.Count == 1) {
+            if (this.passengers.Count == 1) { // If only one passenger in the list
                 e.Cancel = true; // Indicate that this event is canceled
-                Response.Write("<script defer>alert(\"You cannot delete all passengers from this reservation\");</script>");
+                Response.Write("<script defer>alert(\"You cannot delete all passengers from this reservation\");</script>"); // Show error
 
-                return;
+                return; // exit from method
             }
 
-            reservedSeatList.Delete("PassengerID", passengerID);
-            bool wasDeleted = passengerList.Delete(passenger);
-            if (wasDeleted) {
-                this.passengers.RemoveAt(idx);
-                this.UpdatePrice();
+            bool wasDeleted = passengerList.Delete(passenger); // Delete the passenger record
+            if (wasDeleted) { // if was deleted
+                this.passengers.RemoveAt(idx); // remove the passenger from the temporarily list
+                this.UpdatePrice(); // update the reservation price
             }
         }
 
+        /// <summary>
+        /// Event on the add passenger button clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void AddPassengerButton_Click(object sender, EventArgs e) {
-            if (this.FirstNameTextBox.Text == string.Empty || this.LastNameTextBox.Text == string.Empty) {
-                return;
+            if (string.IsNullOrEmpty(this.FirstNameTextBox.Text) || string.IsNullOrEmpty(this.LastNameTextBox.Text)) { // If either first or last name are empty
+                Response.Write("<script defer>alert(\"Passenger first and last name cannot be empty.\");</script>"); // Show error message
+                return; // Exit from method
             }
 
-            this.AddPassenger(this.FirstNameTextBox.Text, this.LastNameTextBox.Text);
+            this.AddPassenger(this.FirstNameTextBox.Text, this.LastNameTextBox.Text); // Add passenger with the given first/last name
 
-            this.FirstNameTextBox.Text = string.Empty;
-            this.LastNameTextBox.Text = string.Empty;
+            this.FirstNameTextBox.Text = string.Empty; // Empty control
+            this.LastNameTextBox.Text = string.Empty; // Empty control
         }
 
+        /// <summary>
+        /// Add a passenger and create related records
+        /// </summary>
+        /// <param name="firstName">Passenger first name</param>
+        /// <param name="lastName">Passenger last name</param>
         protected void AddPassenger(string firstName, string lastName) {
+            // Create new passenger object
             Passenger passenger = new Passenger() {
-                ReservationID = this.reservation.ReservationID,
+                ReservationID = this.reservation.ReservationID, // assign reservation id
                 FirstName = firstName,
                 LastName = lastName,
             };
 
-            bool wasAdded = passengerList.Add(passenger);
-            if (wasAdded) {
-                ReservedSeat outwardReservedSeat = new ReservedSeat() {
-                    PassengerID = passenger.PassengerID,
-                    ScheduledFlightID = this.outwardScheduledFlight.ScheduledFlightID,
-                    Class = this.ReservationClassDropDownList.SelectedValue,
-                    Status = "Waitlisted",
-                    Sector = "Outward"
-                };
-                reservedSeatList.Add(outwardReservedSeat);
+            bool wasAdded = passengerList.Add(passenger); // add passenger
+            if (wasAdded) { // if added
+                wasAdded = this.ReserveNewSeat(this.outwardScheduledFlight, passenger, "Return"); // Reserve seat on outward flight for the passenger
 
                 if (this.returnScheduledFlight is null == false) {
-                    ReservedSeat returnReservedSeat = new ReservedSeat() {
-                        PassengerID = passenger.PassengerID,
-                        ScheduledFlightID = this.returnScheduledFlight.ScheduledFlightID,
-                        Class = this.ReservationClassDropDownList.SelectedValue,
-                        Status = "Waitlisted",
-                        Sector = "Return"
-                    };
-                    reservedSeatList.Add(returnReservedSeat);
+                    wasAdded = this.ReserveNewSeat(this.returnScheduledFlight, passenger, "Return"); // Reserve seat on return flight for the passenger
                 }
 
-                this.passengers.Add(passenger);
-                this.UpdatePrice();
+                this.passengers.Add(passenger); // Add the passenger to the temporary list
+                this.UpdatePrice(); // Update the reservation price
             }
         }
 
+        /// <summary>
+        /// Reserve new seat on given scheduled flight for given passenger on a specific sector
+        /// </summary>
+        /// <param name="scheduledFlight">The scheduled flight</param>
+        /// <param name="passenger">The passenger which the seat will be reserved</param>
+        /// <param name="sector">The seat sector (Outward/Return)</param>
+        /// <returns></returns>
+        protected bool ReserveNewSeat(ScheduledFlight scheduledFlight, Passenger passenger, string sector = "Outward") {
+            // Create reserved seat and fill details
+            ReservedSeat returnReservedSeat = new ReservedSeat() {
+                PassengerID = passenger.PassengerID, // set the passenger id
+                ScheduledFlightID = scheduledFlight.ScheduledFlightID, // set the scheduled flight id
+                Class = this.ReservationClassDropDownList.SelectedValue, // set the customer preferred class
+                Status = "Waitlisted", // Default to wait-listed
+                Sector = sector // Set the sector as passed
+            };
+
+            return reservedSeatList.Add(returnReservedSeat); // Add and return the state
+        }
+
+        /// <summary>
+        /// Update the reservation price
+        /// </summary>
         protected void UpdatePrice() {
             this.reservation.Price = this.CalculateTotalFlights();
             reservationList.Update(this.reservation);
@@ -236,36 +251,60 @@ namespace AirtoursWebApplication.Reservations {
             this.PopulateReservation(this.reservation);
         }
 
+        /// <summary>
+        /// Calculate the total flight cost
+        /// </summary>
+        /// <param name="flight">Specific flight</param>
+        /// <returns></returns>
         protected decimal CalculateTotalFlight(Flight flight) {
             return FlightList.CalclauteFlightCost(flight, this.passengers.Count);
         }
 
+        /// <summary>
+        /// Calculate the total flights cost
+        /// </summary>
+        /// <returns></returns>
         protected decimal CalculateTotalFlights() {
             return this.CalculateTotalFlight(this.outwardFlight) + this.CalculateTotalFlight(this.returnFlight);
         }
 
+        /// <summary>
+        /// Event on the reservation class drop-down list has changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void ReservationClassDropDownList_SelectedIndexChanged(object sender, EventArgs e) {
-            int count = this.passengers.Count;
-            object[] passengersIDs = new object[count];
-            for (int i = 0; i < count; i++) {
+            int count = this.passengers.Count; // Count of passengers
+            object[] passengersIDs = new object[count]; // object array of all passengers ids
+            for (int i = 0; i < count; i++) { // fill the array of ids
                 passengersIDs[i] = this.passengers[i].PassengerID;
             }
 
-            var set = new AirtoursBusinessObjects.Builder.SetClause(reservedSeatList.TableSchema);
-            set.Add("Class", this.ReservationClassDropDownList.SelectedValue);
+            // Create set clause to update Class col
+            SetClause set = new SetClause(reservedSeatList.TableSchema);
+            set.Add("Class", this.ReservationClassDropDownList.SelectedValue); // from the selected drop down
 
-            var where = reservedSeatList.WhereClause;
-            where.WhereIn("PassengerID", passengersIDs);
+            WhereClause where = reservedSeatList.WhereClause.WhereIn("PassengerID", passengersIDs); // Where clause to match given passenger ids (WHERE [PassengerID] IN (.., .., ....)
 
-            reservedSeatList.Update(set, where);
+            reservedSeatList.Update(set, where); // Issue the query with the set and where (will update all in one query)
         }
 
+        /// <summary>
+        /// Event on clicking the back button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void BackButton_Click(object sender, EventArgs e) {
             if (this.Request.QueryString["returnUrl"] != null) {
                 this.Response.Redirect(this.Request.QueryString["returnUrl"], true);
             }
         }
 
+        /// <summary>
+        /// Page load complete (occur after all controls event, perfect for rendering)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_LoadComplete(object sender, EventArgs e) {
             this.PassengersGridView.DataSource = this.passengers;
             this.PassengersGridView.DataBind();
