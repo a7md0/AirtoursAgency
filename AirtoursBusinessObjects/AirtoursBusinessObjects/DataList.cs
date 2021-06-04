@@ -214,9 +214,9 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Checks if there are any records where a column parameter is equal to a value parameter. (Design Document Requirement #9)
         /// </summary>
-        /// <param name="whereColumn"></param>
-        /// <param name="whereValue"></param>
-        /// <returns></returns>
+        /// <param name="whereColumn">Condition column</param>
+        /// <param name="whereValue">Condition value</param>
+        /// <returns>Whether there is any records matching the provided filters</returns>
         public bool CheckChildRecords(string whereColumn, object whereValue) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn, whereValue);
@@ -228,11 +228,11 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Deletes records where a column parameter is equal to a value parameter. (Design Document Requirement #10)
         /// </summary>
-        /// <param name="whereColumn"></param>
-        /// <param name="whereValuse"></param>
-        public void Delete(string whereColumn, object whereValuse) {
+        /// <param name="whereColumn">Condition column</param>
+        /// <param name="whereValue">Condition value</param>
+        public void Delete(string whereColumn, object whereValue) {
             using (WhereClause whereClause = this.WhereClause) {
-                whereClause.Where(whereColumn, whereValuse);
+                whereClause.Where(whereColumn, whereValue);
 
                 this.Delete(whereClause);
             }
@@ -241,13 +241,13 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Deletes records from two joined tables where a column parameter is equal to a value parameter. (Design Document Requirement #11)
         /// </summary>
-        /// <param name="column"></param>
-        /// <param name="value"></param>
-        /// <param name="joinTable"></param>
-        /// <param name="joinColumn"></param>
-        public void Delete(string column, object value, string joinTable, string joinColumn) {
+        /// <param name="whereColumn">Condition column</param>
+        /// <param name="whereValue">Condition value</param>
+        /// <param name="joinTable">Join table name</param>
+        /// <param name="joinColumn">Join column name</param>
+        public void Delete(string whereColumn, object whereValue, string joinTable, string joinColumn) {
             using (WhereClause whereClause = this.WhereClause) {
-                whereClause.Where(column, value);
+                whereClause.Where(whereColumn, whereValue);
 
                 this.Delete(whereClause, joinTable, joinColumn);
             }
@@ -256,13 +256,13 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Generates a list of Item objects by joining two related tables where a column value parameter in a related table is equal to a value parameter. (Design Document Requirement #12)
         /// </summary>
-        /// <param name="column"></param>
-        /// <param name="value"></param>
-        /// <param name="joinTable"></param>
-        /// <param name="joinColumn"></param>
-        public void FilterJoin(string column, string value, string joinTable, string joinColumn) {
+        /// <param name="whereColumn">Condition column</param>
+        /// <param name="whereValue">Condition value</param>
+        /// <param name="joinTable">Join table name</param>
+        /// <param name="joinColumn">Join column name</param>
+        public void FilterJoin(string whereColumn, string whereValue, string joinTable, string joinColumn) {
             using (WhereClause whereClause = this.WhereClause) {
-                whereClause.Where(column, value);
+                whereClause.Where(whereColumn, whereValue);
 
                 this.FilterJoin(whereClause, joinTable, joinColumn);
             }
@@ -271,21 +271,21 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Generates a list of Item objects by joining two related tables where the values in 3 column parameters are equal to three value parameters. (Design Document Requirement #13)
         /// </summary>
-        /// <param name="whereColumn"></param>
-        /// <param name="whereValue"></param>
-        /// <param name="joinTable"></param>
-        /// <param name="joinColumn"></param>
-        /// <param name="onColumn"></param>
-        /// <param name="onValue"></param>
-        /// <param name="onColumn2"></param>
-        /// <param name="onValue2"></param>
-        public void Filter(string whereColumn, object whereValue, string joinTable, string joinColumn, string onColumn, object onValue, string onColumn2, object onValue2) {
+        /// <param name="whereColumn1">Condition column 1</param>
+        /// <param name="whereValue1">Condition value 1</param>
+        /// <param name="whereColumn2">Condition column 2</param>
+        /// <param name="whereValue2">Condition value 2</param>
+        /// <param name="joinTable">Join table name</param>
+        /// <param name="joinColumn">Join column name</param>
+        /// <param name="onColumn">On condition column</param>
+        /// <param name="onValue">On condition value</param>
+        public void Filter(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2, string joinTable, string joinColumn, string onColumn, object onValue) {
             using (WhereClause whereClause = this.WhereClause)
             using (WhereClause onClause = new WhereClause()) {
-                whereClause.Where(whereColumn, whereValue);
+                whereClause.Where(whereColumn1, whereValue1);
+                whereClause.Where(whereColumn2, whereValue2);
 
                 onClause.Where(onColumn, onValue);
-                onClause.Where(onColumn2, onValue2);
 
                 this.FilterJoin(whereClause, joinTable, joinColumn, onClause);
             }
