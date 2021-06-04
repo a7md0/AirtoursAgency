@@ -87,7 +87,7 @@ namespace AirtoursBusinessObjects {
         /// <exception cref="SqlException"></exception>
         /// </summary>
         protected void OpenConnection() {
-            if (this.connection.State.HasFlag(ConnectionState.Closed)) {
+            if (this.connection.State.HasFlag(ConnectionState.Closed)) { // if connection state has closed flag
                 this.connection.Open();
             }
         }
@@ -97,7 +97,7 @@ namespace AirtoursBusinessObjects {
         /// <exception cref="SqlException"></exception>
         /// </summary>
         protected void CloseConnection() {
-            if (this.connection.State.HasFlag(ConnectionState.Open)) {
+            if (this.connection.State.HasFlag(ConnectionState.Open)) { // if connection state has open flag
                 this.connection.Close();
             }
         }
@@ -105,10 +105,10 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Calculates the total of all values for a column parameter. (Design Document Requirement #1)
         /// </summary>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        public double TotalValue(string column) {
-            return this.TotalValue<double>(column, null);
+        /// <param name="totalColumn">Column to calculate</param>
+        /// <returns>The total count of the given column</returns>
+        public double TotalValue(string totalColumn) {
+            return this.TotalValue<double>(totalColumn, null);
         }
 
         /// <summary>
@@ -122,10 +122,10 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Calculates the total of values for a column parameter where another column parameter is equal to a value. (Design Document Requirement #3)
         /// </summary>
-        /// <param name="totalColumn"></param>
-        /// <param name="whereColumn"></param>
-        /// <param name="whereValue"></param>
-        /// <returns></returns>
+        /// <param name="totalColumn">Column to calculate</param>
+        /// <param name="whereColumn">Condition column</param>
+        /// <param name="whereValue">Condition value</param>
+        /// <returns>The total value of the given column filtered by the given condition</returns>
         public double TotalValue(string totalColumn, string whereColumn, object whereValue) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn, whereValue);
@@ -137,10 +137,10 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// generates a list of Item objects where the value in a column parameter is equal to a value parameter, and the value in a second column parameter is equal to a second value parameter. (Design Document Requirement #4)
         /// </summary>
-        /// <param name="whereColumn1"></param>
-        /// <param name="whereValue1"></param>
-        /// <param name="whereColumn2"></param>
-        /// <param name="whereValue2"></param>
+        /// <param name="whereColumn1">Condition column 1</param>
+        /// <param name="whereValue1">Condition value 1</param>
+        /// <param name="whereColumn2">Condition column 2</param>
+        /// <param name="whereValue2">Condition value 2</param>
         public void Filter(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
@@ -153,12 +153,12 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Calculates the total of values for a column parameter where two column parameters are equal to two value parameters. (Design Document Requirement #5)
         /// </summary>
-        /// <param name="totalColumn"></param>
-        /// <param name="whereColumn1"></param>
-        /// <param name="whereValue1"></param>
-        /// <param name="whereColumn2"></param>
-        /// <param name="whereValue2"></param>
-        /// <returns></returns>
+        /// <param name="totalColumn">Column to calculate</param>
+        /// <param name="whereColumn1">Condition column 1</param>
+        /// <param name="whereValue1">Condition value 1</param>
+        /// <param name="whereColumn2">Condition column 2</param>
+        /// <param name="whereValue2">Condition value 2</param>
+        /// <returns>The total value of the given column filtered by the given conditions</returns>
         public double TotalValue(string totalColumn, string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
@@ -171,11 +171,11 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Calculates the number of values in a column parameter where two column parameters are equal to two value parameters. (Design Document Requirement #6)
         /// </summary>
-        /// <param name="whereColumn1"></param>
-        /// <param name="whereValue1"></param>
-        /// <param name="whereColumn2"></param>
-        /// <param name="whereValue2"></param>
-        /// <returns></returns>
+        /// <param name="whereColumn1">Condition column 1</param>
+        /// <param name="whereValue1">Condition value 1</param>
+        /// <param name="whereColumn2">Condition column 2</param>
+        /// <param name="whereValue2">Condition value 2</param>
+        /// <returns>The total count of the given column filtered by the given conditions</returns>
         public int TotalCount(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
@@ -198,10 +198,10 @@ namespace AirtoursBusinessObjects {
         /// <summary>
         /// Generates a list of Item objects where the value in a column parameter is equal to a value parameter, and the value in a second column parameter is greater than a second value parameter. (Design Document Requirement #8)
         /// </summary>
-        /// <param name="whereColumn1"></param>
-        /// <param name="whereValue1"></param>
-        /// <param name="whereColumn2"></param>
-        /// <param name="whereValue2"></param>
+        /// <param name="whereColumn1">Condition column 1</param>
+        /// <param name="whereValue1">Condition value 1</param>
+        /// <param name="whereColumn2">Condition column 2</param>
+        /// <param name="whereValue2">Condition value 2</param>
         public void FilterPlus(string whereColumn1, object whereValue1, string whereColumn2, object whereValue2) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(whereColumn1, whereValue1);
