@@ -40,7 +40,7 @@ namespace AirtoursBusinessObjects {
             this.modelProperties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly); // Get the specific model T properties, for later usage
             this.columnsOrdinals = new Dictionary<string, int>(); // Create dictionary to hold column ordinals (sorting order from the database table)
 
-            this.nonUpdateableColumns = new[] { this.pkColumn };
+            this.nonUpdateableColumns = new[] { this.pkColumn }; // Set the non-update-able columns (i.e. PK)
 
             this.SetDataTableColumns(); // Prepare data table column from the model properties
             this.FetchTableSchema(); // Fetch table schema for later usage
@@ -88,7 +88,7 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         protected void OpenConnection() {
             if (this.connection.State.HasFlag(ConnectionState.Closed)) { // if connection state has closed flag
-                this.connection.Open();
+                this.connection.Open(); // open connection
             }
         }
 
@@ -98,7 +98,7 @@ namespace AirtoursBusinessObjects {
         /// </summary>
         protected void CloseConnection() {
             if (this.connection.State.HasFlag(ConnectionState.Open)) { // if connection state has open flag
-                this.connection.Close();
+                this.connection.Close(); // close connection
             }
         }
 
@@ -324,9 +324,9 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (SqlDataReader reader = command.ExecuteReader()) {
-                        this.SetColumnsOrdinals(reader);
-                        found = reader.HasRows;
+                    using (SqlDataReader reader = command.ExecuteReader()) { // Execute reader on the command and dispose on the end
+                        this.SetColumnsOrdinals(reader); // Set columns ordinals once
+                        found = reader.HasRows; // if the reader has any rows
 
                         if (reader.Read()) {
                             this.SetValues(model, reader); // Set the values of the created model from the reader
@@ -714,10 +714,10 @@ namespace AirtoursBusinessObjects {
             try {
                 this.OpenConnection(); // Open the connection
 
-                using (SqlDataReader reader = command.ExecuteReader()) {
-                    hasRows = reader.HasRows;
+                using (SqlDataReader reader = command.ExecuteReader()) { // Execute reader on the command and dispose on the end
+                    hasRows = reader.HasRows; // if the reader has any rows
 
-                    this.SetColumnsOrdinals(reader);
+                    this.SetColumnsOrdinals(reader); // Set columns ordinals once
                     this.RepopulateList(reader);
                 }
             } catch (Exception ex) {
@@ -799,7 +799,7 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) { // Execute reader
+                    using (SqlDataReader reader = command.ExecuteReader(CommandBehavior.SchemaOnly)) { // Execute reader on the command and dispose on the end
                         DataTable schemaTable = reader.GetSchemaTable(); // Get the schema table from the reader
 
                         this.schema = new TableSchema(schemaTable); // Construct table schema object from the schema data-table
@@ -888,7 +888,7 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    using (SqlDataReader reader = command.ExecuteReader()) {
+                    using (SqlDataReader reader = command.ExecuteReader()) { // Execute reader on the command and dispose on the end
                         while (reader.Read()) {
                             object value = reader.GetValue(0);
 
