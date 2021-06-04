@@ -19,6 +19,11 @@ namespace AirtoursWebApplication {
             }
         }
 
+        /// <summary>
+        /// Event called on the register button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void RegisterButton_Click(object sender, EventArgs e) { // On the user clicking "Register"
             if (Page.IsValid) { // Call the validation from the page, if valid
                 // Create new customer and assign the fields from the form
@@ -34,6 +39,11 @@ namespace AirtoursWebApplication {
                     CreditCardNumber = this.CreditCardNumberTextBox.Text.NullIfWhiteSpace(),
                     SecurityCode = int.Parse(this.SecurityCodeTextBox.Text.DefaultIfWhiteSpace("000")),
                 };
+
+                if (customerList.CheckChildRecords("Email", customer.Email)) { // Check for matching email
+                    Response.Write("<script defer>alert(\"The provided email already exist, try to login.\");</script>"); // Show error message
+                    return; // Exit method
+                }
 
                 if (customerList.Add(customer)) { // If the customer was added successfully
                     this.Session.Add("customer", customer); // Add the customer obj to the session
