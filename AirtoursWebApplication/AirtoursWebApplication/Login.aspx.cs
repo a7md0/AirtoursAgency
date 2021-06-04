@@ -22,14 +22,14 @@ namespace AirtoursWebApplication {
             var password = txtUserPass.Text;
 
             if ((null == email) || (0 == email.Length) || (email.Length > 30)) {
-                System.Diagnostics.Debug.WriteLine("[ValidateUser] Input validation of userName failed.");
+                Response.Write("<script defer>alert(\"Email cannot be empty and should not be more than 30 character long.\");</script>");
                 return;
             }
 
             // Check for invalid passWord.
             // passWord must not be null and must be between 1 and 25 characters.
             if ((null == password) || (0 == password.Length) || (password.Length > 25)) {
-                System.Diagnostics.Debug.WriteLine("[ValidateUser] Input validation of passWord failed.");
+                Response.Write("<script defer>alert(\"Password cannot be empty and should not be more than 25 character long.\");</script>");
                 return;
             }
 
