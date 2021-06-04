@@ -72,9 +72,10 @@ namespace AirtoursWebApplication.Flights {
                     this.DepartureDateTextBox.Text = DateTime.Now.ToString("yyyy-MM-dd"); // Dep date default to today date
                     this.ReturnDateTextBox.Text = DateTime.Now.AddDays(14).ToString("yyyy-MM-dd"); // Return date to today + 2 weeks
                 }
+
+                this.OnOriginChanged(); // Call the origin changed to update the available destination list
             }
 
-            this.OnOriginChanged(); // Call the origin changed to update the available destination list
             this.ControlsVisibility();
         }
 
