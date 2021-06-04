@@ -338,6 +338,7 @@ namespace AirtoursBusinessObjects {
 
                     Debug.WriteLine(ex.Message, "DataList.Fill");
                 } finally {
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
             }
@@ -395,7 +396,8 @@ namespace AirtoursBusinessObjects {
                     }
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.FindOne");
-                } finally { // Either the try block is executed or catches0 an exception
+                } finally { // Either the try block is executed or catches an exception
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
             }
@@ -439,6 +441,7 @@ namespace AirtoursBusinessObjects {
                         model.SetError(ex.Message); // Set the errors
                         Debug.WriteLine(ex.Message, "DataList.Add");
                     } finally {
+                        command.Parameters.Clear();
                         this.CloseConnection(); // Finally close the connection
                     }
                 }
@@ -477,13 +480,14 @@ namespace AirtoursBusinessObjects {
                     try {
                         this.OpenConnection(); // Open the connection
 
-                        affectedRows = command.ExecuteNonQuery();
+                        affectedRows = command.ExecuteNonQuery(); // Execute non query and get the affected rows
 
                         model.SetError(null);
                     } catch (Exception ex) {
                         model.SetError(ex.Message);
                         Debug.WriteLine(ex.Message, "DataList.Update");
                     } finally {
+                        command.Parameters.Clear();
                         this.CloseConnection(); // Finally close the connection
                     }
                 }
@@ -519,6 +523,7 @@ namespace AirtoursBusinessObjects {
                     model.SetError(ex.Message);
                     Debug.WriteLine(ex.Message, "DataList.Delete");
                 } finally {
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
 
@@ -718,6 +723,7 @@ namespace AirtoursBusinessObjects {
             } catch (Exception ex) {
                 Debug.WriteLine(ex.Message, "DataList.populateWithQuery");
             } finally {
+                command.Parameters.Clear();
                 this.CloseConnection(); // Finally close the connection
             }
 
@@ -801,6 +807,7 @@ namespace AirtoursBusinessObjects {
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.fetchTableSchema");
                 } finally {
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
             }
@@ -899,6 +906,7 @@ namespace AirtoursBusinessObjects {
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.UniqueValues");
                 } finally {
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
             }
@@ -1012,7 +1020,7 @@ namespace AirtoursBusinessObjects {
         }
 
         /// <summary>
-        /// Execute scalar query and convert to appropriate type.
+        /// Execute scalar query.
         /// </summary>
         /// <param name="query">The query to execute</param>
         /// <param name="parameters">Array of SqlParameter for this query (optional)</param>
@@ -1020,8 +1028,8 @@ namespace AirtoursBusinessObjects {
         protected object ScalarQuery(string query, SqlParameter[] parameters = null) {
             object result = null;
 
-            try {
-                using (SqlCommand command = this.connection.CreateCommand()) {
+            using (SqlCommand command = this.connection.CreateCommand()) {
+                try {
                     command.CommandText = query;
 
                     if (parameters != null) {
@@ -1030,11 +1038,13 @@ namespace AirtoursBusinessObjects {
 
                     this.OpenConnection(); // Open the connection
                     result = command.ExecuteScalar();
+
+                } catch (Exception ex) {
+                    Debug.WriteLine(ex.Message, "DataList.scalarQuery");
+                } finally {
+                    command.Parameters.Clear();
+                    this.CloseConnection(); // Finally close the connection
                 }
-            } catch (Exception ex) {
-                Debug.WriteLine(ex.Message, "DataList.scalarQuery");
-            } finally {
-                this.CloseConnection(); // Finally close the connection
             }
 
             return result;
@@ -1072,10 +1082,11 @@ namespace AirtoursBusinessObjects {
                     try {
                         this.OpenConnection(); // Open the connection
 
-                        affectedRows = command.ExecuteNonQuery();
+                        affectedRows = command.ExecuteNonQuery(); // Execute non query and get the affected rows
                     } catch (Exception ex) {
                         Debug.WriteLine(ex.Message, "DataList.UpdateMany");
                     } finally {
+                        command.Parameters.Clear();
                         this.CloseConnection(); // Finally close the connection
                     }
                 }
@@ -1105,11 +1116,11 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    affectedRows = command.ExecuteNonQuery();
-                    command.Parameters.Clear();
+                    affectedRows = command.ExecuteNonQuery(); // Execute non query and get the affected rows
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
 
@@ -1148,11 +1159,11 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    affectedRows = command.ExecuteNonQuery();
-                    command.Parameters.Clear();
+                    affectedRows = command.ExecuteNonQuery(); // Execute non query and get the affected rows
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message, "DataList.DeleteMany");
                 } finally {
+                    command.Parameters.Clear();
                     this.CloseConnection(); // Finally close the connection
                 }
 
