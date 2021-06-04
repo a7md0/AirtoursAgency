@@ -150,7 +150,7 @@ namespace AirtoursWebApplication.Reservations {
                     this.outwardFlight = flightList.FindOne("FlightID", this.outwardScheduledFlight.FlightID);
                 } else if (reservedSeat.Sector == "Return") {
                     this.returnScheduledFlight = scheduledFlightList.FindOne("ScheduledFlightID", reservedSeat.ScheduledFlightID);
-                    this.returnFlight = flightList.FindOne("FlightID", returnScheduledFlight.FlightID);
+                    this.returnFlight = flightList.FindOne("FlightID", this.returnScheduledFlight.FlightID);
                 }
             }
         }
@@ -174,6 +174,7 @@ namespace AirtoursWebApplication.Reservations {
                 return; // exit from method
             }
 
+            reservedSeatList.Delete("PassengerID", passengerID);
             bool wasDeleted = passengerList.Delete(passenger); // Delete the passenger record
             if (wasDeleted) { // if was deleted
                 this.passengers.RemoveAt(idx); // remove the passenger from the temporarily list
@@ -213,7 +214,7 @@ namespace AirtoursWebApplication.Reservations {
 
             bool wasAdded = passengerList.Add(passenger); // add passenger
             if (wasAdded) { // if added
-                wasAdded = this.ReserveNewSeat(this.outwardScheduledFlight, passenger, "Return"); // Reserve seat on outward flight for the passenger
+                wasAdded = this.ReserveNewSeat(this.outwardScheduledFlight, passenger, "Outward"); // Reserve seat on outward flight for the passenger
 
                 if (this.returnScheduledFlight is null == false) {
                     wasAdded = this.ReserveNewSeat(this.returnScheduledFlight, passenger, "Return"); // Reserve seat on return flight for the passenger
