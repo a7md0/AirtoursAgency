@@ -143,7 +143,9 @@ namespace AirtoursWebApplication.Reservations {
             reservedSeatList.Populate("PassengerID", passengerID);
 
             foreach (ReservedSeat reservedSeat in reservedSeatList.List) { // For each reserved seat (there could be one or two)
-                this.ReservationClassLabel.Text = reservedSeat.Class; // Set the class label from the reserved seat
+                if (!string.IsNullOrEmpty(reservedSeat.Class)) {
+                    this.ReservationClassLabel.Text = reservedSeat.Class; // Set the class label from the reserved seat
+                }
 
                 if (reservedSeat.Sector == "Outward") {
                     this.outwardScheduledFlight = scheduledFlightList.FindOne("ScheduledFlightID", reservedSeat.ScheduledFlightID);
