@@ -411,32 +411,32 @@ namespace AirtoursBusinessObjects {
         public virtual bool Add(T model) {
             bool added = false;
 
-            using (SqlCommand command = this.connection.CreateCommand())
-            using (InsertClause insert = new InsertClause(this.schema)) {
-                insert.Add(model, modelProperties);
+            using (SqlCommand command = this.connection.CreateCommand()) // Create new command
+            using (InsertClause insert = new InsertClause(this.schema)) { // Initialize insert clause for this table schema
+                insert.Add(model, modelProperties); // Pass the model along with the properties
 
-                if (insert.HasAny) {
-                    string insertFields = insert.InsertFields;
-                    string insertValues = insert.InsertValues;
+                if (insert.HasAny) {// If the insert has anything (it should)
+                    string insertFields = insert.InsertFields; // Get the comma separated fields
+                    string insertValues = insert.InsertValues; // Get the comma separated placeholders
 
-                    command.Parameters.AddRange(insert.Parameters);
-                    command.CommandText = $"INSERT INTO [{this.table}] ({insertFields}) OUTPUT INSERTED.{this.pkColumn} VALUES ({insertValues});";
+                    command.Parameters.AddRange(insert.Parameters); // Add the SqlParamter array to the command
+                    command.CommandText = $"INSERT INTO [{this.table}] ({insertFields}) OUTPUT INSERTED.{this.pkColumn} VALUES ({insertValues});"; // Construct the command text
 
                     try {
                         this.OpenConnection(); // Open the connection
 
-                        object inserted_id = command.ExecuteScalar();
-                        added = true;
+                        object inserted_id = command.ExecuteScalar(); // insert and get the PK value
+                        added = true; // indicate that the add is successful
 
-                        if (inserted_id is null == false && inserted_id is DBNull == false) {
-                            model.SetId(inserted_id);
+                        if (inserted_id is null == false && inserted_id is DBNull == false) { // if the insert PK is not null
+                            model.SetId(inserted_id); // Assign the id to the PK in the model
                         }
 
-                        model.Inserted = true;
+                        model.Inserted = true; // Indicate that the model as inserted
 
-                        model.SetError(null);
+                        model.SetError(null); // Reset the errors if there's any
                     } catch (Exception ex) {
-                        model.SetError(ex.Message);
+                        model.SetError(ex.Message); // Set the errors
                         Debug.WriteLine(ex.Message, "DataList.Add");
                     } finally {
                         this.CloseConnection(); // Finally close the connection
@@ -462,7 +462,7 @@ namespace AirtoursBusinessObjects {
 
                 if (set.HasAny) {
                     string setClause = set.ToString();
-                    string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
+                    string whereClause = $" WHERE {where.ToString()}";
 
                     command.CommandText = $"UPDATE [{this.table}] {setClause}{whereClause};";
 
@@ -488,7 +488,7 @@ namespace AirtoursBusinessObjects {
                     }
                 }
 
-                return affectedRows > 0;
+                return affectedRows > 0; // Return whether the affected rows are greater than zero (bool)
             }
         }
 
@@ -502,7 +502,7 @@ namespace AirtoursBusinessObjects {
             using (WhereClause where = this.ModelWhereClause(model)) {
                 int affectedRows = 0;
 
-                string whereClause = where.HasAny ? $" WHERE {where.ToString()}" : "";
+                string whereClause = $" WHERE {where.ToString()}";
 
                 command.CommandText = $"DELETE FROM [{this.table}]{whereClause};";
                 if (where?.Parameters is null == false) {
@@ -512,7 +512,7 @@ namespace AirtoursBusinessObjects {
                 try {
                     this.OpenConnection(); // Open the connection
 
-                    affectedRows = command.ExecuteNonQuery();
+                    affectedRows = command.ExecuteNonQuery(); // Execute non query and get the affected rows
 
                     model.SetError(null);
                 } catch (Exception ex) {
@@ -522,7 +522,7 @@ namespace AirtoursBusinessObjects {
                     this.CloseConnection(); // Finally close the connection
                 }
 
-                return affectedRows > 0;
+                return affectedRows > 0; // Return whether the affected rows are greater than zero (bool)
             }
         }
     }
@@ -535,6 +535,12 @@ namespace AirtoursBusinessObjects {
             return this.Populate(null);
         }
 
+        /// <summary>
+        /// Populate the list with a given condition. (Just for compatibility)
+        /// </summary>
+        /// <param name="field">Column name</param>
+        /// <param name="value">Column value</param>
+        /// <returns></returns>
         public bool Populate(string field, object value) {
             using (WhereClause whereClause = this.WhereClause) {
                 whereClause.Where(field, value);
@@ -620,7 +626,7 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(on?.Parameters);
                 }
 
-                return this.PopulateWithQuery(command);
+                return this.PopulateWithQuery(command); // Call the base populate with query passing the command
             }
         }
 
@@ -668,7 +674,7 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(on3?.Parameters);
                 }
 
-                return this.PopulateWithQuery(command);
+                return this.PopulateWithQuery(command); // Call the base populate with query passing the command
             }
         }
 
@@ -691,7 +697,7 @@ namespace AirtoursBusinessObjects {
                     command.Parameters.AddRange(sqlParameters);
                 }
 
-                return this.PopulateWithQuery(command);
+                return this.PopulateWithQuery(command); // Call the base populate with query passing the command
             }
         }
     }
@@ -817,14 +823,18 @@ namespace AirtoursBusinessObjects {
             }
         }
 
+        /// <summary>
+        /// Add data-table row for passed model
+        /// </summary>
+        /// <param name="model">Model to construct from</param>
         protected void AddDataTableRow(T model) {
-            DataRow row = this.dataTable.NewRow();
+            DataRow row = this.dataTable.NewRow(); // New data row
 
-            foreach (PropertyInfo property in this.modelProperties) {
+            foreach (PropertyInfo property in this.modelProperties) { // for each property of the model properties
                 row[property.Name] = property.GetValue(model) ?? DBNull.Value; // https://forums.asp.net/t/1796259.aspx?how+to+solve+this+DataSet+does+not+support+System+Nullable+
             }
 
-            this.dataTable.Rows.Add(row);
+            this.dataTable.Rows.Add(row); // Add the row in the data-table
         }
     }
 
