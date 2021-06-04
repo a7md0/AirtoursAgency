@@ -14,6 +14,7 @@ namespace AirtoursWebApplication.Reservations {
         protected static ReservationList reservationList = new ReservationList();
         protected static FlightList flightList = new FlightList();
         protected static ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
+        protected static PassengerList passengerList = new PassengerList();
 
         protected Customer customer => this.Session["customer"] as Customer; // getter for the customer from the session
 
@@ -56,9 +57,15 @@ namespace AirtoursWebApplication.Reservations {
             }
         }
 
+        /// <summary>
+        /// Control some conditional visibility elements
+        /// </summary>
         private void ControlVisiblity() {
             // Only if this reservation flights are in the future (both Outward and Return flights)
-            if (this.outwardScheduledFlight?.FlightDate >= DateTime.Now && this.returnScheduledFlight?.FlightDate >= DateTime.Now) {
+            if (
+                this.outwardScheduledFlight?.FlightDate >= DateTime.Now &&
+                (this.returnScheduledFlight?.FlightDate ?? DateTime.Now.AddDays(1)) >= DateTime.Now
+            ) {
                 this.EditReservationButton.Visible = true; // Show the edit button
                 this.DeleteReservationButton.Visible = true; // Show the delete button
             } else {
@@ -72,15 +79,22 @@ namespace AirtoursWebApplication.Reservations {
             }
         }
 
+        /// <summary>
+        /// Populate reservation details
+        /// </summary>
+        /// <param name="reservation"></param>
         protected void PopulateReservationLabels(Reservation reservation) {
             this.ReservationDateLabel.Text = reservation.ReservationDate?.ToLongDateString() ?? "-"; // Set the reservation date
             this.ReservationTotalLabel.Text = string.Format("{0:C}", reservation.Price ?? 0m); // Format currency
             this.ReservationPaidLabel.Text = (reservation?.Paid ?? false) ? "Yes" : "No"; // Set the paid label to Yes, No
         }
 
-        // Find all passengers tied to this reservation and return first passenger id
+        /// <summary>
+        /// Find all passengers tied to this reservation and return first passenger id
+        /// </summary>
+        /// <param name="reservation">Reservation to match</param>
+        /// <returns></returns>
         protected int FindAndPopulatePassengers(Reservation reservation) {
-            PassengerList passengerList = new PassengerList();
             passengerList.Populate("ReservationID", reservation.ReservationID); // Populate all passengers based on reservation id
 
             this.PassengersGridView.DataSource = passengerList.DataTable; // Set the passengers grid view data source

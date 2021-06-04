@@ -81,51 +81,54 @@ namespace AirtoursWebApplication.Reservations {
             this.ReservationPaidLabel.Text = (reservation?.Paid ?? false) ? "Yes" : "No";
         }
 
+        /// <summary>
+        /// Find all passengers tied to this reservation and return first passenger id
+        /// </summary>
+        /// <param name="reservation">Reservation to match</param>
+        /// <returns></returns>
         protected int FindAndPopulatePassengers(Reservation reservation) {
-            PassengerList passengerList = new PassengerList();
-            passengerList.Populate("ReservationID", reservation.ReservationID);
+            passengerList.Populate("ReservationID", reservation.ReservationID); // Populate all passengers based on reservation id
 
             this.passengers = passengerList.List.GetRange(0, passengerList.List.Count);
 
-            if (this.passengers.Count > 0) {
-                return this.passengers[0].PassengerID;
+            if (this.passengers.Count > 0) { // If there are passenger (it should be; but just in case)
+                return this.passengers[0].PassengerID; // Return the 1st passenger id only for later usage
             }
 
-            return 0;
+            return 0; // return 0 otherwise
         }
 
         protected void PopulateOutwardFlight() {
-            if (outwardFlight is null == false && outwardScheduledFlight is null == false) {
+            if (outwardFlight is null == false && outwardScheduledFlight is null == false) { // if the outward flight is available
                 this.OutwardFlightNumberLabel.Text = this.outwardFlight.FlightNumber;
                 this.OutwardFlightAirlineLabel.Text = this.outwardFlight.Airline;
 
                 this.OutwardFlightOriginLabel.Text = this.outwardFlight.Origin;
                 this.OutwardFlightDestinationLabel.Text = this.outwardFlight.Destination;
 
-                this.OutwardFlightDepartureLabel.Text = this.outwardFlight.Departure?.ToShortTimeString();
-                this.OutwardFlightArrivalLabel.Text = this.outwardFlight.Arrival?.ToShortTimeString();
+                this.OutwardFlightDepartureLabel.Text = this.outwardFlight.Departure?.ToShortTimeString(); // Format time
+                this.OutwardFlightArrivalLabel.Text = this.outwardFlight.Arrival?.ToShortTimeString(); // Format time
 
-                this.OutwardFlightDateLabel.Text = this.outwardScheduledFlight.FlightDate?.ToLongDateString();
-                this.OutwardFlightFareLabel.Text = string.Format("{0:C}", this.outwardFlight.Fare ?? 0m);
+                this.OutwardFlightDateLabel.Text = this.outwardScheduledFlight.FlightDate?.ToLongDateString(); // Formate date
+                this.OutwardFlightFareLabel.Text = string.Format("{0:C}", this.outwardFlight.Fare ?? 0m); // Format currency
             }
         }
 
         protected void PopulateReturnFlight() {
-
-            if (returnFlight is null == false && returnScheduledFlight is null == false) {
+            if (returnFlight is null == false && returnScheduledFlight is null == false) { // if the return flight is available
                 this.ReturnFlightNumberLabel.Text = this.returnFlight.FlightNumber;
                 this.ReturnFlightAirlineLabel.Text = this.returnFlight.Airline;
 
                 this.ReturnFlightOriginLabel.Text = this.returnFlight.Origin;
                 this.ReturnFlightDestinationLabel.Text = this.returnFlight.Destination;
 
-                this.ReturnFlightDepartureLabel.Text = this.returnFlight.Departure?.ToShortTimeString();
-                this.ReturnFlightArrivalLabel.Text = this.returnFlight.Arrival?.ToShortTimeString();
+                this.ReturnFlightDepartureLabel.Text = this.returnFlight.Departure?.ToShortTimeString(); // Format time
+                this.ReturnFlightArrivalLabel.Text = this.returnFlight.Arrival?.ToShortTimeString(); // Format time
 
-                this.ReturnFlightDateLabel.Text = this.returnScheduledFlight.FlightDate?.ToLongDateString();
-                this.ReturnFlightFareLabel.Text = string.Format("{0:C}", this.returnFlight.Fare ?? 0m);
+                this.ReturnFlightDateLabel.Text = this.returnScheduledFlight.FlightDate?.ToLongDateString(); // Formate date
+                this.ReturnFlightFareLabel.Text = string.Format("{0:C}", this.returnFlight.Fare ?? 0m); // Format currency
 
-                this.ReturnFlightView.Visible = true;
+                this.ReturnFlightView.Visible = true; // Show the return flight view
             }
         }
 
