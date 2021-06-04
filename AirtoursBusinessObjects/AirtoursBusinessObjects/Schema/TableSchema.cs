@@ -3,31 +3,50 @@ using System.Data;
 using System.Collections.Generic;
 
 namespace AirtoursBusinessObjects.Schema {
+    /// <summary>
+    /// Table schema representation of a given table, custom made to replace the data-table output from the SQL command
+    /// </summary>
     public class TableSchema {
         private Dictionary<string, TableSchemaColumn> columns;
 
+        /// <summary>
+        /// Construct new table schema from data-table
+        /// </summary>
+        /// <param name="dataTable">Table schema in data-table</param>
         public TableSchema(DataTable dataTable) {
-            this.columns = new Dictionary<string, TableSchemaColumn>();
+            this.columns = new Dictionary<string, TableSchemaColumn>(); // Initialize new dictionary
 
-            var properties = typeof(TableSchemaColumn).GetProperties();
+            var properties = typeof(TableSchemaColumn).GetProperties(); // Get the properties of the table schema column (reflection)
 
-            foreach (DataRow row in dataTable.Rows) {
-                var column = new TableSchemaColumn();
+            foreach (DataRow row in dataTable.Rows) { // For each row in the data-table
+                var column = new TableSchemaColumn(); // Create new schema column
 
-                foreach (var property in properties) {
-                    var value = row[property.Name];
-                    if (value is DBNull) {
-                        value = null;
+                foreach (var property in properties) { // For each property
+                    var value = row[property.Name]; // Grab the value from the data-table row
+                    if (value is DBNull) { // if the value is db-null
+                        value = null; // set the value to null
                     }
 
-                    property.SetValue(column, value);
+                    property.SetValue(column, value); // Set property of the col to the value
                 }
 
-                this.columns.Add(column.ColumnName, column);
+                this.columns.Add(column.ColumnName, column); // Add the column to the dictionary
             }
         }
 
-        public TableSchemaColumn this[string column] => this.columns[column];
+        /// <summary>
+        /// Getter for specific column
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <returns>TableSchemaColumn</returns>
+        /// <example>tableSchema["ID"]</example>
+        public TableSchemaColumn this[string column] => this.columns[column]; // Getter for a specific columns
+
+        /// <summary>
+        /// Check if the schema has a specific column
+        /// </summary>
+        /// <param name="column">Column name</param>
+        /// <returns>Boolean indicating whether the column does exists</returns>
         public bool HasColumn(string column) => this.columns.ContainsKey(column);
     }
 
