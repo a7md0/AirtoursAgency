@@ -17,7 +17,7 @@ namespace AirtoursWebApplication.Reservations {
 
         protected static ReservationList reservationList = new ReservationList();
 
-        protected Customer customer => this.Session["customer"] as Customer;
+        protected Customer customer => this.Session["customer"] as Customer; // getter for the customer from the session
 
         protected int reservationID => (int) this.Session["EditReservationID"];
         protected Reservation reservation {

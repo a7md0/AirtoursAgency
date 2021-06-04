@@ -15,7 +15,7 @@ namespace AirtoursWebApplication.Reservations {
         protected static FlightList flightList = new FlightList();
         protected static ScheduledFlightList scheduledFlightList = new ScheduledFlightList();
 
-        protected Customer customer;
+        protected Customer customer => this.Session["customer"] as Customer; // getter for the customer from the session
 
         protected string reservationID;
         protected Reservation reservation;
@@ -29,7 +29,6 @@ namespace AirtoursWebApplication.Reservations {
         /****************************************************/
 
         protected void Page_Load(object sender, EventArgs e) {
-            this.customer = (Customer) this.Session["customer"];
             this.reservationID = this.Request.QueryString["reservationID"];
 
             if (!Page.IsPostBack) {
@@ -49,7 +48,7 @@ namespace AirtoursWebApplication.Reservations {
                         this.PopulateOutwardFlight();
                         this.PopulateReturnFlight();
                     }
-                } else {
+                } else { // If no reservation is found (or the customer does not have right to access)
                     this.Response.Redirect("/", true);
                 }
 
@@ -82,16 +81,16 @@ namespace AirtoursWebApplication.Reservations {
         // Find all passengers tied to this reservation and return first passenger id
         protected int FindAndPopulatePassengers(Reservation reservation) {
             PassengerList passengerList = new PassengerList();
-            passengerList.Populate("ReservationID", reservation.ReservationID);
+            passengerList.Populate("ReservationID", reservation.ReservationID); // Populate all passengers based on reservation id
 
-            this.PassengersGridView.DataSource = passengerList.DataTable;
-            this.PassengersGridView.DataBind();
+            this.PassengersGridView.DataSource = passengerList.DataTable; // Set the passengers grid view data source
+            this.PassengersGridView.DataBind(); // Bind the data
 
-            if (passengerList.List.Count > 0) {
-                return passengerList.List[0].PassengerID;
+            if (passengerList.List.Count > 0) { // If there are passenger (it should be; but just in case)
+                return passengerList.List[0].PassengerID; // Return the 1st passenger id only for later usage
             }
 
-            return 0;
+            return 0; // return 0 otherwise
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace AirtoursWebApplication.Reservations {
                 this.OutwardFlightArrivalLabel.Text = this.outwardFlight.Arrival?.ToShortTimeString();
 
                 this.OutwardFlightDateLabel.Text = this.outwardScheduledFlight.FlightDate?.ToLongDateString();
-                this.OutwardFlightFareLabel.Text = string.Format("{0:C}", this.outwardFlight.Fare ?? 0m);
+                this.OutwardFlightFareLabel.Text = string.Format("{0:C}", this.outwardFlight.Fare ?? 0m); // Format currency
             }
         }
 
